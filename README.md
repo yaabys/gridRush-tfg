@@ -8,7 +8,7 @@ Node.js (versión recomendada: LTS)
 
 npm o yarn
 
-<hr style="border: 0.5px solid #ccc;" />
+<hr>
 
 <h2> 🛠 Instalación </h2>
 
