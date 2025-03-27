@@ -1,6 +1,6 @@
 <h1>🚀 Proyecto Vite + React + API</h1>
 
-📜 Requisitos Previos
+<h2>📜 Requisitos Previos </h2>
 
 Asegúrate de tener instalado lo siguiente en tu sistema:
 
@@ -10,7 +10,7 @@ npm o yarn
 
 <hr>
 
-🛠 Instalación
+<h2> 🛠 Instalación </h2>
 
 Clona este repositorio y accede a la carpeta del proyecto:
 
@@ -20,7 +20,7 @@ cd tu-repositorio
 
 <hr>
 
-🚀 Iniciar la API
+<h2> 🚀 Iniciar la API </h2>
 
 Asegúrate de tener un archivo .env con las variables de entorno necesarias y ejecuta el siguiente comando:
 
@@ -30,7 +30,7 @@ node --env-file={rutaArchivoEnv} api.mjs
 
 <hr>
 
-💻 Iniciar el Frontend (React + Vite)
+<h2> 💻 Iniciar el Frontend (React + Vite) </h2>
 
 Instala las dependencias necesarias:
 
