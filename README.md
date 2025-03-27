@@ -15,6 +15,7 @@ npm o yarn
 Clona este repositorio y accede a la carpeta del proyecto:
 
 git clone https://github.com/tu-usuario/tu-repositorio.git
+
 cd tu-repositorio
 
 <hr>
