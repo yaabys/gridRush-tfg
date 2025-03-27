@@ -41,6 +41,8 @@ npm run dev
 
 Esto iniciará el proyecto en http://localhost:5173/ (por defecto).
 
+<hr>
+
 📌 Notas Adicionales
 
 Asegúrate de que la API está corriendo antes de iniciar el frontend.
