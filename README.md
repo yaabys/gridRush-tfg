@@ -1,6 +1,3 @@
-# Proyecto final
-TFG CAMBIAR README
-
 📜 Requisitos Previos
 
 Asegúrate de tener instalado lo siguiente en tu sistema:
@@ -9,12 +6,16 @@ Node.js (versión recomendada: LTS)
 
 npm o yarn
 
+<hr>
+
 🛠 Instalación
 
 Clona este repositorio y accede a la carpeta del proyecto:
 
 git clone https://github.com/tu-usuario/tu-repositorio.git
 cd tu-repositorio
+
+<hr>
 
 🚀 Iniciar la API
 
