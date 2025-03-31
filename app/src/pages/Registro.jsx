@@ -36,7 +36,7 @@ const Registro = () => {
     setShowSemaforo(true);
 
     setTimeout(() => {
-      navigate('/'); // o a donde querés llevarlo
+      navigate('/principal'); // o a donde querés llevarlo
     }, 4000);
   };
 
