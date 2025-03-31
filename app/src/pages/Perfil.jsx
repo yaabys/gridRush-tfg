@@ -1,33 +1,25 @@
+import { useState } from 'react';
 import Header from '../components/Header';
 import './Perfil.css';
-//import fotoDefault from '../assets/default-avatar.png'; // poné una imagen en esa ruta
 
 const Perfil = () => {
+  const [mostrarOpciones, setMostrarOpciones] = useState(false);
+
   const user = {
     nombre: 'Álvaro',
-    apellido: 'López',
+    apellido: 'Langa',
     username: 'alvarorush',
     email: 'alvaro@example.com',
     provincia: 'Madrid',
-    nacimiento: '2000-04-15',
-    //avatar: fotoDefault
+    nacimiento: '2004-12-09',
+    vueltaRapida: '1:33.333',
+    victorias: 12,
+    torneosGanados: 4
   };
 
-  const handleLogout = () => {
-    alert('Sesión cerrada');
-  };
-
-  const handleCambiarUsername = () => {
-    alert('Cambio de nombre de usuario');
-  };
-
-  const handleCambiarPassword = () => {
-    alert('Cambio de contraseña');
-  };
-
-  const handleCambiarAvatar = () => {
-    alert('Cambiar foto de perfil (por implementar)');
-  };
+  const handleEditarUsername = () => alert('Función para cambiar nombre de usuario');
+  const handleEditarEmail = () => alert('Función para cambiar email');
+  const handleEditarAvatar = () => alert('Función para cambiar foto de perfil');
 
   return (
     <>
@@ -36,22 +28,45 @@ const Perfil = () => {
         <h2>👤 Mi perfil</h2>
 
         <div className='perfil-avatar'>
-          <img src={user.avatar} alt='Foto de perfil' />
-          <button onClick={handleCambiarAvatar}>📷 Cambiar foto</button>
+          <img
+            src={`https://ui-avatars.com/api/?name=${user.nombre}+${user.apellido}&background=222&color=fff`}
+            alt='Foto de perfil'
+          />
         </div>
 
         <div className='perfil-datos'>
           <p><strong>Nombre:</strong> {user.nombre} {user.apellido}</p>
-          <p><strong>Usuario:</strong> {user.username}</p>
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Provincia:</strong> {user.provincia}</p>
           <p><strong>Nacimiento:</strong> {user.nacimiento}</p>
+          <p><strong>Usuario:</strong> {user.username}</p>
+
+          <button className='editar-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
+            ✏️ Editar perfil
+          </button>
+
+          {mostrarOpciones && (
+            <div className='editar-opciones'>
+              <button onClick={handleEditarUsername}>🆔 Cambiar nombre de usuario</button>
+              <button onClick={handleEditarEmail}>📧 Cambiar email</button>
+              <button onClick={handleEditarAvatar}>📷 Cambiar foto de perfil</button>
+            </div>
+          )}
         </div>
 
-        <div className='perfil-acciones'>
-          <button onClick={handleCambiarUsername}>✏️ Cambiar nombre de usuario</button>
-          <button onClick={handleCambiarPassword}>🔐 Cambiar contraseña</button>
-          <button className='logout' onClick={handleLogout}>🚪 Cerrar sesión</button>
+        <div className='perfil-estadisticas'>
+          <div className='estadistica-card'>
+            <h3>🏁 Vuelta más rápida</h3>
+            <p>{user.vueltaRapida}</p>
+          </div>
+          <div className='estadistica-card'>
+            <h3>🏆 Torneos ganados</h3>
+            <p>{user.torneosGanados}</p>
+          </div>
+          <div className='estadistica-card'>
+            <h3>🎖️ Victorias en carreras</h3>
+            <p>{user.victorias}</p>
+          </div>
         </div>
       </div>
     </>

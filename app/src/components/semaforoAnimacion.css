@@ -33,4 +33,33 @@
       box-shadow: 0 0 20px #d10000;
     }
   }
+
+  .go-text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--color-primary-light);
+    text-shadow: 0 0 20px var(--color-primary);
+    animation: goZoom 1s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes goZoom {
+    0% {
+      transform: translateY(-50%) scale(0.6);
+      opacity: 0;
+    }
+    50% {
+      transform: translateY(-50%) scale(1.2);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-50%) scale(1);
+      opacity: 0;
+    }
+  }
+  
+  
   
