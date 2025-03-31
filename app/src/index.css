@@ -1,7 +1,14 @@
 /* src/styles/global.css */
 
+
 /* Tipografía base */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@font-face {
+  font-family: 'Formula1';
+  src: url('./assets/fonts/Formula1-Bold_web_0.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 :root {
   --color-bg: #0f0f0f;
@@ -11,8 +18,16 @@
   --color-text: #ffffff;
   --color-muted: #bbbbbb;
   --border-radius: 8px;
-  --font-family: 'Orbitron', sans-serif;
+  --font-family: 'Formula1', sans-serif;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 
 * {
   margin: 0;
@@ -27,6 +42,8 @@ body {
   font-size: 16px;
   line-height: 1.5;
 }
+
+
 
 a {
   color: var(--color-primary);
