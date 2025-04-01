@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import './Header.css';
+import DarkModeToggle from './buttonDarkMode.jsx'; // Asegúrate de que la ruta sea correcta
 
 const Header = () => {
   return (
@@ -15,7 +16,11 @@ const Header = () => {
         <Link to='/carrerasLibres'>Carreras Libres</Link>
         <Link to='/temporadas'>Temporadas</Link>
       </nav>
+      
       <div className='header-right'>
+        <div>
+      <DarkModeToggle />
+      </div>
         <Link to='/perfil' className='perfil-link'>👤 Perfil</Link>
       </div>
     </header>
