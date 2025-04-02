@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import './TorneosOficiales.css';
+import Header from '../../components/Header';
+import './OfficialTournaments.css';
 
 const torneos = [
   {
@@ -35,7 +35,7 @@ const torneos = [
 const niveles = ['Principiante', 'Intermedio', 'Avanzado'];
 const comunidades = [...new Set(torneos.map(t => t.comunidad))];
 
-const TorneosOficiales = () => {
+const OfficialTournaments = () => {
   const [nivelSeleccionado, setNivelSeleccionado] = useState('');
   const [comunidadSeleccionada, setComunidadSeleccionada] = useState('');
 
@@ -46,13 +46,13 @@ const TorneosOficiales = () => {
   });
 
   return (
-    <div className='torneosOficiales'>
+    <div className='officialTournaments'>
       <Header />
-      <div className='torneosOficiales__container'>
+      <div className='officialTournaments__container'>
         <h1>Torneos Oficiales</h1>
         <p>Filtrá por nivel y comunidad para encontrar tu próximo reto.</p>
 
-        <div className='filtros'>
+        <div className='filters'>
           <label>
             Nivel mínimo:
             <select value={nivelSeleccionado} onChange={(e) => setNivelSeleccionado(e.target.value)}>
@@ -70,9 +70,9 @@ const TorneosOficiales = () => {
           </label>
         </div>
 
-        <div className='tarjetas-torneos'>
+        <div className='cards-torneos'>
           {torneosFiltrados.map((torneo, index) => (
-            <div key={index} className='tarjeta-torneo'>
+            <div key={index} className='card-torneo'>
               <h3>{torneo.nombre}</h3>
               <p><strong>📍 Ubicación:</strong> {torneo.ubicacion}</p>
               <p><strong>🗓 Fecha:</strong> {torneo.fecha}</p>
@@ -89,4 +89,4 @@ const TorneosOficiales = () => {
   );
 };
 
-export default TorneosOficiales;
+export default OfficialTournaments;

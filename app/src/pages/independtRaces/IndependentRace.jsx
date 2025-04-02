@@ -1,12 +1,12 @@
-import Header from '../components/Header';
-import './CarrerasLibres.css';
+import Header from '../../components/Header';
+import './IndependentRace.css';
 
-const CarrerasLibres = () => {
+const IndependentRace = () => {
 
     return (
-        <div className='carrerasLibres'>
+        <div className='independentRace'>
             <Header />
-            <div className='carrerasLibres__container'>
+            <div className='independentRace__container'>
                 <h1>Carreras Libres</h1>
                 <p>En esta sección podrás encontrar las carreras libres de GridRush.</p>
                 <p>Pronto estarán disponibles.</p>
@@ -15,4 +15,4 @@ const CarrerasLibres = () => {
     )
 }
 
-export default CarrerasLibres;
+export default IndependentRace;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import './Perfil.css';
+import Header from '../../components/Header';
+import './Profile.css';
 
 const Perfil = () => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
@@ -34,19 +34,19 @@ const Perfil = () => {
           />
         </div>
 
-        <div className='perfil-datos'>
+        <div className='perfil-data'>
           <p><strong>Nombre:</strong> {user.nombre} {user.apellido}</p>
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Provincia:</strong> {user.provincia}</p>
           <p><strong>Nacimiento:</strong> {user.nacimiento}</p>
           <p><strong>Usuario:</strong> {user.username}</p>
 
-          <button className='editar-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
+          <button className='edit-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
             ✏️ Editar perfil
           </button>
 
           {mostrarOpciones && (
-            <div className='editar-opciones'>
+            <div className='edit-opciones'>
               <button onClick={handleEditarUsername}>🆔 Cambiar nombre de usuario</button>
               <button onClick={handleEditarEmail}>📧 Cambiar email</button>
               <button onClick={handleEditarAvatar}>📷 Cambiar foto de perfil</button>
@@ -54,16 +54,16 @@ const Perfil = () => {
           )}
         </div>
 
-        <div className='perfil-estadisticas'>
-          <div className='estadistica-card'>
+        <div className='perfil-stats'>
+          <div className='stats-card'>
             <h3>🏁 Vuelta más rápida</h3>
             <p>{user.vueltaRapida}</p>
           </div>
-          <div className='estadistica-card'>
+          <div className='stats-card'>
             <h3>🏆 Torneos ganados</h3>
             <p>{user.torneosGanados}</p>
           </div>
-          <div className='estadistica-card'>
+          <div className='stats-card'>
             <h3>🎖️ Victorias en carreras</h3>
             <p>{user.victorias}</p>
           </div>

@@ -1,4 +1,4 @@
-.principal-container {
+.main-container {
   padding: 6rem 2rem 2rem;
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -8,22 +8,20 @@
   box-sizing: border-box;
 }
 
-/* Bienvenida */
-.bienvenida {
+.welcome {
   margin-bottom: 2.5rem;
 }
 
-.bienvenida h2 {
+.welcome h2 {
   font-size: 2rem;
   color: var(--color-primary);
 }
 
-.bienvenida p {
+.welcome p {
   color: var(--color-muted);
 }
 
-/* Stats */
-.stats-resumen {
+.stats-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
@@ -44,21 +42,20 @@
   color: var(--color-primary-light);
 }
 
-/* Objetivo semanal */
-.objetivo-semanal {
+.weekly-goal {
   margin-bottom: 3rem;
 }
 
-.objetivo-semanal h3 {
+.weekly-goal h3 {
   color: var(--color-primary);
   margin-bottom: 0.5rem;
 }
 
-.objetivo-semanal p {
+.weekly-goal p {
   margin-bottom: 0.5rem;
 }
 
-.progreso-barra {
+.progress-bar {
   width: 90%;
   height: 14px;
   background-color: #333;
@@ -67,28 +64,27 @@
   margin-bottom: 0.3rem;
 }
 
-.progreso-completado {
+.progress-completed {
   height: 100%;
   background-color: var(--color-primary);
   transition: width 0.3s ease;
 }
 
-/* Próximos torneos */
-.proximos-torneos {
+.upcoming-tournaments {
   margin-bottom: 3rem;
 }
 
-.proximos-torneos h3 {
+.upcoming-tournaments h3 {
   color: var(--color-primary-light);
   margin-bottom: 1rem;
 }
 
-.proximos-torneos ul {
+.upcoming-tournaments ul {
   list-style: none;
   padding: 0;
 }
 
-.proximos-torneos li {
+.upcoming-tournaments li {
   background-color: var(--color-bg-dark);
   padding: 1rem;
   margin-bottom: 0.75rem;
@@ -97,17 +93,16 @@
   font-weight: 500;
 }
 
-/* Sugerencias */
-.sugerencias {
+.suggestions {
   margin-bottom: 4rem;
 }
 
-.sugerencias h3 {
+.suggestions h3 {
   color: var(--color-primary-light);
   margin-bottom: 0.5rem;
 }
 
-.sugerencias p {
+.suggestions p {
   background-color: var(--color-bg-dark);
   color: var(--color-text);
   padding: 1rem;

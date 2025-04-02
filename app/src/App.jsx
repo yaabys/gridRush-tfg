@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import Home from './pages/Home'
-import Registro from './pages/Registro'
-import Principal from './pages/Principal'
-import CarrerasLibres from './pages/CarrerasLibres'
-import Temporadas from './pages/Temporadas'
-import TorneosOficiales from './pages/TorneosOficiales'
-import PistasKarting from './pages/PistasKarting'
-import Perfil from './pages/Perfil'
+import Home from './pages/home/Home'
+import Register from './pages/register/Register'
+import Index from './pages/index/Index'
+import IndependentRace from './pages/independtRaces/IndependentRace'
+import Seasons from './pages/seasons/Seasons'
+import OfficialTournaments from './pages/officialTournaments/OfficialTournaments'
+import Tracks from './pages/kartingTracks/Tracks'
+import Profile from './pages/profile/Profile'
 
 function App() {
   return (
@@ -18,13 +17,13 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/registro' element={<Registro />} />
-          <Route path='/principal' element={<Principal />} />
-          <Route path='/carrerasLibres' element={<CarrerasLibres />} />
-          <Route path='/temporadas' element={<Temporadas />} />
-          <Route path='/torneosOficiales' element={<TorneosOficiales />} />
-          <Route path='/pistasKarting' element={<PistasKarting />} />
-          <Route path='/perfil' element={<Perfil />} />
+          <Route path='/registro' element={<Register />} />
+          <Route path='/principal' element={<Index />} />
+          <Route path='/carrerasLibres' element={<IndependentRace />} />
+          <Route path='/temporadas' element={<Seasons />} />
+          <Route path='/torneosOficiales' element={<OfficialTournaments />} />
+          <Route path='/pistasKarting' element={<Tracks />} />
+          <Route path='/perfil' element={<Profile />} />
         </Routes>
       </Router>
     </>
