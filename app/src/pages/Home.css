@@ -1,7 +1,7 @@
 /* src/pages/Home.css */
 
 .home-container {
-    background: linear-gradient(to bottom, #0f0f0f, #1a1a1a);
+    background: linear-gradient(to bottom, #0f0f0f,var(--color-bg-dark));
     min-height: 100vh;
     color: var(--color-text);
     font-family: var(--font-family);
@@ -11,8 +11,8 @@
     background: repeating-linear-gradient(45deg,
             #0f0f0f,
             #0f0f0f 10px,
-            #1a1a1a 10px,
-            #1a1a1a 20px);
+            var(--color-bg-dark) 10px,
+            var(--color-bg-dark) 20px);
 
     background-size: cover;
     background-position: center;
@@ -45,7 +45,7 @@
 
 .hero-button {
     background-color: var(--color-primary);
-    color: #fff;
+    color:var(--color-text);
     border: none;
     padding: 1rem 2rem;
     font-size: 1rem;
@@ -64,7 +64,7 @@
 .features {
     padding: 4rem 2rem;
     text-align: center;
-    background-color: #111;
+    background-color: var(--color-bg-dark);
   }
   
   .features h2 {
@@ -81,7 +81,7 @@
   }
   
   .feature {
-    background-color: #1a1a1a;
+    background-color: var(--color-bg-dark);
     border: 1px solid #333;
     border-radius: var(--border-radius);
     padding: 2rem;
@@ -104,7 +104,7 @@
   .cta {
     padding: 4rem 2rem;
     text-align: center;
-    background: linear-gradient(to right, #111, #1a1a1a);
+    background: linear-gradient(to right, var(--color-bg-dark), var(--color-bg-dark));
   }
   
   .cta h2 {

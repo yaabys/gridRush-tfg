@@ -4,7 +4,7 @@
   color: var(--color-text);
   min-height: 100vh;
   font-family: var(--font-family);
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .progreso-barra {
-  width: 100%;
+  width: 90%;
   height: 14px;
   background-color: #333;
   border-radius: 8px;
@@ -89,7 +89,7 @@
 }
 
 .proximos-torneos li {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-dark);
   padding: 1rem;
   margin-bottom: 0.75rem;
   border-left: 4px solid var(--color-primary);
@@ -108,9 +108,9 @@
 }
 
 .sugerencias p {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text);
   padding: 1rem;
   border-left: 4px solid var(--color-primary);
   border-radius: var(--border-radius);
-  color: var(--color-text);
 }
