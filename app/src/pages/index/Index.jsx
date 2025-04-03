@@ -7,50 +7,50 @@ const Index = () => {
       <Header />
       <div className='main-container'>
         <section className='welcome'>
-          <h2>Welcome back, pilot!</h2>
-          <p>Here are your stats and featured events for the week.</p>
+          <h2>¡Bienvenido de nuevo, piloto!</h2>
+          <p>Aquí tienes tus estadísticas y los eventos destacados de la semana.</p>
         </section>
 
         <section className='stats-summary'>
           <div className='stat-box'>
-            <h3>Best Time</h3>
+            <h3>Mejor Tiempo</h3>
             <p>1:21.4</p>
           </div>
           <div className='stat-box'>
             <h3>Ranking</h3>
-            <p>7th out of 142</p>
+            <p>7º de 142</p>
           </div>
           <div className='stat-box'>
-            <h3>Circuits Visited</h3>
+            <h3>Circuitos Visitados</h3>
             <p>5</p>
           </div>
           <div className='stat-box'>
-            <h3>Total Races</h3>
+            <h3>Carreras Totales</h3>
             <p>24</p>
           </div>
         </section>
 
         <section className='weekly-goal'>
-          <h3>🏆 Weekly Goal</h3>
-          <p>Complete 10 laps this week to unlock the <strong>Iron Driver</strong> challenge!</p>
+          <h3>🏆 Objetivo Semanal</h3>
+          <p>¡Completa 10 vueltas esta semana para desbloquear el reto <strong>Conductor de Hierro</strong>!</p>
           <div className='progress-bar'>
             <div className='progress-completed' style={{ width: '70%' }}></div>
           </div>
-          <p>7 / 10 laps</p>
+          <p>7 / 10 vueltas</p>
         </section>
 
         <section className='upcoming-tournaments'>
-          <h3>🏆 Upcoming Tournaments</h3>
+          <h3>🏆 Próximos Torneos</h3>
           <ul>
-            <li>📍 Karting Madrid – April 6 – Spring Cup Tournament</li>
-            <li>📍 Karting Jerez – April 13 – Night Tournament</li>
-            <li>📍 Karting Valencia – April 20 – Pro Race</li>
+            <li>📍 Karting Madrid – 6 de abril – Torneo Copa de Primavera</li>
+            <li>📍 Karting Jerez – 13 de abril – Torneo Nocturno</li>
+            <li>📍 Karting Valencia – 20 de abril – Carrera Pro</li>
           </ul>
         </section>
 
         <section className='suggestions'>
-          <h3>📅 Suggestions for You</h3>
-          <p>🔥 There's an open race at <strong>Karting Málaga</strong> this weekend. Sign up now!</p>
+          <h3>📅 Sugerencias para Ti</h3>
+          <p>🔥 Hay una carrera abierta en <strong>Karting Málaga</strong> este fin de semana. ¡Apúntate ya!</p>
         </section>
       </div>
     </>
