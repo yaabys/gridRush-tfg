@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import './PistasKarting.css';
+import Header from '../../components/Header';
+import './Tracks.css';
 
 const todasLasPistas = [
   {
@@ -28,7 +28,7 @@ const todasLasPistas = [
 
 const comunidades = [...new Set(todasLasPistas.map(p => p.comunidad))];
 
-const PistasKarting = () => {
+const kartingTracks = () => {
   const [comunidadSeleccionada, setComunidadSeleccionada] = useState('');
   
   const pistasFiltradas = comunidadSeleccionada
@@ -38,8 +38,8 @@ const PistasKarting = () => {
   return (
     <>
       <Header />
-      <div className='pistasKarting'>
-        <div className='pistasKarting__container'>
+      <div className='kartingTracks'>
+        <div className='kartingTracks__container'>
           <h1>Pistas de Karting</h1>
 
           <label htmlFor='comunidad'>Filtrar por comunidad:</label>
@@ -54,9 +54,9 @@ const PistasKarting = () => {
             ))}
           </select>
 
-          <div className='tarjetas'>
+          <div className='cards'>
             {pistasFiltradas.map((pista, index) => (
-              <div key={index} className='tarjeta-karting'>
+              <div key={index} className='card-karting'>
                 <h3>{pista.nombre}</h3>
                 <p><strong>📍 Ubicación:</strong> {pista.ubicacion}</p>
                 <p><strong>📌 Dirección:</strong> {pista.direccion}</p>
@@ -70,4 +70,4 @@ const PistasKarting = () => {
   );
 };
 
-export default PistasKarting;
+export default kartingTracks;

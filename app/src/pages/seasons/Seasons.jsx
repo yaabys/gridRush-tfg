@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Header from '../components/Header';
-import './Temporadas.css';
+import Header from '../../components/Header';
+import './Seasons.css';
 
 const temporadaActual = {
   nombre: 'Temporada Nitro X',
@@ -20,43 +20,43 @@ const ranking = Array.from({ length: 30 }, (_, i) => ({
   puntos: 1500 - i * 10
 }));
 
-const Temporadas = () => {
+const Seasons = () => {
   const [mostrarRecompensas, setMostrarRecompensas] = useState(false);
 
   return (
     <>
       <Header />
-      <div className='temporadas'>
-        <div className='temporadas__container'>
-          <h1 className='temporada-titulo'>{temporadaActual.nombre}</h1>
-          <p className='temporada-fechas'>
+      <div className='seasons'>
+        <div className='seasons__container'>
+          <h1 className='season-title'>{temporadaActual.nombre}</h1>
+          <p className='season-dates'>
             🗓 Del <strong>{temporadaActual.inicio}</strong> al <strong>{temporadaActual.fin}</strong>
           </p>
-          <p className='temporada-recompensa'>🎁 {temporadaActual.recompensaPrincipal}</p>
+          <p className='season-reward'>🎁 {temporadaActual.recompensaPrincipal}</p>
 
           <button
-            className='btn-recompensas'
+            className='btn-rewards'
             onClick={() => setMostrarRecompensas(prev => !prev)}
           >
             {mostrarRecompensas ? 'Ocultar recompensas' : 'Ver recompensas'}
           </button>
 
           {mostrarRecompensas && (
-            <ul className='recompensas-extra'>
+            <ul className='rewards-extra'>
               {temporadaActual.recompensasExtra.map((r, i) => (
                 <li key={i}>🎉 {r}</li>
               ))}
             </ul>
           )}
 
-          <h2 className='ranking-titulo'>🏁 Ranking actual</h2>
+          <h2 className='ranking-title'>🏁 Ranking actual</h2>
           <div className='ranking-scroll'>
-            <ul className='ranking-lista'>
+            <ul className='ranking-list'>
               {ranking.map((piloto, i) => (
                 <li key={i}>
-                  <span className='ranking-posicion'>#{i + 1}</span>
-                  <span className='ranking-nombre'>{piloto.nombre}</span>
-                  <span className='ranking-puntos'>{piloto.puntos} pts</span>
+                  <span className='ranking-position'>#{i + 1}</span>
+                  <span className='ranking-name'>{piloto.nombre}</span>
+                  <span className='ranking-points'>{piloto.puntos} pts</span>
                 </li>
               ))}
             </ul>
@@ -67,4 +67,4 @@ const Temporadas = () => {
   );
 };
 
-export default Temporadas;
+export default Seasons;

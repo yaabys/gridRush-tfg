@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SemaforoAnimacion from '../components/semaforoAnimacion';
-import './Registro.css';
+import SemaforoAnimacion from '../../components/SemaforoAnimacion';
+import './Register.css';
 
 const provincias = [
   'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
@@ -13,7 +13,7 @@ const provincias = [
   'Zamora', 'Zaragoza'
 ];
 
-const Registro = () => {
+const Register = () => {
   const [form, setForm] = useState({
     nombre: '',
     apellido: '',
@@ -45,12 +45,12 @@ const Registro = () => {
   }
 
   return (
-    <div className='registro-container'>
-      <div className='registro-box'>
-        <h1 className='titulo'>GRID<span>RUSH</span></h1>
-        <p className='subtitulo'>¡Únete a la parrilla de salida!</p>
+    <div className='register-container'>
+      <div className='register-box'>
+        <h1 className='title'>GRID<span>RUSH</span></h1>
+        <p className='subtitle'>¡Únete a la parrilla de salida!</p>
 
-        <form onSubmit={handleSubmit} className='registro-form'>
+        <form onSubmit={handleSubmit} className='register-form'>
           <input type='text' name='nombre' placeholder='Nombre' value={form.nombre} onChange={handleChange} required />
           <input type='text' name='apellido' placeholder='Apellido' value={form.apellido} onChange={handleChange} required />
           <input type='text' name='username' placeholder='Nombre de usuario' value={form.username} onChange={handleChange} required />
@@ -70,4 +70,4 @@ const Registro = () => {
   );
 };
 
-export default Registro;
+export default Register;

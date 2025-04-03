@@ -1,4 +1,4 @@
-.registro-container {
+.register-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,7 +9,7 @@
   color: #fff;
 }
 
-.registro-box {
+.register-box {
   background: linear-gradient(135deg, #111, #1a1a1a);
   border: 2px solid #d10000;
   padding: 3rem;
@@ -22,7 +22,7 @@
   overflow: hidden;
 }
 
-.registro-box::before {
+.register-box::before {
   content: '';
   position: absolute;
   top: -40%;
@@ -32,11 +32,11 @@
   background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255, 0, 0, 0.05) 9px, rgba(255, 0, 0, 0.05) 18px);
   transform: rotate(2deg);
   z-index: 0;
-  animation: movimientoLuces 10s linear infinite;
+  animation: movementLights 10s linear infinite;
   pointer-events: none;
 }
 
-@keyframes movimientoLuces {
+@keyframes movementLights {
   0% {
     background-position: 0 0;
   }
@@ -45,7 +45,7 @@
   }
 }
 
-.titulo {
+.title {
   font-size: 3rem;
   margin-bottom: 0.25rem;
   font-weight: 800;
@@ -53,11 +53,11 @@
   position: relative;
 }
 
-.titulo span {
+.title span {
   color: #d10000;
 }
 
-.subtitulo {
+.subtitle {
   font-size: 1rem;
   margin-bottom: 2rem;
   font-style: italic;
@@ -66,14 +66,14 @@
   position: relative;
 }
 
-.registro-form {
+.register-form {
   z-index: 1;
   position: relative;
 }
 
-.registro-form input,
-.registro-form select,
-.registro-form input[type='date'] {
+.register-form input,
+.register-form select,
+.register-form input[type='date'] {
   width: 100%;
   padding: 0.85rem;
   margin-bottom: 1.2rem;
@@ -86,16 +86,16 @@
   transition: all 0.3s ease;
 }
 
-.registro-form input:focus,
-.registro-form select:focus,
-.registro-form input[type='date']:focus {
+.register-form input:focus,
+.register-form select:focus,
+.register-form input[type='date']:focus {
   border: 2px solid #ff1f1f;
   background-color: #111;
   outline: none;
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
 }
 
-.registro-form button {
+.register-form button {
   width: 100%;
   padding: 1rem;
   background: linear-gradient(to right, #d10000, #ff1f1f);
@@ -110,11 +110,11 @@
   margin-top: 1rem;
 }
 
-.registro-form button:hover {
+.register-form button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(255, 30, 30, 0.6);
 }
 
-.registro-form button:active {
+.register-form button:active {
   transform: scale(0.97);
 }
