@@ -24,17 +24,17 @@ const Perfil = () => {
   return (
     <>
       <Header />
-      <div className='perfil-container'>
+      <div className='profile-container'>
         <h2>👤 Mi perfil</h2>
 
-        <div className='perfil-avatar'>
+        <div className='profile-avatar'>
           <img
             src={`https://ui-avatars.com/api/?name=${user.nombre}+${user.apellido}&background=222&color=fff`}
             alt='Foto de perfil'
           />
         </div>
 
-        <div className='perfil-data'>
+        <div className='profile-data'>
           <p><strong>Nombre:</strong> {user.nombre} {user.apellido}</p>
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Provincia:</strong> {user.provincia}</p>
@@ -54,7 +54,7 @@ const Perfil = () => {
           )}
         </div>
 
-        <div className='perfil-stats'>
+        <div className='profile-stats'>
           <div className='stats-card'>
             <h3>🏁 Vuelta más rápida</h3>
             <p>{user.vueltaRapida}</p>

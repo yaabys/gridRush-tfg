@@ -19,6 +19,8 @@ app.use(express.urlencoded({extended:true}))
 // app.use("/api",rutasListar)
 // app.use("/api",rutasModificar)
 
+
+
 app.get("/", (req, res) =>{
     res.sendStatus(200)
 })
