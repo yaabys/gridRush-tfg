@@ -1,0 +1,18 @@
+IDEAS REGISTER
+
+- Meter algun tipo de tecnologia para comprobar la seguridad de una contraseña en el register.
+
+
+
+
+
+
+- Para la muestra de perfil de usuario podriamos enseñar una cuenta atras del cumpleaños y posibles regalos.
+- Hacer una cuenta atras para cuanto queda un torneo o carrera.
+
+LLAMADAS SQL
+
+- CUANDO MUESTRES EL KARTING VAS A LLAMAR A TORNEO QUE SEA MAS PROXIMO Y CON ESE MISMO NOMBRE DE KARTING 
+- CUANDO MUESTRES EL KARTING VAS A LLAMAR A CARRERA QUE SEA MAS PROXIMA Y CON ESE MISMO DE NOMBRE DE KARTING
+- Las recompensas tendran unas fechas para que aparezcan en la pagina cuando esten dentro de esas fechas y 
+si no se va ir variando las recompensas (cada mes una recompensa distinta) 
