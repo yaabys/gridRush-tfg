@@ -1,2 +1,3 @@
 # node modules fuera
 /node_modules
+.DS_Store
