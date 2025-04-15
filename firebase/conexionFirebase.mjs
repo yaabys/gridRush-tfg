@@ -1,0 +1,78 @@
+import { initializeApp } from "firebase/app"
+import bcrypt from "bcrypt"
+import { getFirestore, collection, doc, getDoc, setDoc} from "firebase/firestore"
+
+const firebaseConfig = {
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.SENDER_ID,
+    appId: process.env.APP_ID
+}
+  
+const firebaseApp = initializeApp(firebaseConfig)
+export const db = getFirestore(firebaseApp)//coge referencia a la base de datos (coleccion)
+
+export const registrar = async (email, hashedPassword, username) => {
+  try {
+    const emailLower = email.toLowerCase();
+
+    const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
+    const usernameDocRef = doc(collection(db, "gridrush_fb"), username.toLowerCase());
+
+    const emailDoc = await getDoc(emailDocRef);
+    const usernameDoc = await getDoc(usernameDocRef);
+
+    if (emailDoc.exists()) {
+      console.error("El correo ya está registrado.");
+      return { success: false, error: "El correo ya está registrado." };
+    }
+
+    if (usernameDoc.exists()) {
+      console.error("El nombre de usuario ya está registrado.");
+      return { success: false, error: "El nombre de usuario ya está registrado." };
+    }
+
+    const newUser = {
+      username: username,
+      email: emailLower,
+      password: hashedPassword,
+    };
+
+    await setDoc(emailDocRef, newUser);
+    console.log("Usuario registrado correctamente");
+    return { success: true };
+  } catch (error) {
+    console.error("Error en registrar:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const comprobarLogin = async (email,password) => {
+  try {
+
+    const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
+    const usernameDocRef = doc(collection(db, "gridrush_fb"), username.toLowerCase());
+    const docRef = doc(db, "gridrush_fb", email.toLowerCase())
+    const userDoc = await getDoc(docRef)
+
+    if (!userDoc.exists()) {
+        return null
+    }
+
+    const userData = userDoc.data()
+    const hashedPassword = userData.password
+
+    const isMatch = await bcrypt.compare(password, hashedPassword)
+
+    if (!isMatch) {
+        return null
+    }
+
+    return userData
+} catch (error) {
+    console.error("Error en comprobarLogin:", error)
+    return null
+}
+}

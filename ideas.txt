@@ -6,6 +6,9 @@ IDEAS REGISTER
 - Para la muestra de perfil de usuario podriamos enseñar una cuenta atras del cumpleaños y posibles regalos.
 - Hacer una cuenta atras para cuanto queda un torneo o carrera.
 
+- Si queremos hacer lo de OAuth cuando se quiera meter a una carrera o torneo solo con la cuenta de google tendra que comprobar
+que tiene los datos necesarios como provincia y tal y si no rellenarlos en un formulario a parte.
+
 LLAMADAS SQL
 
 - CUANDO MUESTRES EL KARTING VAS A LLAMAR A TORNEO QUE SEA MAS PROXIMO Y CON ESE MISMO NOMBRE DE KARTING 
