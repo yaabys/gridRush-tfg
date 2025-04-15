@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SemaforoAnimacion from '../../components/SemaforoAnimacion';
 import './Register.css';
+import { conn } from '../../../../sql/conexionSQL.mjs';
+import { registrar } from '../../../../firebase/conexionFirebase.mjs'
 
 const provincias = [
   'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
@@ -31,7 +33,15 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+
+    const { email, password, nombreCompleto, userName, passwordConfirmar } = form;
+
+    hashearPassword
+
+    const usuarios = `INSERT INTO usuarios (nombreCompleto, userName, email, passwordUsuario, rutaFoto) VALUES (?, ?, ?, ?,?)`
+    await conn.execute(usuarios, [nombreCompleto, userName, email, hashPassword, "default.png"])
+
     e.preventDefault();
     setShowSemaforo(true);
 

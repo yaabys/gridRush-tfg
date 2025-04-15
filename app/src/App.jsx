@@ -11,6 +11,8 @@ import OfficialTournaments from './pages/officialTournaments/OfficialTournaments
 import Tracks from './pages/kartingTracks/Tracks'
 import Profile from './pages/profile/Profile'
 
+import routeRegister from './routers/routeRegister'
+
 function App() {
   return (
     <>
