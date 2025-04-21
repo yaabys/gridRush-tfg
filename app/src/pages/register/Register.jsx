@@ -35,24 +35,25 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // evita el refresh de la página
   
     try {
       const response = await axios.post('/api/register', form);
-      // ++++++++++++mirar esto del switch aqui habria que poner un div o algo al formulario para poner el error ahi++++++
       switch (response.status) {
         case 400:
-          alert('Faltan campos requeridos.');
+          setErrorMsg('Faltan campos requeridos.');
           break;
         case 409:
-          alert('El correo o el nombre de usuario ya están registrados.');
+          setErrorMsg('El correo o el nombre de usuario ya están registrados.');
           break;
         case 500:
-          alert('Error en el servidor. Intenta nuevamente.');
+          setErrorMsg('Error en el servidor. Intenta nuevamente.');
           break;
         default:
-          alert('Algo salió mal. Intenta de nuevo.');
+          setErrorMsg('Algo salió mal. Intenta de nuevo.');
           break;
       }      
 
@@ -63,7 +64,11 @@ const Register = () => {
         }, 4000);
       }
     } catch (error) {
-      console.log('Error al registrar usuario:', error);
+      if (error.response) {
+        setErrorMsg(error.response.data.error || "Error desconocido pongase en contacto con el administrador");
+      } else {
+        setErrorMsg("no se pudo conectar con el servidor verifica tu conexión con el servidor");
+      }
     }
   };
   
@@ -92,6 +97,8 @@ const Register = () => {
           </select>
           <input type='password' name='password' placeholder='Contraseña' value={form.password} onChange={handleChange} required />
           <button type='submit'>¡A rodar!</button>
+          {/*por si falla el registro*/}
+          {errorMsg && <p className="error-message">{errorMsg}</p>}
         </form>
       </div>
     </div>

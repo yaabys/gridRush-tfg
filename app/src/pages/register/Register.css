@@ -118,3 +118,9 @@
 .register-form button:active {
   transform: scale(0.97);
 }
+
+.error-message {
+  color: crimson;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
