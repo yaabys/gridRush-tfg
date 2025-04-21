@@ -1,3 +1,4 @@
+/* creacion de la conexion para utilizar en otros archivos */
 import { createClient } from "@libsql/client"
 import process from "process"
 

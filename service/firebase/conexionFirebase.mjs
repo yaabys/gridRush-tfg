@@ -14,12 +14,14 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig)
 export const db = getFirestore(firebaseApp)//coge referencia a la base de datos (coleccion)
 
-export const registrar = async (email, hashedPassword, username) => {
+export const registrarFirebase = async (email, hashedPassword, username) => {
   try {
+    console.log("Intentando registrar en Firebase:", email, hashedPassword, username);
     const emailLower = email.toLowerCase();
+    const usernameLower = username.toLowerCase();
 
     const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
-    const usernameDocRef = doc(collection(db, "gridrush_fb"), username.toLowerCase());
+    const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameLower);
 
     const emailDoc = await getDoc(emailDocRef);
     const usernameDoc = await getDoc(usernameDocRef);

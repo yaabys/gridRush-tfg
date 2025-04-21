@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SemaforoAnimacion from '../../components/SemaforoAnimacion';
 import './Register.css';
-import { conn } from '../../../../sql/conexionSQL.mjs';
-import { registrar } from '../../../../firebase/conexionFirebase.mjs'
+import axios from 'axios';
 
 const provincias = [
   'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
@@ -16,6 +15,9 @@ const provincias = [
 ];
 
 const Register = () => {
+
+  //comprobar si tiene sesion activa
+
   const [form, setForm] = useState({
     nombre: '',
     apellido: '',
@@ -34,21 +36,37 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault(); // evita el refresh de la página
+  
+    try {
+      const response = await axios.post('/api/register', form);
+      // ++++++++++++mirar esto del switch aqui habria que poner un div o algo al formulario para poner el error ahi++++++
+      switch (response.status) {
+        case 400:
+          alert('Faltan campos requeridos.');
+          break;
+        case 409:
+          alert('El correo o el nombre de usuario ya están registrados.');
+          break;
+        case 500:
+          alert('Error en el servidor. Intenta nuevamente.');
+          break;
+        default:
+          alert('Algo salió mal. Intenta de nuevo.');
+          break;
+      }      
 
-    const { email, password, nombreCompleto, userName, passwordConfirmar } = form;
-
-    hashearPassword
-
-    const usuarios = `INSERT INTO usuarios (nombreCompleto, userName, email, passwordUsuario, rutaFoto) VALUES (?, ?, ?, ?,?)`
-    await conn.execute(usuarios, [nombreCompleto, userName, email, hashPassword, "default.png"])
-
-    e.preventDefault();
-    setShowSemaforo(true);
-
-    setTimeout(() => {
-      navigate('/principal'); 
-    }, 4000);
+      if (response.status === 201) {
+        setShowSemaforo(true);
+        setTimeout(() => {
+          navigate('/principal');
+        }, 4000);
+      }
+    } catch (error) {
+      console.log('Error al registrar usuario:', error);
+    }
   };
+  
 
   if (showSemaforo) {
     return <SemaforoAnimacion />;
@@ -62,12 +80,12 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className='register-form'>
           <input type='text' name='nombre' placeholder='Nombre' value={form.nombre} onChange={handleChange} required />
-          <input type='text' name='apellido' placeholder='Apellido' value={form.apellido} onChange={handleChange} required />
+          <input type='text' name='apellido' placeholder='Apellidos' value={form.apellido} onChange={handleChange} required />
           <input type='text' name='username' placeholder='Nombre de usuario' value={form.username} onChange={handleChange} required />
           <input type='date' name='nacimiento' value={form.nacimiento} onChange={handleChange} required />
           <input type='email' name='email' placeholder='Correo electrónico' value={form.email} onChange={handleChange} required />
           <select name='provincia' value={form.provincia} onChange={handleChange} required>
-            <option value=''>Selecciona tu provinciaa</option>
+            <option value=''>Selecciona tu provincia</option>
             {provincias.map((provincia) => (
               <option key={provincia} value={provincia}>{provincia}</option>
             ))}

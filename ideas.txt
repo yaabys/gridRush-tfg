@@ -9,6 +9,12 @@ IDEAS REGISTER
 - Si queremos hacer lo de OAuth cuando se quiera meter a una carrera o torneo solo con la cuenta de google tendra que comprobar
 que tiene los datos necesarios como provincia y tal y si no rellenarlos en un formulario a parte.
 
+
+IDEAS pagina
+
+- Podemos mirar como implementar un modelo de IA sencillita para que se pregunte por una pregunta
+de un kart o un circuito como cuanto mide o algo asi en la pagina (video midu mcp mirar)
+
 LLAMADAS SQL
 
 - CUANDO MUESTRES EL KARTING VAS A LLAMAR A TORNEO QUE SEA MAS PROXIMO Y CON ESE MISMO NOMBRE DE KARTING 

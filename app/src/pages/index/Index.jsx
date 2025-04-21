@@ -2,6 +2,8 @@ import Header from '../../components/Header';
 import './Index.css';
 
 const Index = () => {
+    // agregar la lógica para verificar si el usuario está autenticado
+    // y redirigir a la página de inicio de sesión si no lo está
   return (
     <>
       <Header />

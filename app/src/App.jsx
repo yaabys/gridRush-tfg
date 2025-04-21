@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import Home from './pages/home/Home'
@@ -10,8 +8,6 @@ import Seasons from './pages/seasons/Seasons'
 import OfficialTournaments from './pages/officialTournaments/OfficialTournaments'
 import Tracks from './pages/kartingTracks/Tracks'
 import Profile from './pages/profile/Profile'
-
-import routeRegister from './routers/routeRegister'
 
 function App() {
   return (
