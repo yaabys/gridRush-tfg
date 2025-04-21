@@ -9,7 +9,6 @@ export const comprobarUser = async (user) => {
         });
 
         const rows = result.rows
-        console.log("Resultado comprobación username:", result.rows);
 
         if (rows.length > 0) {
             return { success: false, error: "Ya hay un usuario con ese nombre" };
@@ -17,7 +16,6 @@ export const comprobarUser = async (user) => {
             return { success: true };
         }
     } catch (error) {
-       console.log("Error en comprobarUser:", error);
        return { success: false, error: "Error comprobando usuario" };
     }
 }
