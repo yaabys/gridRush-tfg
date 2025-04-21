@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState,useEffect } from 'react';
 import Header from '../../components/Header';
 import './Profile.css';
 import axios from 'axios';
@@ -7,7 +7,7 @@ const Perfil = () => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
-
+  
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
@@ -27,7 +27,7 @@ const Perfil = () => {
 
   if (error) {
     return (
-      <div className='perfil-container'>
+      <div className='profile-container'>
         <p className='error-message'>{error}</p>
       </div>
     );
@@ -35,7 +35,7 @@ const Perfil = () => {
 
   if (!usuario) {
     return (
-      <div className='perfil-container'>
+      <div className='profile-container'>
         <p>Cargando perfil...</p>
       </div>
     );
@@ -44,22 +44,22 @@ const Perfil = () => {
   return (
     <>
       <Header />
-      <div className='perfil-container'>
+      <div className='profile-container'>
         <h2>👤 Mi perfil</h2>
 
-        <div className='perfil-avatar'>
+        <div className='profile-avatar'>
           <img
-            src={`https://ui-avatars.com/api/?name=${usuario.nombre}+${usuario.apellidos}&background=222&color=fff`}
+            src={`https://ui-avatars.com/api/?name=${user.nombre}+${user.apellido}&background=222&color=fff`}
             alt='Foto de perfil'
           />
         </div>
 
-        <div className='perfil-data'>
-          <p><strong>Nombre:</strong> {usuario.nombre} {usuario.apellidos}</p>
-          <p><strong>Email:</strong> {usuario.email}</p>
-          <p><strong>Provincia:</strong> {usuario.provincia}</p>
-          <p><strong>Nacimiento:</strong> {usuario.fechaNacimiento}</p>
-          <p><strong>Usuario:</strong> {usuario.username}</p>
+        <div className='profile-data'>
+          <p><strong>Nombre:</strong> {user.nombre} {user.apellido}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Provincia:</strong> {user.provincia}</p>
+          <p><strong>Nacimiento:</strong> {user.nacimiento}</p>
+          <p><strong>Usuario:</strong> {user.username}</p>
 
           <button className='edit-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
             ✏️ Editar perfil
@@ -74,18 +74,18 @@ const Perfil = () => {
           )}
         </div>
 
-        <div className='perfil-stats'>
+        <div className='profile-stats'>
           <div className='stats-card'>
             <h3>🏁 Vuelta más rápida</h3>
-            <p>{usuario.vueltaRapida || "—"}</p>
+            <p>{user.vueltaRapida}</p>
           </div>
           <div className='stats-card'>
             <h3>🏆 Torneos ganados</h3>
-            <p>{usuario.torneosGanados || 0}</p>
+            <p>{user.torneosGanados}</p>
           </div>
           <div className='stats-card'>
             <h3>🎖️ Victorias en carreras</h3>
-            <p>{usuario.victorias || 0}</p>
+            <p>{user.victorias}</p>
           </div>
         </div>
       </div>
