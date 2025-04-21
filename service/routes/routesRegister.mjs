@@ -11,7 +11,7 @@ router.post("/register", async (req, res) => {
     if (!nombre || !apellido || !username || !nacimiento || !password || !email || !provincia) {
       return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
     }
-  
+
     try {
       const userCheck = await comprobarUser(username);
       if (!userCheck.success) {
