@@ -16,7 +16,6 @@ export const db = getFirestore(firebaseApp)//coge referencia a la base de datos 
 
 export const registrarFirebase = async (email, hashedPassword, username) => {
   try {
-    console.log("Intentando registrar en Firebase:", email, hashedPassword, username);
     const emailLower = email.toLowerCase();
     const usernameLower = username.toLowerCase();
 
@@ -43,7 +42,6 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
     };
 
     await setDoc(emailDocRef, newUser);
-    console.log("Usuario registrado correctamente");
     return { success: true };
   } catch (error) {
     console.error("Error en registrar:", error);

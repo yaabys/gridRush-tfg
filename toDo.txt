@@ -1,0 +1,1 @@
+- Corregir la base de datos , hemos puesto el usuario que sea unique para la sesion que no de problemas.

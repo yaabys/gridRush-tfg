@@ -49,3 +49,17 @@ export const hashearPassword = async (password) => {
     }
 }
 
+//metodo comprobar sesion
+export const comprobarSesion = (req) => {
+
+    if(!comprobarUser(req.session.usuario)){ //comprobar si el usuario existe en la base de datos
+        return false
+    }
+
+    const result = req.session.usuario
+    
+    if(result){
+        return true
+    }
+    return false
+}

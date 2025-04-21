@@ -1,8 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link,useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Home.css';
 
+
 const Home = () => {
+ 
+  const navigate = useNavigate();
+
+     // comprobamos si hay sesión activa
+     useEffect(() => {
+      const comprobarSesion = async () => {
+        try {
+          const res = await axios.get('/api/sesion');
+          if (res.data.logueado) {
+            navigate('/principal'); // redirige si ya está logueado
+          }
+        } catch (err) {
+          console.error("Error al comprobar sesión:", err);
+        }
+      };
+  
+      comprobarSesion();
+    }, [navigate]);
+
   console.log("HOME");
   return (
     <div className='home-container'>

@@ -3,6 +3,7 @@
     "@libsql/client": "^0.15.4",
     "bcrypt": "^5.1.1",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "firebase": "^11.6.0",
     "process": "^0.11.10"
   }

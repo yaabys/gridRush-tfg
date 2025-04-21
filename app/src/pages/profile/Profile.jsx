@@ -1,25 +1,45 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Header from '../../components/Header';
 import './Profile.css';
+import axios from 'axios';
 
 const Perfil = () => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
+  const [usuario, setUsuario] = useState(null);
+  const [error, setError] = useState("");
+  
+  useEffect(() => {
+    const obtenerPerfil = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/perfil");
+        setUsuario(response.data);
+      } catch (err) {
+        setError("No se pudo cargar el perfil. ¿Estás logueado?");
+      }
+    };
 
-  const user = {
-    nombre: 'Álvaro',
-    apellido: 'Langa',
-    username: 'alvarorush',
-    email: 'alvaro@example.com',
-    provincia: 'Madrid',
-    nacimiento: '2004-12-09',
-    vueltaRapida: '1:33.333',
-    victorias: 12,
-    torneosGanados: 4
-  };
+    obtenerPerfil();
+  }, []);
 
   const handleEditarUsername = () => alert('Función para cambiar nombre de usuario');
   const handleEditarEmail = () => alert('Función para cambiar email');
   const handleEditarAvatar = () => alert('Función para cambiar foto de perfil');
+
+  if (error) {
+    return (
+      <div className='profile-container'>
+        <p className='error-message'>{error}</p>
+      </div>
+    );
+  }
+
+  if (!usuario) {
+    return (
+      <div className='profile-container'>
+        <p>Cargando perfil...</p>
+      </div>
+    );
+  }
 
   return (
     <>
