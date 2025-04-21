@@ -1,11 +1,32 @@
 import express from "express";
 import { registrarFirebase,comprobarLogin } from "../firebase/conexionFirebase.mjs"
-import { comprobarUser,hashearPassword,comprobarEmail } from "../controllers/userController.mjs"
+import { comprobarUser,hashearPassword,comprobarEmail,comprobarSesion } from "../controllers/userController.mjs"
 import { conn } from "../sql/conexionSQL.mjs"
+import session from "express-session"
 
 const router = express.Router();
 
+router.use(session({
+	secret: "clave_secreta",
+	resave: false, // no guardar la cookie de nuevo si no hay cambio
+	saveUninitialized: true, // guardarla sin inicializar
+	cookie: {maxAge: 1000 * 60 * 60 * 2} // 2 horas
+}))
+
+router.get("/sesion", (req, res) => {
+  if (req.session.usuario) {
+    return res.json({ logueado: true, username: req.session.usuario.username });
+  } else {
+    return res.json({ logueado: false });
+  }
+});
+
 router.post("/register", async (req, res) => {
+    
+    if(comprobarSesion(req)){
+        return false;
+    }
+  
     const { nombre, apellido, username, nacimiento, email, provincia, password } = req.body;
   
     if (!nombre || !apellido || !username || !nacimiento || !password || !email || !provincia) {
@@ -35,11 +56,17 @@ router.post("/register", async (req, res) => {
                    VALUES (?, ?, ?, ?, ?, ?, ?)`;
   
       await conn.execute(sql, [username, nombre, apellido, email, hashPassword, provincia, nacimiento]);
-      res.status(201).json({ success: true, message: 'Usuario registrado correctamente' });
+      //crear sesion usuario
+      req.session.usuario = {
+        username: username
+      };
+      
+      return res.status(201).json({ success: true, message: 'Usuario registrado correctamente' });
   
     } catch (error) {
-      res.status(500).json({ success: false, error: 'Error interno del servidor' });
+      return res.status(500).json({ success: false, error: 'Error interno del servidor' });
     }
+
   });
   
 export default router;

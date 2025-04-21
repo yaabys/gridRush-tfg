@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SemaforoAnimacion from '../../components/SemaforoAnimacion';
 import './Register.css';
@@ -14,9 +14,26 @@ const provincias = [
   'Zamora', 'Zaragoza'
 ];
 
+
 const Register = () => {
 
-  //comprobar si tiene sesion activa
+  const navigate = useNavigate();
+
+   // comprobamos si hay sesión activa
+   useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/sesion');
+        if (res.data.logueado) {
+          navigate('/principal'); // redirige si ya está logueado
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+
+    comprobarSesion();
+  }, [navigate]);
 
   const [form, setForm] = useState({
     nombre: '',
@@ -29,7 +46,6 @@ const Register = () => {
   });
 
   const [showSemaforo, setShowSemaforo] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,6 +67,9 @@ const Register = () => {
           break;
         case 500:
           setErrorMsg('Error en el servidor. Intenta nuevamente.');
+          break;
+        case false: //si tiene sesion activa
+          navigate('/principal');
           break;
         default:
           setErrorMsg('Algo salió mal. Intenta de nuevo.');
