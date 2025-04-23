@@ -1,5 +1,5 @@
-import { useState,useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SemaforoAnimacion from '../../components/SemaforoAnimacion';
 import './Register.css';
 import axios from 'axios';
@@ -14,18 +14,16 @@ const provincias = [
   'Zamora', 'Zaragoza'
 ];
 
-
 const Register = () => {
-
   const navigate = useNavigate();
+  const location = useLocation();
 
-   // comprobamos si hay sesión activa
-   useEffect(() => {
+  useEffect(() => {
     const comprobarSesion = async () => {
       try {
         const res = await axios.get('/api/sesion');
         if (res.data.logueado) {
-          navigate('/principal'); // redirige si ya está logueado
+          navigate('/principal');
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
@@ -46,8 +44,18 @@ const Register = () => {
   });
 
   const [showSemaforo, setShowSemaforo] = useState(false);
-  const [formType, setFormType] = useState('register'); // 'register' o 'login'
+  const [formType, setFormType] = useState('register');
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Comprobar el parámetro formType de la URL
+    const searchParams = new URLSearchParams(location.search);
+    const type = searchParams.get('formType');
+    if (type === 'login') {
+      setFormType('login');
+    }
+  }, [location]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,15 +63,15 @@ const Register = () => {
 
   const handleFormTypeChange = (type) => {
     setFormType(type);
-    setErrorMsg(""); // Limpiar mensajes de error al cambiar de formulario
+    setErrorMsg("");
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // evita el refresh de la página
+    e.preventDefault();
+    setIsLoading(true);
   
     try {
       if (formType === 'register') {
-        // Lógica de registro
         const response = await axios.post('/api/register', form);
         switch (response.status) {
           case 400:
@@ -75,7 +83,7 @@ const Register = () => {
           case 500:
             setErrorMsg('Error en el servidor. Intenta nuevamente.');
             break;
-          case false: //si tiene sesion activa
+          case false:
             navigate('/principal');
             break;
           default:
@@ -90,7 +98,6 @@ const Register = () => {
           }, 4000);
         }
       } else {
-        // Lógica de inicio de sesión
         const loginData = {
           username: form.username,
           password: form.password
@@ -113,9 +120,10 @@ const Register = () => {
       } else {
         setErrorMsg("no se pudo conectar con el servidor verifica tu conexión con el servidor");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
   if (showSemaforo) {
     return <SemaforoAnimacion />;
@@ -123,54 +131,156 @@ const Register = () => {
 
   return (
     <div className='register-container'>
-      <div className='register-box'>
-        <h1 className='title'>GRID<span>RUSH</span></h1>
-        <p className='subtitle'>¡Únete a la parrilla de salida!</p>
-
-        <div className="form-type-buttons">
-          <button 
-            className={`form-type-button ${formType === 'register' ? 'active' : ''}`}
-            onClick={() => handleFormTypeChange('register')}
-          >
-            Registrarse
-          </button>
-          <button 
-            className={`form-type-button ${formType === 'login' ? 'active' : ''}`}
-            onClick={() => handleFormTypeChange('login')}
-          >
-            Iniciar Sesión
-          </button>
+      <div className='register-content'>
+        <div className='register-header'>
+          <h1 className='title'>GRID<span>RUSH</span></h1>
+          <p className='subtitle'>¡Únete a la parrilla de salida!</p>
         </div>
 
-        <form onSubmit={handleSubmit} className='register-form'>
-          {formType === 'register' ? (
-            // Formulario de registro completo
-            <>
-              <input type='text' name='nombre' placeholder='Nombre' value={form.nombre} onChange={handleChange} required />
-              <input type='text' name='apellido' placeholder='Apellidos' value={form.apellido} onChange={handleChange} required />
-              <input type='text' name='username' placeholder='Nombre de usuario' value={form.username} onChange={handleChange} required />
-              <input type='date' name='nacimiento' value={form.nacimiento} onChange={handleChange} required />
-              <input type='email' name='email' placeholder='Correo electrónico' value={form.email} onChange={handleChange} required />
-              <select name='provincia' value={form.provincia} onChange={handleChange} required>
-                <option value=''>Selecciona tu provincia</option>
-                {provincias.map((provincia) => (
-                  <option key={provincia} value={provincia}>{provincia}</option>
-                ))}
-              </select>
-              <input type='password' name='password' placeholder='Contraseña' value={form.password} onChange={handleChange} required />
-            </>
-          ) : (
-            // Formulario de inicio de sesion
-            <>
-              <input type='text' name='username' placeholder='Nombre de usuario o correo' value={form.username} onChange={handleChange} required />
-              <input type='password' name='password' placeholder='Contraseña' value={form.password} onChange={handleChange} required />
-            </>
-          )}
-          
-          <button type='submit'>{formType === 'register' ? '¡A rodar!' : 'Iniciar Sesión'}</button>
-          {/*por si falla el registro*/}
-          {errorMsg && <p className="error-message">{errorMsg}</p>}
-        </form>
+        <div className='register-box'>
+          <div className="form-type-buttons">
+            <button 
+              className={`form-type-button ${formType === 'register' ? 'active' : ''}`}
+              onClick={() => handleFormTypeChange('register')}
+            >
+              <span className="button-icon">🏎️</span>
+              Registrarse
+            </button>
+            <button 
+              className={`form-type-button ${formType === 'login' ? 'active' : ''}`}
+              onClick={() => handleFormTypeChange('login')}
+            >
+              <span className="button-icon">🔑</span>
+              Iniciar Sesión
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className='register-form'>
+            {formType === 'register' ? (
+              <>
+                <div className="form-group">
+                  <input 
+                    type='text' 
+                    name='nombre' 
+                    placeholder='Nombre' 
+                    value={form.nombre} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='text' 
+                    name='apellido' 
+                    placeholder='Apellidos' 
+                    value={form.apellido} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='text' 
+                    name='username' 
+                    placeholder='Nombre de usuario' 
+                    value={form.username} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='date' 
+                    name='nacimiento' 
+                    value={form.nacimiento} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='email' 
+                    name='email' 
+                    placeholder='Correo electrónico' 
+                    value={form.email} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <select 
+                    name='provincia' 
+                    value={form.provincia} 
+                    onChange={handleChange} 
+                    required
+                  >
+                    <option value=''>Selecciona tu provincia</option>
+                    {provincias.map((provincia) => (
+                      <option key={provincia} value={provincia}>{provincia}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='password' 
+                    name='password' 
+                    placeholder='Contraseña' 
+                    value={form.password} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="form-group">
+                  <input 
+                    type='text' 
+                    name='username' 
+                    placeholder='Nombre de usuario o correo' 
+                    value={form.username} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <input 
+                    type='password' 
+                    name='password' 
+                    placeholder='Contraseña' 
+                    value={form.password} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                </div>
+              </>
+            )}
+            
+            <button 
+              type='submit' 
+              className={`submit-button ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="loading-spinner"></span>
+              ) : (
+                <>
+                  <span className="button-icon">
+                    {formType === 'register' ? '🏁' : '🚀'}
+                  </span>
+                  {formType === 'register' ? '¡A rodar!' : 'Iniciar Sesión'}
+                </>
+              )}
+            </button>
+
+            {errorMsg && (
+              <div className="error-message">
+                <span className="error-icon">⚠️</span>
+                {errorMsg}
+              </div>
+            )}
+          </form>
+        </div>
       </div>
     </div>
   );

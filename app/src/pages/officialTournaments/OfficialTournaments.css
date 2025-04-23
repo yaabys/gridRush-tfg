@@ -74,25 +74,46 @@
   margin: 0.4rem 0;
 }
 
-.card-torneo button {
+.card-torneo__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.btn-apuntarse,
+.btn-mas-info {
   width: 100%;
   padding: 0.6rem;
   font-size: 1rem;
-  background-color: var(--color-primary);
-  color: #fff;
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.card-torneo button:hover {
+.btn-apuntarse {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn-apuntarse:hover:not(:disabled) {
   background-color: var(--color-primary-light);
 }
 
-.card-torneo button:disabled {
+.btn-apuntarse:disabled {
   background-color: gray;
   cursor: not-allowed;
+}
+
+.btn-mas-info {
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-mas-info:hover {
+  background-color: var(--color-primary);
+  color: #fff;
 }
   
