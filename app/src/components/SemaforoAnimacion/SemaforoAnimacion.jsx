@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './SemaforoAnimacion.css';
+import './semaforoAnimacion.css';
 
 const SemaforoAnimacion = () => {
   const [mostrarGo, setMostrarGo] = useState(false);

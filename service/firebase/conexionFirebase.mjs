@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app"
 import bcrypt from "bcrypt"
 import { getFirestore, collection, doc, getDoc, setDoc} from "firebase/firestore"
+import { hashearPassword } from "../controllers/userController.mjs"
 
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -49,30 +50,37 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
   }
 };
 
-export const comprobarLogin = async (email,password) => {
+export const comprobarLogin = async (username, password) => {
   try {
+    let docRef;
 
-    const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
-    const usernameDocRef = doc(collection(db, "gridrush_fb"), username.toLowerCase());
-    const docRef = doc(db, "gridrush_fb", email.toLowerCase())
-    const userDoc = await getDoc(docRef)
+    if (username.includes("@")) { //si es email
+      const emailLower = username.toLowerCase();
+      docRef = doc(collection(db, "gridrush_fb"), emailLower);
+    } else { //si es username
+      const usernameLower = username.toLowerCase();
+      docRef = doc(collection(db, "gridrush_fb"), usernameLower);
+    }
+
+    const userDoc = await getDoc(docRef);
 
     if (!userDoc.exists()) {
-        return null
+      return null;
     }
 
-    const userData = userDoc.data()
-    const hashedPassword = userData.password
+    const userData = userDoc.data();
+    const hashedPassword = userData.password;
+    console.log(userData);
 
-    const isMatch = await bcrypt.compare(password, hashedPassword)
+    const isMatch = await bcrypt.compare(password, hashedPassword);
 
     if (!isMatch) {
-        return null
+      return null;
     }
 
-    return userData
-} catch (error) {
-    console.error("Error en comprobarLogin:", error)
-    return null
-}
-}
+    return userData;
+  } catch (error) {
+    console.error("Error en comprobarLogin:", error);
+    return null;
+  }
+};
