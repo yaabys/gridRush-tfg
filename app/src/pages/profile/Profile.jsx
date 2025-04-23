@@ -11,7 +11,7 @@ const Perfil = () => {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/perfil");
+        const response = await axios.get("http://localhost:3000/api/perfil");
         setUsuario(response.data);
       } catch (err) {
         setError("No se pudo cargar el perfil. ¿Estás logueado?");
