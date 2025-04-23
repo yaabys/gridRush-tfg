@@ -6,6 +6,7 @@ import Index from './pages/index/Index'
 import IndependentRace from './pages/independtRaces/IndependentRace'
 import Seasons from './pages/seasons/Seasons'
 import OfficialTournaments from './pages/officialTournaments/OfficialTournaments'
+import OfficialTournamentInside from './pages/officialTournamentInside/OfficialTournamentInside'
 import Tracks from './pages/kartingTracks/Tracks'
 import Profile from './pages/profile/Profile'
 
@@ -20,6 +21,7 @@ function App() {
           <Route path='/carrerasLibres' element={<IndependentRace />} />
           <Route path='/temporadas' element={<Seasons />} />
           <Route path='/torneosOficiales' element={<OfficialTournaments />} />
+          <Route path='/torneo/:id' element={<OfficialTournamentInside />} />
           <Route path='/pistasKarting' element={<Tracks />} />
           <Route path='/perfil' element={<Profile />} />
         </Routes>
