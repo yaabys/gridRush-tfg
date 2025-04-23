@@ -66,6 +66,40 @@
   position: relative;
 }
 
+/* Estilos para los botones de tipo de formulario */
+.form-type-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  z-index: 1;
+  position: relative;
+}
+
+.form-type-button {
+  padding: 0.7rem 1.5rem;
+  border: 2px solid #d10000;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  max-width: 200px;
+}
+
+.form-type-button:hover {
+  background-color: rgba(209, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
+.form-type-button.active {
+  background: linear-gradient(to right, #d10000, #ff1f1f);
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.5);
+}
+
 .register-form {
   z-index: 1;
   position: relative;
