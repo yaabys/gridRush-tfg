@@ -8,7 +8,7 @@ const Seasons = () => {
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-//laaaanaghaaaaa
+//laaaanaghaaaaaffddffddffd
   useEffect(() => {
     const fetchData = async () => {
       try {
