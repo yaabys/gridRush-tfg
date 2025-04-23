@@ -31,7 +31,7 @@ const Register = () => {
         console.log("Error al comprobar sesión:", err);
       }
     };
-
+    
     comprobarSesion();
   }, [navigate]);
 
@@ -160,7 +160,7 @@ const Register = () => {
               <input type='password' name='password' placeholder='Contraseña' value={form.password} onChange={handleChange} required />
             </>
           ) : (
-            // Formulario de inicio de sesión simplificado
+            // Formulario de inicio de sesion
             <>
               <input type='text' name='username' placeholder='Nombre de usuario o correo' value={form.username} onChange={handleChange} required />
               <input type='password' name='password' placeholder='Contraseña' value={form.password} onChange={handleChange} required />
