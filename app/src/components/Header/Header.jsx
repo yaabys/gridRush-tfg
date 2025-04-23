@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import './Header.css';
-import DarkModeToggle from './buttonDarkMode.jsx'; // Asegúrate de que la ruta sea correcta
+import './header.css';
+import DarkModeToggle from '../ButtonDarkMode/ButtonDarkMode';
 
 const Header = () => {
   return (

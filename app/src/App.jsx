@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import Home from './pages/home/Home'
-import Register from './pages/register/Register'
-import Index from './pages/index/Index'
-import IndependentRace from './pages/independtRaces/IndependentRace'
-import Seasons from './pages/seasons/Seasons'
-import OfficialTournaments from './pages/officialTournaments/OfficialTournaments'
-import OfficialTournamentInside from './pages/officialTournamentInside/OfficialTournamentInside'
-import Tracks from './pages/kartingTracks/Tracks'
-import Profile from './pages/profile/Profile'
+import Home from './pages/Home/Home';
+import Register from './pages/Register/Register';
+import Index from './pages/Index/Index';
+import IndependentRace from './pages/IndependtRaces/IndependentRace';
+import Seasons from './pages/Seasons/Seasons';
+import OfficialTournaments from './pages/OfficialTournaments/OfficialTournaments';
+import OfficialTournamentInside from './pages/OfficialTournamentInside/OfficialTournamentInside';
+import Tracks from './pages/KartingTracks/Tracks';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (

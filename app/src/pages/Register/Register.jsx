@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import SemaforoAnimacion from '../../components/SemaforoAnimacion';
+import SemaforoAnimacion from '../../components/SemaforoAnimacion/SemaforoAnimacion';
 import './Register.css';
 import axios from 'axios';
 

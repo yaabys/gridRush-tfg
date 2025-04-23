@@ -20,7 +20,7 @@ router.get("/perfil", async (req, res) => {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
   
-      // Opcional: elimina la contraseña antes de enviar los datos
+      // eliminar contraseña antes de enviar los datos por si hay algun tipo de ataque
       const usuario = filas[0];
       delete usuario.password;
   
