@@ -68,5 +68,46 @@ router.post("/register", async (req, res) => {
     }
 
   });
+
+// Inicio de Sesion
+router.post("/login", async (req, res) => {
+  if(comprobarSesion(req)){
+    return res.status(200).json({ success: true, message: 'Usuario ya logueado' });
+  }
+
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
+  }
+
+  try {
+    // Buscar usuario por nombre de usuario o correo electrónico
+    const sql = `SELECT * FROM Usuarios WHERE username = ? OR email = ?`;
+    const [rows] = await conn.execute(sql, [username, username]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ success: false, error: 'Usuario no encontrado' });
+    }
+
+    const user = rows[0];
+    
+    // Verificar contraseña
+    const loginResult = await comprobarLogin(username, password);
+    if (!loginResult) {
+      return res.status(401).json({ success: false, error: 'Contraseña incorrecta' });
+    }
+
+    // Crear sesión
+    req.session.usuario = {
+      username: user.username
+    };
+
+    return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+  } catch (error) {
+    console.error("Error en login:", error);
+    return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+  }
+});
   
 export default router;
