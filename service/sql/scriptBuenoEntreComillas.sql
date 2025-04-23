@@ -135,3 +135,16 @@ CREATE TABLE TemporadaUsuarios (
     FOREIGN KEY (id_temporada) REFERENCES Temporadas(id),
     FOREIGN KEY (id_piloto) REFERENCES Usuarios(id)
 );
+
+-- Relación de temporadas con recompensas
+CREATE TABLE TemporadaRecompensas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_temporada INT,
+    id_recompensa INT,
+    nombre_recompensa VARCHAR(100) NOT NULL, -- Nombre específico de la recompensa para esta temporada
+    descripcion TEXT, -- Descripción detallada de la recompensa
+    posicion_min INT, -- Posición mínima para obtener la recompensa (ej. 1 para el primer lugar)
+    posicion_max INT, -- Posición máxima para obtener la recompensa (ej. 100 para los 100 primeros)
+    FOREIGN KEY (id_temporada) REFERENCES Temporadas(id),
+    FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id)
+);
