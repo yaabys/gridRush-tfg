@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import './Index.css';
+import axios from 'axios';
 
 const Index = () => {
-  // Simulación de datos del usuario
+  const navigate = useNavigate();
+
   const [userData, setUserData] = useState({
     nombre: 'Carlos',
     mejorTiempo: '1:21.4',
@@ -27,6 +29,20 @@ const Index = () => {
       { id: 2, tipo: 'reto', nombre: 'Maestro del Asfalto', descripcion: 'Completa 5 vueltas en menos de 1:30' }
     ]
   });
+
+  useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
 
   // Simulación de carga de datos
   useEffect(() => {

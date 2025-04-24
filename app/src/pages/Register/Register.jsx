@@ -21,7 +21,7 @@ const Register = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/sesion');
+        const res = await axios.get('/api/comprobarSesion');
         if (res.data.logueado) {
           navigate('/principal');
         }
@@ -49,7 +49,6 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Comprobar el parámetro formType de la URL
     const searchParams = new URLSearchParams(location.search);
     const type = searchParams.get('formType');
     if (type === 'login') {
@@ -231,7 +230,7 @@ const Register = () => {
                   />
                 </div>
               </>
-            ) : (
+            ) : ( //login
               <>
                 <div className="form-group">
                   <input 

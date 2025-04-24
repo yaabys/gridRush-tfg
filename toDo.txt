@@ -1,2 +1,2 @@
 - Corregir la base de datos , hemos puesto el usuario que sea unique para la sesion que no de problemas.
-- Corregir log in
+- Corregir log in solo funciona con correo (valorar si poner solo correo y fuera o solo usuario)

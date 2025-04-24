@@ -17,6 +17,12 @@ export const db = getFirestore(firebaseApp)//coge referencia a la base de datos 
 
 export const registrarFirebase = async (email, hashedPassword, username) => {
   try {
+
+    if(username.includes("@")) {
+      console.error("El nombre de usuario no puede contener '@'.");
+      return { success: false, error: "El nombre de usuario no puede contener '@'." };
+    }
+
     const emailLower = email.toLowerCase();
     const usernameLower = username.toLowerCase();
 
@@ -70,7 +76,6 @@ export const comprobarLogin = async (username, password) => {
 
     const userData = userDoc.data();
     const hashedPassword = userData.password;
-    console.log(userData);
 
     const isMatch = await bcrypt.compare(password, hashedPassword);
 
