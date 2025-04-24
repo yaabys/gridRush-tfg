@@ -4,17 +4,10 @@
 import rutasRead from "./routes/routesRead.mjs"
 // import rutasModificar from "./routers/rutasModificar.mjs"
 import rutasRegister from "./routes/routesRegister.mjs"
-import express from 'express';
-import cors from 'cors';
-
-
-// ... tus rutas y lógic
-//modulos
+import express from 'express'
 
 const app = express()
 const puerto = 3000
-
-app.use(cors());
 
 //middlewares
 app.use(express.json())
@@ -26,8 +19,6 @@ app.use(express.urlencoded({ extended:true }))
 // app.use("/api",rutasModificar)
 app.use("/api", rutasRegister)
 app.use("/api", rutasRead)
-
-
 
 app.get("/", (req, res) =>{
     res.sendStatus(200)

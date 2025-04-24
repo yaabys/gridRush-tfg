@@ -6,6 +6,9 @@ import session from "express-session"
 
 const router = express.Router();
 
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
 router.use(session({
 	secret: "clave_secreta",
 	resave: false, // no guardar la cookie de nuevo si no hay cambio
@@ -13,7 +16,7 @@ router.use(session({
 	cookie: {maxAge: 1000 * 60 * 60 * 2} // 2 horas
 }))
 
-router.get("/sesion", (req, res) => {
+router.get("/comprobarSesion", (req, res) => {
   if (req.session.usuario) {
     return res.json({ logueado: true, username: req.session.usuario.username });
   } else {
@@ -70,21 +73,22 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+    const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
-  }
-  try {
-    const user = await comprobarLogin(username, password);
+    if (!username || !password) {
+      return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
+    }
 
-  if (!user) {
-    return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
-  }
+    try {
+      const user = await comprobarLogin(username, password);
 
-  req.session.usuario = { username: user.username };
+      if (!user) {
+        return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
+      }
 
-  return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+      req.session.usuario = { username: user.username };
+
+      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
   } catch (error) {
     return res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }

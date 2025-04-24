@@ -14,16 +14,22 @@ router.get("/perfil", async (req, res) => {
     const username = req.session.usuario.username;
   
     try {
-      const [filas] = await conn.execute("SELECT * FROM Usuarios WHERE username = ?", [username]);
-  
+      const result = await conn.execute({
+        sql: "SELECT * FROM Usuarios WHERE username = ?",
+        args: [username]
+      });
+
+      const filas = result.rows;
+
       if (filas.length === 0) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
   
       // eliminar contraseña antes de enviar los datos por si hay algun tipo de ataque
       const usuario = filas[0];
-      delete usuario.password;
-  
+      //delete usuario.password;
+      console.log("Usuario encontrado:", usuario);
+
       res.json(usuario);
     } catch (error) {
       console.error("Error al obtener perfil:", error);

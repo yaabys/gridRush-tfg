@@ -2,12 +2,30 @@ import { useState,useEffect } from 'react';
 import Header from '../../components/Header/Header';
 import './Profile.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Perfil = () => {
+
+  const navigate = useNavigate();
+
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
-  
+
+  useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
+
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
@@ -49,17 +67,17 @@ const Perfil = () => {
 
         <div className='profile-avatar'>
           <img
-            src={`https://ui-avatars.com/api/?name=${user.nombre}+${user.apellido}&background=222&color=fff`}
+            src={`https://ui-avatars.com/api/?name=${usuario.nombre}+${usuario.apellido}&background=222&color=fff`}
             alt='Foto de perfil'
           />
         </div>
 
         <div className='profile-data'>
-          <p><strong>Nombre:</strong> {user.nombre} {user.apellido}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Provincia:</strong> {user.provincia}</p>
-          <p><strong>Nacimiento:</strong> {user.nacimiento}</p>
-          <p><strong>Usuario:</strong> {user.username}</p>
+          <p><strong>Nombre:</strong> {usuario.nombre} {usuario.apellido}</p>
+          <p><strong>Email:</strong> {usuario.email}</p>
+          <p><strong>Provincia:</strong> {usuario.provincia}</p>
+          <p><strong>Nacimiento:</strong> {usuario.fechaNacimiento}</p>
+          <p><strong>Usuario:</strong> {usuario.username}</p>
 
           <button className='edit-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
             ✏️ Editar perfil
@@ -77,15 +95,15 @@ const Perfil = () => {
         <div className='profile-stats'>
           <div className='stats-card'>
             <h3>🏁 Vuelta más rápida</h3>
-            <p>{user.vueltaRapida}</p>
+            <p>{usuario.vueltaRapida}</p>
           </div>
           <div className='stats-card'>
             <h3>🏆 Torneos ganados</h3>
-            <p>{user.torneosGanados}</p>
+            <p>{usuario.torneosGanados}</p>
           </div>
           <div className='stats-card'>
             <h3>🎖️ Victorias en carreras</h3>
-            <p>{user.victorias}</p>
+            <p>{usuario.victorias}</p>
           </div>
         </div>
       </div>
