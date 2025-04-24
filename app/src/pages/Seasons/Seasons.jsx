@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Seasons.css';
+
 
 const Seasons = () => {
   const [temporadaActual, setTemporadaActual] = useState(null);
@@ -17,17 +18,17 @@ const Seasons = () => {
         setError(null);
 
         // Obtener temporada actual
-        const temporadaResponse = await axios.get('/api/temporada-actual');
+        const temporadaResponse = await axios.get('http://localhost:3000/api/temporada-actual');
         const temporada = temporadaResponse.data;
         setTemporadaActual(temporada);
 
         // Obtener recompensas de la temporada
-        const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`);
+      /*  const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`);
         setRecompensas(recompensasResponse.data);
 
         // Obtener ranking de la temporada
         const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`);
-        setRanking(rankingResponse.data);
+        setRanking(rankingResponse.data);*/
 
       } catch (err) {
         setError('Error al cargar los datos. Por favor, inténtalo de nuevo más tarde.');

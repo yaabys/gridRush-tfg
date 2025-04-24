@@ -32,21 +32,25 @@ router.get("/perfil", async (req, res) => {
 });
 
 // Ruta para obtener la temporada actual
-router.get("/temporada-actual", async (req, res) => {
+router.get('/temporada-actual', async (req, res) => {
   try {
-    // Obtener la temporada actual (la que tiene la fecha actual entre fecha_inicio y fecha_fin)
-    const [temporadas] = await conn.execute(
-      "SELECT * FROM Temporadas WHERE CURDATE() BETWEEN fecha_inicio AND fecha_fin ORDER BY fecha_inicio DESC LIMIT 1"
+    const result = await conn.execute(
+      "SELECT * FROM Temporadas"
     );
+    console.log('▶️ Resultado:', JSON.stringify(result, null, 2));
 
-    if (temporadas.length === 0) {
-      // Si no hay temporada activa, obtener la próxima temporada
-      const [proximasTemporadas] = await conn.execute(
-        "SELECT * FROM Temporadas WHERE fecha_inicio > CURDATE() ORDER BY fecha_inicio ASC LIMIT 1"
+
+    const temporadas = result.rows;
+
+    if (!Array.isArray(temporadas) || temporadas.length === 0) {
+      const resultProximas = await conn.execute(
+        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1"
       );
 
-      if (proximasTemporadas.length === 0) {
-        return res.status(404).json({ error: "No hay temporadas disponibles" });
+      const proximasTemporadas = resultProximas.rows;
+
+      if (!Array.isArray(proximasTemporadas) || proximasTemporadas.length === 0) {
+        return res.status(404).json({ error: 'No hay temporadas disponibles' });
       }
 
       return res.json(proximasTemporadas[0]);
@@ -54,13 +58,16 @@ router.get("/temporada-actual", async (req, res) => {
 
     return res.json(temporadas[0]);
   } catch (error) {
-    console.error("Error al obtener temporada actual:", error);
-    return res.status(500).json({ error: "Error del servidor" });
+    console.error('💥 Error al obtener temporada actual:', error);
+    return res.status(500).json({ error: 'Error del servidor' });
   }
 });
 
+
+
+
 // Ruta para obtener las recompensas de una temporada
-router.get("/recompensas/:temporadaId", async (req, res) => {
+/*router.get("/recompensas/:temporadaId", async (req, res) => {
   try {
     const { temporadaId } = req.params;
 
@@ -102,7 +109,7 @@ router.get("/ranking/:temporadaId", async (req, res) => {
     console.error("Error al obtener ranking:", error);
     return res.status(500).json({ error: "Error del servidor" });
   }
-});
+});*/
 
 export default router;
   
