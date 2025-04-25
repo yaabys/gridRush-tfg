@@ -21,6 +21,8 @@ const Home = () => {
     comprobarSesion();
   }, []);
 
+  
+
   const handleExplorarClick = (e) => {
     e.preventDefault();
     if (isLoggedIn) {
@@ -47,13 +49,13 @@ const Home = () => {
               </Link>
               <a href="#" onClick={handleExplorarClick} className='hero-button secondary'>
                 <span className='button-icon'>🔍</span>
-                EXPLORAR APP
+                INICIA SESION
               </a>
             </div>
           </div>
           <div className='hero-image'>
             <div className='image-container'>
-              <img src="/img/img.png" alt="Karting racing" />
+              <img src="/img/kart.png" alt="Karting racing" />
             </div>
           </div>
         </div>

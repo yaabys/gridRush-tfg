@@ -1,33 +1,29 @@
 import { useState, useEffect } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import './Index.css';
 import axios from 'axios';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Inicializa userData con valores por defecto
   const [userData, setUserData] = useState({
-    nombre: 'Carlos',
-    mejorTiempo: '1:21.4',
-    ranking: 7,
-    totalPilotos: 142,
-    circuitosVisitados: 5,
-    carrerasTotales: 24,
+    nombre: '',
+    mejorTiempo: '0:00.0',
+    ranking: 0,
+    totalPilotos: 0,
+    circuitosVisitados: 0,
+    carrerasTotales: 0,
     objetivoSemanal: {
-      completado: 7,
+      completado: 0,
       total: 10,
-      nombre: 'Conductor de Hierro'
+      nombre: 'Cargando...'
     },
-    proximosTorneos: [
-      { id: 1, nombre: 'Torneo Copa de Primavera', karting: 'Karting Madrid', fecha: '6 de abril' },
-      { id: 2, nombre: 'Torneo Nocturno', karting: 'Karting Jerez', fecha: '13 de abril' },
-      { id: 3, nombre: 'Carrera Pro', karting: 'Karting Valencia', fecha: '20 de abril' }
-    ],
-    sugerencias: [
-      { id: 1, tipo: 'carrera', karting: 'Karting Málaga', fecha: 'Este fin de semana', destacado: true },
-      { id: 2, tipo: 'reto', nombre: 'Maestro del Asfalto', descripcion: 'Completa 5 vueltas en menos de 1:30' }
-    ]
+    proximosTorneos: [],
+    sugerencias: []
   });
 
   useEffect(() => {
@@ -39,16 +35,72 @@ const Index = () => {
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
+        setError("Error al comprobar la sesión");
       }
     };
     comprobarSesion();
   }, [navigate]);
 
-  // Simulación de carga de datos
   useEffect(() => {
-    // Aquí irían las llamadas a la API para obtener los datos reales
-    // Por ahora usamos los datos de ejemplo definidos arriba
+    const obtenerPerfil = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("/api/perfil");
+        
+        // Actualiza userData con la respuesta
+        setUserData({
+          nombre: response.data.nombre || 'Usuario',
+          mejorTiempo: response.data.mejorTiempo || '0:00.0',
+          ranking: response.data.ranking || 0,
+          totalPilotos: response.data.totalPilotos || 0,
+          circuitosVisitados: response.data.circuitosVisitados || 0,
+          carrerasTotales: response.data.carrerasTotales || 0,
+          objetivoSemanal: response.data.objetivoSemanal || {
+            completado: 0,
+            total: 10,
+            nombre: 'Objetivo Semanal'
+          },
+          proximosTorneos: response.data.proximosTorneos || [],
+          sugerencias: response.data.sugerencias || []
+        });
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al obtener perfil:", err);
+        setError("No se pudo cargar el perfil. ¿Estás logueado?");
+        setLoading(false);
+      }
+    };
+
+    obtenerPerfil();
   }, []);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className='main-container'>
+          <div className='loading-message'>
+            <p>Cargando datos del usuario...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <div className='main-container'>
+          <div className='error-message'>
+            <p>{error}</p>
+            <button onClick={() => navigate('/registro')}>Ir a Registro</button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -131,52 +183,56 @@ const Index = () => {
             </div>
           </section>
 
-          <section className='tournaments-section'>
-            <h2>Próximos Torneos</h2>
-            <div className='tournaments-grid'>
-              {userData.proximosTorneos.map(torneo => (
-                <div key={torneo.id} className='tournament-card'>
-                  <div className='tournament-header'>
-                    <h3>{torneo.nombre}</h3>
-                    <span className='tournament-date'>{torneo.fecha}</span>
+          {userData.proximosTorneos.length > 0 && (
+            <section className='tournaments-section'>
+              <h2>Próximos Torneos</h2>
+              <div className='tournaments-grid'>
+                {userData.proximosTorneos.map(torneo => (
+                  <div key={torneo.id} className='tournament-card'>
+                    <div className='tournament-header'>
+                      <h3>{torneo.nombre}</h3>
+                      <span className='tournament-date'>{torneo.fecha}</span>
+                    </div>
+                    <p className='tournament-location'>📍 {torneo.karting}</p>
+                    <Link to={`/torneo/${torneo.id}`} className='tournament-link'>
+                      Ver detalles
+                    </Link>
                   </div>
-                  <p className='tournament-location'>📍 {torneo.karting}</p>
-                  <Link to={`/torneo/${torneo.id}`} className='tournament-link'>
-                    Ver detalles
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
 
-          <section className='suggestions-section'>
-            <h2>Recomendados para ti</h2>
-            <div className='suggestions-grid'>
-              {userData.sugerencias.map(sugerencia => (
-                <div key={sugerencia.id} className={`suggestion-card ${sugerencia.destacado ? 'highlighted' : ''}`}>
-                  {sugerencia.tipo === 'carrera' ? (
-                    <>
-                      <div className='suggestion-icon'>🔥</div>
-                      <div className='suggestion-content'>
-                        <h3>Carrera Abierta</h3>
-                        <p><strong>{sugerencia.karting}</strong> - {sugerencia.fecha}</p>
-                        <Link to='/carrerasLibres' className='suggestion-link'>Apúntate ahora</Link>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className='suggestion-icon'>🎯</div>
-                      <div className='suggestion-content'>
-                        <h3>Nuevo Reto</h3>
-                        <p><strong>{sugerencia.nombre}</strong> - {sugerencia.descripcion}</p>
-                        <Link to='/perfil' className='suggestion-link'>Ver retos</Link>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+          {userData.sugerencias.length > 0 && (
+            <section className='suggestions-section'>
+              <h2>Recomendados para ti</h2>
+              <div className='suggestions-grid'>
+                {userData.sugerencias.map(sugerencia => (
+                  <div key={sugerencia.id} className={`suggestion-card ${sugerencia.destacado ? 'highlighted' : ''}`}>
+                    {sugerencia.tipo === 'carrera' ? (
+                      <>
+                        <div className='suggestion-icon'>🔥</div>
+                        <div className='suggestion-content'>
+                          <h3>Carrera Abierta</h3>
+                          <p><strong>{sugerencia.karting}</strong> - {sugerencia.fecha}</p>
+                          <Link to='/carrerasLibres' className='suggestion-link'>Apúntate ahora</Link>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className='suggestion-icon'>🎯</div>
+                        <div className='suggestion-content'>
+                          <h3>Nuevo Reto</h3>
+                          <p><strong>{sugerencia.nombre}</strong> - {sugerencia.descripcion}</p>
+                          <Link to='/perfil' className='suggestion-link'>Ver retos</Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </>
