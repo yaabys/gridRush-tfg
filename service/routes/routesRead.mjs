@@ -1,4 +1,4 @@
-import express from "express";
+import express from "express"
 import { registrarFirebase,comprobarLogin } from "../firebase/conexionFirebase.mjs"
 import { comprobarUser,hashearPassword,comprobarEmail,comprobarSesion } from "../controllers/userController.mjs"
 import { conn } from "../sql/conexionSQL.mjs"
@@ -68,9 +68,6 @@ router.get('/temporada-actual', async (req, res) => {
   }
 });
 
-
-
-
 // Ruta para obtener las recompensas de una temporada
 /*router.get("/recompensas/:temporadaId", async (req, res) => {
   try {
@@ -116,6 +113,36 @@ router.get("/ranking/:temporadaId", async (req, res) => {
   }
 });*/
 
+// Ruta para obtener los kartings
+router.get("/kartings", async (req, res) => {
+  try {
+    // Verificamos primero que la conexión está disponible
+    if (!conn) {
+      console.error("La conexión a la base de datos no está disponible");
+      return res.status(500).json({ error: "Error de conexión a la base de datos" });
+    }
+
+    // Consulta los circuitos de karting en Madrid
+    const kartings = await conn.execute(
+       `SELECT nombre, ciudad as ubicacion, ubicacion as direccion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
+    );
+    
+    const kartingRows = kartings.rows
+
+    console.log('▶️ Resultado:', JSON.stringify(kartingRows, null, 2));
+    // Verificamos si se obtuvieron resultados
+    if (!Array.isArray(kartingRows) || kartingRows.length === 0) {
+      return res.status(404).json({ error: "No se encontraron circuitos de karting" });
+    }
+    // Devolvemos los circuitos de karting
+    res.json(kartingRows);
+    
+  } catch (error) {
+    console.error("Error al obtener kartings:", error);
+    res.status(500).json({ 
+      error: "Error al obtener la información de los circuitos de karting",
+      detalles: process.env.NODE_ENV === 'development' ? error.message : null
+    });
+  }
+});
 export default router;
-  
-  
