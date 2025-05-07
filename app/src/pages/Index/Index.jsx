@@ -50,6 +50,7 @@ const Index = () => {
         // Actualiza userData con la respuesta
         setUserData({
           nombre: response.data.nombre || 'Usuario',
+          username: response.data.username || 'Username',
           mejorTiempo: response.data.mejorTiempo || '0:00.0',
           ranking: response.data.ranking || 0,
           totalPilotos: response.data.totalPilotos || 0,
@@ -108,7 +109,7 @@ const Index = () => {
       <div className='main-container'>
         <div className='dashboard-header'>
           <div className='welcome-section'>
-            <h1>¡Bienvenido de nuevo, <span className='highlight'>{userData.nombre}</span>!</h1>
+            <h1>¡Bienvenido de nuevo, <span className='highlight'>{userData.username}</span>!</h1>
             <p className='subtitle'>Tu panel de control personalizado para dominar el asfalto</p>
           </div>
           <div className='quick-actions'>
