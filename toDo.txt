@@ -4,6 +4,7 @@
 
 - 8 Mayo
 
---Mirar Perfil, foto, cambir nombre, email etc...
--- Iniciar Sesion con email o nombreUsuario 
+- Dejar base de datos rellena.
+- Comprobar el login para que funcione con usuario y gmail.
+- Para perfil poder modificar sus datos.
 
