@@ -40,7 +40,7 @@ CREATE TABLE Kartings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
     ciudad TEXT NOT NULL,
-    ubicacion TEXT NOT NULL -- URL a Google Maps
+    ubicacionLink TEXT NOT NULL -- URL a Google Maps
 );
 
 -- Tabla de torneos
