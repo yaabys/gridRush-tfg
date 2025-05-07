@@ -58,6 +58,7 @@ const Tracks = () => {
                     <p><span>📍 Ubicación:</span> {pista.ubicacion}</p>
                     <p><span>📌 Dirección:</span> <a href={pista.link} target="_blank">{pista.direccion}</a></p>
                     {/*<p><span>🗓️ Próximo torneo:</span> {pista.proximoTorneo}</p> */}
+                    {/*Pruebaa*/ }
                   </div>
                 </div>
               ))}
