@@ -124,7 +124,7 @@ router.get("/kartings", async (req, res) => {
 
     // Consulta los circuitos de karting en Madrid
     const kartings = await conn.execute(
-       `SELECT nombre, ciudad as ubicacion, ubicacion as direccion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
+       `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
     );
     
     const kartingRows = kartings.rows
@@ -145,4 +145,62 @@ router.get("/kartings", async (req, res) => {
     });
   }
 });
+
+
+    // Consulta los torneos oficiales
+    // Usando la estructura de tu base de datos
+    router.get("/torneos", async (req, res) => {
+      try {
+        // Verificamos que la conexión está disponible
+        if (!conn) {
+          console.error("La conexión a la base de datos no está disponible");
+          return res.status(500).json({ error: "Error de conexión a la base de datos" });
+        }
+    
+        // Consulta los torneos oficiales
+        // Usando funciones de SQLite para formato de fecha
+        const torneos = await conn.execute(`
+          SELECT 
+            t.id,
+            t.nombreTorneo as nombre,
+            k.nombre as ubicacion,
+            k.ciudad as comunidad,
+            strftime('%d/%m/%Y', t.fecha_inicio) as fecha,
+            CASE 
+              WHEN t.nivelMin = 1 THEN 'Principiante'
+              WHEN t.nivelMin = 2 THEN 'Intermedio'
+              WHEN t.nivelMin = 3 THEN 'Avanzado'
+              ELSE 'Desconocido'
+            END as nivelMinimo,
+            (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as inscritos,
+            t.maxInscripciones as maximo
+          FROM Torneos t
+          JOIN TorneoKartings tk ON t.id = tk.id_torneo
+          JOIN Kartings k ON tk.id_karting = k.id
+          WHERE t.fecha_fin >= date('now')
+          ORDER BY t.fecha_inicio ASC
+        `);
+        
+        const torneosRows = torneos.rows;
+    
+        console.log('▶️ Resultado torneos:', JSON.stringify(torneosRows, null, 2));
+        
+        // Verificamos si se obtuvieron resultados
+        if (!Array.isArray(torneosRows) || torneosRows.length === 0) {
+          return res.status(404).json({ error: "No se encontraron torneos oficiales" });
+        }
+        
+        // Devolvemos los torneos
+        res.json(torneosRows);
+        
+      } catch (error) {
+        console.error("Error al obtener torneos:", error);
+        res.status(500).json({ 
+          error: "Error al obtener la información de los torneos oficiales",
+          detalles: process.env.NODE_ENV === 'development' ? error.message : null
+        });
+      }
+    });
+
+
 export default router;
