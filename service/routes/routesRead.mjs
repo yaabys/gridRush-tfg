@@ -69,7 +69,7 @@ router.get('/temporada-actual', async (req, res) => {
 });
 
 // Ruta para obtener las recompensas de una temporada
-/*router.get("/recompensas/:temporadaId", async (req, res) => {
+router.get("/recompensas/:temporadaId", async (req, res) => {
   try {
     const { temporadaId } = req.params;
 
@@ -111,7 +111,7 @@ router.get("/ranking/:temporadaId", async (req, res) => {
     console.error("Error al obtener ranking:", error);
     return res.status(500).json({ error: "Error del servidor" });
   }
-});*/
+});
 
 // Ruta para obtener los kartings
 router.get("/kartings", async (req, res) => {

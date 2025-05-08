@@ -74,9 +74,10 @@
 
 .track-details {
   display: flex;
-  flex-direction: column;
+  flex-direction:column-reverse;
   gap: 0.75rem;
   margin-top: 0.5rem;
+
 }
 
 .track-details p {
@@ -89,3 +90,49 @@
   font-weight: 600;
   margin-right: 0.5rem;
 }
+
+@keyframes zoomFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.track-card {
+  animation: zoomFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  opacity: 0;
+}
+
+
+.track-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.track-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, transparent, rgba(0, 0, 0, 0.187), transparent);
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+.track-card:hover::before {
+  animation: shine 0.75s linear;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(100%) rotate(25deg); }
+}
+

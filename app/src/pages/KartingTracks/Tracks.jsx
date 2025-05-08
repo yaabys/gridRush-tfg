@@ -13,7 +13,7 @@ const Tracks = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const pistasResponse = await axios.get('/api/kartings');
         setPistas(pistasResponse.data);
       } catch (err) {
@@ -51,14 +51,16 @@ const Tracks = () => {
             </div>
 
             <div className="tracks-grid">
-              {pistas.map((pista) => (
-                <div key={pista.id} className="track-card">
+              {pistas.map((pista, index) => (
+                <div
+                  key={pista.id}
+                  className="track-card"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
                   <h3>{pista.nombre}</h3>
                   <div className="track-details">
                     <p><span>📍 Ubicación:</span> {pista.ubicacion}</p>
-                    <p><span>📌 Dirección:</span> <a href={pista.link} target="_blank">{pista.direccion}</a></p>
-                    {/*<p><span>🗓️ Próximo torneo:</span> {pista.proximoTorneo}</p> */}
-                    {/*Pruebaa*/ }
+                    <p><a href={pista.link} target="_blank"><span>🗺️ Maps:</span> {pista.direccion}</a></p>
                   </div>
                 </div>
               ))}
