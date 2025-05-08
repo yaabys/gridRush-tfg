@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"
 import bcrypt from "bcrypt"
-import { getFirestore, collection, doc, getDoc, setDoc} from "firebase/firestore"
+import { getFirestore, collection, doc, getDoc,getDocs, setDoc, query,where} from "firebase/firestore"
 import { hashearPassword } from "../controllers/userController.mjs"
 
 const firebaseConfig = {
@@ -58,27 +58,21 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
 
 export const comprobarLogin = async (username, password) => {
   try {
-    let docRef;
+    // dependiendo si es email o username
+    const campo = username.includes("@") ? "email" : "username";
+    const valor = username.toLowerCase();
 
-    if (username.includes("@")) { //si es email
-      const emailLower = username.toLowerCase();
-      docRef = doc(collection(db, "gridrush_fb"), emailLower);
-    } else { //si es username
-      const usernameLower = username.toLowerCase();
-      docRef = doc(collection(db, "gridrush_fb"), usernameLower);
-    }
+    const q = query(collection(db, "gridrush_fb"), where(campo, "==", valor));
+    const result = await getDocs(q);
 
-    const userDoc = await getDoc(docRef);
-
-    if (!userDoc.exists()) {
+    if (result.empty) {
       return null;
     }
 
+    const userDoc = result.docs[0];
     const userData = userDoc.data();
-    const hashedPassword = userData.password;
 
-    const isMatch = await bcrypt.compare(password, hashedPassword);
-
+    const isMatch = await bcrypt.compare(password, userData.password);
     if (!isMatch) {
       return null;
     }
