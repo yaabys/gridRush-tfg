@@ -142,10 +142,10 @@ CREATE TABLE TemporadaRecompensas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_temporada INTEGER,
     id_recompensa INTEGER,
-    nombre_recompensa TEXT NOT NULL, -- Nombre específico de la recompensa para esta temporada
-    descripcion TEXT, -- Descripción detallada de la recompensa
-    posicion_min INTEGER, -- Posición mínima para obtener la recompensa (ej. 1 para el primer lugar)
-    posicion_max INTEGER, -- Posición máxima para obtener la recompensa (ej. 100 para los 100 primeros)
+    nombre_recompensa TEXT NOT NULL,
+    descripcion TEXT,
+    posicion_min INTEGER,
+    posicion_max INTEGER,
     FOREIGN KEY (id_temporada) REFERENCES Temporadas(id),
     FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id)
 );
