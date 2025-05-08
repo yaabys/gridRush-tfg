@@ -4,7 +4,11 @@
 
 - 8 Mayo
 
-- Dejar base de datos rellena.
+- Rellenar kartings HECHOOOOOOO
+- Dejar base de datos rellena. HECHOOOO
 - Comprobar el login para que funcione con usuario y gmail.
 - Para perfil poder modificar sus datos.
 
+- 9 Mayo
+
+- Hacer las busquedas de Kartings con su ciudad (primero cargar todas)
