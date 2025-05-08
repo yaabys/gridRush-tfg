@@ -101,7 +101,6 @@ const Register = () => {
           username: form.username,
           password: form.password
         };
-        
         const response = await axios.post('/api/login', loginData);
         
         if (response.status === 200) {
