@@ -11,6 +11,9 @@ const Perfil = () => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
+  const [editandoCampo, setEditandoCampo] = useState(null); // 'username' | 'email' | null
+  const [nuevoValor, setNuevoValor] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -39,9 +42,46 @@ const Perfil = () => {
     obtenerPerfil();
   }, []);
 
-  const handleEditarUsername = () => alert('Función para cambiar nombre de usuario');
-  const handleEditarEmail = () => alert('Función para cambiar email');
+  const handleEditarUsername = () => {
+    setEditandoCampo('username');
+    setNuevoValor(usuario.username);
+    setMensaje("");
+  };
+  const handleEditarEmail = () => {
+    setEditandoCampo('email');
+    setNuevoValor(usuario.email);
+    setMensaje("");
+  };
   const handleEditarAvatar = () => alert('Función para cambiar foto de perfil');
+
+  const handleGuardarCambio = async () => {
+    try {
+      const payload = {
+        usernameActual: usuario.username.toLowerCase(), // 👈 muy importante
+        username: editandoCampo === 'username' ? nuevoValor : usuario.username,
+        email: editandoCampo === 'email' ? nuevoValor : usuario.email
+      };
+      console.log('Enviando payload:', payload);
+  
+      const res = await axios.put('/api/cambiarperfil', payload);
+  
+      // Recargar perfil actualizado
+      const refreshedProfile = await axios.get('/api/perfil');
+      setUsuario(refreshedProfile.data);
+  
+      setMensaje('¡Perfil actualizado correctamente!');
+      setEditandoCampo(null);
+      setMostrarOpciones(false);
+    } catch (err) {
+      console.error(err);
+      setMensaje(err.response?.data?.error || 'Error al actualizar el perfil');
+    }
+  };
+
+  const handleCancelar = () => {
+    setEditandoCampo(null);
+    setMensaje("");
+  };
 
   if (error) {
     return (
@@ -90,6 +130,26 @@ const Perfil = () => {
               <button onClick={handleEditarAvatar}>📷 Cambiar foto de perfil</button>
             </div>
           )}
+
+          {editandoCampo && (
+            <div className='modal-editar'>
+              <div className='modal-contenido'>
+                <h4>Cambiar {editandoCampo === 'username' ? 'nombre de usuario' : 'email'}</h4>
+                <input
+                  type={editandoCampo === 'email' ? 'email' : 'text'}
+                  value={nuevoValor}
+                  onChange={e => setNuevoValor(e.target.value)}
+                />
+                <div className='modal-botones'>
+                  <button onClick={handleGuardarCambio}>Guardar</button>
+                  <button onClick={handleCancelar}>Cancelar</button>
+                </div>
+                {mensaje && <p className='mensaje-editar'>{mensaje}</p>}
+              </div>
+            </div>
+          )}
+
+          {mensaje && !editandoCampo && <p className='mensaje-editar'>{mensaje}</p>}
         </div>
 
         <div className='profile-stats'>

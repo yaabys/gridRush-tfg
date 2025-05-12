@@ -2,7 +2,7 @@
 // import rutasInsertar from "./routers/rutasInsertar.mjs"
 // import rutasEliminar from "./routers/rutasEliminar.mjs"
 import rutasRead from "./routes/routesRead.mjs"
-// import rutasModificar from "./routers/rutasModificar.mjs"
+import rutasModificar from "./routes/routesUpdate.mjs"
 import rutasRegister from "./routes/routesRegister.mjs"
 import express from 'express'
 
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended:true }))
 // app.use("/api",rutasInsertar)
 // app.use("/api",rutasEliminar)
 // app.use("/api",rutasListar)
-// app.use("/api",rutasModificar)
+app.use("/api",rutasModificar)
 app.use("/api", rutasRegister)
 app.use("/api", rutasRead)
 
