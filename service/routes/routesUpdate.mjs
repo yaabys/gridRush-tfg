@@ -69,7 +69,17 @@ router.put("/cambiarperfil", async (req, res) => {
       return res.status(400).json({ error: resultado.error });
     }
 
-    res.json({ success: true, mensaje: "Perfil actualizado correctamente" });
+    // Devolvemos el usuario actualizado
+    const usuarioActualizado = await conn.execute({
+      sql: "SELECT * FROM Usuarios WHERE id = ?",
+      args: [id]
+    });
+
+    res.json({ 
+      success: true, 
+      mensaje: "Perfil actualizado correctamente",
+      usuario: usuarioActualizado.rows[0]
+    });
   } catch (error) {
     console.error("Error en actualización:", error);
     res.status(500).json({ error: "Error del servidor" });

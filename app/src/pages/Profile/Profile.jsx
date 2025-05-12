@@ -57,18 +57,19 @@ const Perfil = () => {
   const handleGuardarCambio = async () => {
     try {
       const payload = {
-        usernameActual: usuario.username.toLowerCase(), // 👈 muy importante
+        usernameActual: usuario.username.toLowerCase(),
         username: editandoCampo === 'username' ? nuevoValor : usuario.username,
         email: editandoCampo === 'email' ? nuevoValor : usuario.email
       };
       console.log('Enviando payload:', payload);
-  
+
       const res = await axios.put('/api/cambiarperfil', payload);
-  
-      // Recargar perfil actualizado
-      const refreshedProfile = await axios.get('/api/perfil');
-      setUsuario(refreshedProfile.data);
-  
+      
+      // Usar los datos actualizados que devuelve el backend
+      if (res.data.usuario) {
+        setUsuario(res.data.usuario);
+      }
+
       setMensaje('¡Perfil actualizado correctamente!');
       setEditandoCampo(null);
       setMostrarOpciones(false);
