@@ -7,12 +7,12 @@ const SemaforoAnimacion = () => {
 
   useEffect(() => {
     const timerLuces = setTimeout(() => {
-      setMostrarLuces(false);    // Oculta las luces
-      setMostrarGo(true);        // Muestra GO!
+      setMostrarLuces(false);   
+      setMostrarGo(true);        
     }, 2500);
 
     const timerGo = setTimeout(() => {
-      setMostrarGo(false);       // Oculta GO! tras 1s
+      setMostrarGo(false);       
     }, 3500);
 
     return () => {

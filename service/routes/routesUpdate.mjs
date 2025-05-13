@@ -5,7 +5,7 @@ import { actualizarFirebase } from "../firebase/conexionFirebase.mjs";
 
 const router = express.Router();
 
-// Ruta para actualizar el perfil del usuario (nombre de usuario y email)
+// Ruta para actualizar el perfil del usuario
 router.put("/cambiarperfil", async (req, res) => {
   const { usernameActual, username, email } = req.body;
 
@@ -14,12 +14,12 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 
   try {
-    // Primero verificamos si los cambios son posibles en Firebase
+
     const emailLower = email.toLowerCase();
     const usernameLower = username.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-    // Verificar si el nuevo username ya existe (si es diferente al actual)
+
     if (usernameLower !== usernameActualLower) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
@@ -30,7 +30,7 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    // Verificar si el nuevo email ya existe (si es diferente al actual)
+
     if (emailLower !== usernameActualLower) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE email = ? AND username != ?",
@@ -41,8 +41,6 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    // Si llegamos aquí, los cambios son válidos en ambas bases de datos
-    // Primero actualizamos en Firebase
     const resultadoFirebase = await actualizarFirebase(usernameActual, username, email);
     if (!resultadoFirebase.success) {
       return res.status(400).json({ error: resultadoFirebase.error });
@@ -55,7 +53,6 @@ router.put("/cambiarperfil", async (req, res) => {
     });
     
     if (!result.rows.length) {
-      // Si no encontramos el usuario en SQL, revertimos Firebase
       await actualizarFirebase(username, usernameActual, email);
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
@@ -64,7 +61,6 @@ router.put("/cambiarperfil", async (req, res) => {
     const resultado = await actualizarPerfil(id, username, email);
     
     if (!resultado.success) {
-      // Si falla la actualización en SQL, revertimos Firebase
       await actualizarFirebase(username, usernameActual, email);
       return res.status(400).json({ error: resultado.error });
     }
