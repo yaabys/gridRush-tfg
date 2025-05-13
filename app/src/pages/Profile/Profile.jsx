@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header/Header';
 import './Profile.css';
 import axios from 'axios';
@@ -84,6 +84,31 @@ const Perfil = () => {
     setMensaje("");
   };
 
+  const calcularNivelElo = (elo) => {
+    const niveles = [
+      { min: 0, max: 1000, nivel: 1 },
+      { min: 1000, max: 2000, nivel: 2 },
+      { min: 2000, max: 3000, nivel: 3 },
+      { min: 3000, max: 4000, nivel: 4 },
+      { min: 4000, max: 5000, nivel: 5 },
+      { min: 5000, max: 6000, nivel: 6 },
+      { min: 6000, max: 7000, nivel: 7 },
+      { min: 7000, max: 8000, nivel: 8 },
+      { min: 8000, max: 9000, nivel: 9 },
+      { min: 9000, max: 10000, nivel: 10 }
+    ];
+
+    const nivelActual = niveles.find(n => elo >= n.min && elo < n.max);
+    const progreso = ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
+    
+    return {
+      nivel: nivelActual.nivel,
+      progreso: Math.min(100, Math.max(0, progreso)),
+      eloActual: elo,
+      siguienteNivel: nivelActual.max
+    };
+  };
+
   if (error) {
     return (
       <div className='profile-container'>
@@ -100,73 +125,110 @@ const Perfil = () => {
     );
   }
 
+  const eloInfo = calcularNivelElo(usuario.elo || 0);
+
   return (
     <>
       <Header />
       <div className='profile-container'>
-        <h2>👤 Mi perfil</h2>
-
-        <div className='profile-avatar'>
-          <img
-            src={`https://ui-avatars.com/api/?name=${usuario.nombre}+${usuario.apellido}&background=222&color=fff`}
-            alt='Foto de perfil'
-          />
+        <div className="profile-header">
+          <h2>Perfil de Usuario</h2>
         </div>
 
-        <div className='profile-data'>
-          <p><strong>Nombre:</strong> {usuario.nombre} {usuario.apellido}</p>
-          <p><strong>Email:</strong> {usuario.email}</p>
-          <p><strong>Provincia:</strong> {usuario.provincia}</p>
-          <p><strong>Nacimiento:</strong> {usuario.fechaNacimiento}</p>
-          <p><strong>Usuario:</strong> {usuario.username}</p>
+        <div className="profile-content">
+          <div className="profile-avatar">
+            <img src={usuario.avatar || "https://via.placeholder.com/150"} alt="Avatar" />
+            <button className="edit-btn" onClick={handleEditarAvatar}>
+              Cambiar Avatar
+            </button>
+          </div>
 
-          <button className='edit-btn' onClick={() => setMostrarOpciones(!mostrarOpciones)}>
-            ✏️ Editar perfil
-          </button>
-
-          {mostrarOpciones && (
-            <div className='edit-opciones'>
-              <button onClick={handleEditarUsername}>🆔 Cambiar nombre de usuario</button>
-              <button onClick={handleEditarEmail}>📧 Cambiar email</button>
-              <button onClick={handleEditarAvatar}>📷 Cambiar foto de perfil</button>
+          <div className="profile-info">
+            <div className="profile-data">
+              <p>
+                <strong>Usuario:</strong>
+                {editandoCampo === 'username' ? (
+                  <input
+                    type="text"
+                    value={nuevoValor}
+                    onChange={(e) => setNuevoValor(e.target.value)}
+                    className="edit-input"
+                  />
+                ) : (
+                  <span>{usuario.username}</span>
+                )}
+                {editandoCampo !== 'username' && (
+                  <button className="edit-btn" onClick={handleEditarUsername}>
+                    Editar
+                  </button>
+                )}
+              </p>
+              <p>
+                <strong>Email:</strong>
+                {editandoCampo === 'email' ? (
+                  <input
+                    type="email"
+                    value={nuevoValor}
+                    onChange={(e) => setNuevoValor(e.target.value)}
+                    className="edit-input"
+                  />
+                ) : (
+                  <span>{usuario.email}</span>
+                )}
+                {editandoCampo !== 'email' && (
+                  <button className="edit-btn" onClick={handleEditarEmail}>
+                    Editar
+                  </button>
+                )}
+              </p>
             </div>
-          )}
 
-          {editandoCampo && (
-            <div className='modal-editar'>
-              <div className='modal-contenido'>
-                <h4>Cambiar {editandoCampo === 'username' ? 'nombre de usuario' : 'email'}</h4>
-                <input
-                  type={editandoCampo === 'email' ? 'email' : 'text'}
-                  value={nuevoValor}
-                  onChange={e => setNuevoValor(e.target.value)}
+            <div className="elo-container">
+              <div className="elo-header">
+                <h3>Nivel de Elo</h3>
+                <span className="elo-level">Nivel {eloInfo.nivel}</span>
+              </div>
+              <div className="elo-progress">
+                <div 
+                  className="elo-progress-bar" 
+                  style={{ width: `${eloInfo.progreso}%` }}
                 />
-                <div className='modal-botones'>
-                  <button onClick={handleGuardarCambio}>Guardar</button>
-                  <button onClick={handleCancelar}>Cancelar</button>
-                </div>
-                {mensaje && <p className='mensaje-editar'>{mensaje}</p>}
+              </div>
+              <div className="elo-stats">
+                <span>{eloInfo.eloActual} Elo</span>
+                <span>{eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
               </div>
             </div>
-          )}
 
-          {mensaje && !editandoCampo && <p className='mensaje-editar'>{mensaje}</p>}
+            <div className="profile-stats">
+              <div className="stats-card">
+                <h3>Partidas Jugadas</h3>
+                <p>{usuario.partidasJugadas || 0}</p>
+              </div>
+              <div className="stats-card">
+                <h3>Victorias</h3>
+                <p>{usuario.victorias || 0}</p>
+              </div>
+              <div className="stats-card">
+                <h3>Derrotas</h3>
+                <p>{usuario.derrotas || 0}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className='profile-stats'>
-          <div className='stats-card'>
-            <h3>🏁 Vuelta más rápida</h3>
-            <p>{usuario.vueltaRapida}</p>
+        {editandoCampo && (
+          <div className="edit-form">
+            <button className="edit-btn" onClick={handleGuardarCambio}>
+              Guardar Cambios
+            </button>
+            <button className="edit-btn" onClick={handleCancelar}>
+              Cancelar
+            </button>
           </div>
-          <div className='stats-card'>
-            <h3>🏆 Torneos ganados</h3>
-            <p>{usuario.torneosGanados}</p>
-          </div>
-          <div className='stats-card'>
-            <h3>🎖️ Victorias en carreras</h3>
-            <p>{usuario.victorias}</p>
-          </div>
-        </div>
+        )}
+
+        {mensaje && <p className="mensaje">{mensaje}</p>}
       </div>
     </>
   );
