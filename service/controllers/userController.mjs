@@ -67,7 +67,7 @@ export const comprobarSesion = (req) => {
 // Actualizar datos del usuario (nombre de usuario y email)
 export const actualizarPerfil = async (id, nuevoUsername, nuevoEmail) => {
     try {
-        // Comprobar si el nuevo username ya existe para otro usuario
+
         const usernameCheck = await conn.execute({
             sql: "SELECT id FROM Usuarios WHERE username = ? AND id != ?",
             args: [nuevoUsername, id]
@@ -75,7 +75,7 @@ export const actualizarPerfil = async (id, nuevoUsername, nuevoEmail) => {
         if (usernameCheck.rows.length > 0) {
             return { success: false, error: "El nombre de usuario ya está en uso." };
         }
-        // Comprobar si el nuevo email ya existe para otro usuario
+
         const emailCheck = await conn.execute({
             sql: "SELECT id FROM Usuarios WHERE email = ? AND id != ?",
             args: [nuevoEmail, id]
@@ -83,7 +83,7 @@ export const actualizarPerfil = async (id, nuevoUsername, nuevoEmail) => {
         if (emailCheck.rows.length > 0) {
             return { success: false, error: "El correo electrónico ya está en uso." };
         }
-        // Actualizar los datos
+      
         await conn.execute({
             sql: "UPDATE Usuarios SET username = ?, email = ? WHERE id = ?",
             args: [nuevoUsername, nuevoEmail, id]

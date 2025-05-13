@@ -113,18 +113,17 @@ router.get("/ranking/:temporadaId", async (req, res) => {
   }
 });
 
-//Te he pasado todos los archivos necesarios para que los analices y me hagas que la pagina de carreras libre, obtenga los datos del backend como lo esta haciendo con las demas 
+
 
 // Ruta para obtener los kartings
 router.get("/kartings", async (req, res) => {
   try {
-    // Verificamos primero que la conexión está disponible
     if (!conn) {
       console.error("La conexión a la base de datos no está disponible");
       return res.status(500).json({ error: "Error de conexión a la base de datos" });
     }
 
-    // Consulta los circuitos de karting en Madrid
+
     const kartings = await conn.execute(
       `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
     );
@@ -150,17 +149,14 @@ router.get("/kartings", async (req, res) => {
 
 
 // Consulta los torneos oficiales
-// Usando la estructura de tu base de datos
 router.get("/torneos", async (req, res) => {
   try {
-    // Verificamos que la conexión está disponible
     if (!conn) {
       console.error("La conexión a la base de datos no está disponible");
       return res.status(500).json({ error: "Error de conexión a la base de datos" });
     }
 
     // Consulta los torneos oficiales
-    // Usando funciones de SQLite para formato de fecha
     const torneos = await conn.execute(`
           SELECT 
             t.id,
@@ -204,7 +200,7 @@ router.get("/torneos", async (req, res) => {
   }
 });
 
-// Ruta para obtener carreras libres (carreras sin torneo asociado)
+// Ruta para obtener carreras libres
 router.get("/carreras-libres", async (req, res) => {
   try {
     const result = await conn.execute(`

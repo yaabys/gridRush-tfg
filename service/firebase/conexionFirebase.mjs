@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app"
 import bcrypt from "bcrypt"
 import { getFirestore, collection, doc, getDoc,getDocs, setDoc, query,where} from "firebase/firestore"
 import { hashearPassword } from "../controllers/userController.mjs"
-import { deleteDoc } from 'firebase/firestore'; // Asegúrate de importar esto
+import { deleteDoc } from 'firebase/firestore'; 
 
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -14,7 +14,7 @@ const firebaseConfig = {
 }
   
 const firebaseApp = initializeApp(firebaseConfig)
-export const db = getFirestore(firebaseApp)//coge referencia a la base de datos (coleccion)
+export const db = getFirestore(firebaseApp)
 
 export const registrarFirebase = async (email, hashedPassword, username) => {
   try {
@@ -91,11 +91,11 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
     const usernameLower = usernameNuevo.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-    // Referencias a los documentos
+
     const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameLower);
 
-    // Buscar el usuario actual en Firebase (puede estar por email o por username)
+
     const q = query(collection(db, "gridrush_fb"), 
       where("username", "==", usernameActual)
     );
@@ -109,7 +109,7 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
     const userData = userDoc.data();
     const emailActualLower = userData.email.toLowerCase();
 
-    // Comprobar si el nuevo username ya existe (y no es el actual)
+    // Comprobar si el nuevo username ya existe
     if (usernameLower !== usernameActualLower) {
       const usernameDoc = await getDoc(usernameDocRef);
       if (usernameDoc.exists()) {
@@ -117,7 +117,7 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
       }
     }
 
-    // Comprobar si el nuevo email ya existe (y no es el actual)
+    // Comprobar si el nuevo email ya existe 
     if (emailLower !== emailActualLower) {
       const emailDoc = await getDoc(emailDocRef);
       if (emailDoc.exists()) {
@@ -125,7 +125,7 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
       }
     }
 
-    // Actualizar los datos
+
     const nuevosDatos = {
       ...userData,
       username: usernameNuevo,

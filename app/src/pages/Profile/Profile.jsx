@@ -11,7 +11,7 @@ const Perfil = () => {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
-  const [editandoCampo, setEditandoCampo] = useState(null); // 'username' | 'email' | null
+  const [editandoCampo, setEditandoCampo] = useState(null); 
   const [nuevoValor, setNuevoValor] = useState("");
   const [mensaje, setMensaje] = useState("");
 
@@ -65,7 +65,7 @@ const Perfil = () => {
 
       const res = await axios.put('/api/cambiarperfil', payload);
       
-      // Usar los datos actualizados que devuelve el backend
+
       if (res.data.usuario) {
         setUsuario(res.data.usuario);
       }
