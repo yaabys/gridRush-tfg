@@ -31,7 +31,7 @@ const OfficialTournaments = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await axios.get('/api/torneos');
         setTorneos(response.data);
       } catch (err) {
@@ -69,7 +69,7 @@ const OfficialTournaments = () => {
     if (!fechaInicio || !fechaFin) {
       return torneos.fecha || 'Fecha no disponible';
     }
-    
+
     // Si tenemos las fechas completas, formateamos el rango
     return `${fechaInicio} al ${fechaFin}`;
   };
@@ -108,8 +108,12 @@ const OfficialTournaments = () => {
             </div>
 
             <div className='cards-torneos'>
-              {torneosFiltrados.map((torneo) => (
-                <div key={torneo.id} className='card-torneo'>
+              {torneosFiltrados.map((torneo, index) => (
+                <div
+                  key={torneo.id}
+                  className='card-torneo'
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
                   <h3>{torneo.nombre}</h3>
                   <p><strong>📍 Ubicación:</strong> {torneo.ubicacion}</p>
                   <p><strong>🌍 Comunidad:</strong> {torneo.comunidad}</p>
@@ -117,13 +121,13 @@ const OfficialTournaments = () => {
                   <p><strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}</p>
                   <p><strong>👥 Inscritos:</strong> {torneo.inscritos}/{torneo.maximo}</p>
                   <div className='card-torneo__buttons'>
-                    <button 
+                    <button
                       className='btn-apuntarse'
                       disabled={torneo.inscritos >= torneo.maximo}
                     >
                       {torneo.inscritos < torneo.maximo ? '¡Apuntarme!' : 'Completo'}
                     </button>
-                    <button 
+                    <button
                       className='btn-mas-info'
                       onClick={() => handleMasInfo(torneo.id)}
                     >
