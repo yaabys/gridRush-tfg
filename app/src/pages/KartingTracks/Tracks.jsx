@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../../components/Header/Header';
 import './Tracks.css';
+import { useNavigate } from 'react-router-dom';
 
 const Tracks = () => {
+  const navigate = useNavigate();
   const [pistas, setPistas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

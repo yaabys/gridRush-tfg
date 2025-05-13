@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../../components/Header/Header';
 import './IndependentRace.css';
+import { useNavigate } from 'react-router-dom';
 
 const IndependentRace = () => {
+  const navigate = useNavigate();
   const [carrerasLibres, setCarrerasLibres] = useState([]);
   const [nivelSeleccionado, setNivelSeleccionado] = useState('');
   const [comunidadSeleccionada, setComunidadSeleccionada] = useState('');

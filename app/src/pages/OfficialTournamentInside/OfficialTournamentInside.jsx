@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate  } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import './OfficialTournamentInside.css';
 
 const OfficialTournamentInside = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [torneo, setTorneo] = useState(null);
   const [clasificacion, setClasificacion] = useState([]);

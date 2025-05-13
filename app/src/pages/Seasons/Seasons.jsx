@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../../components/Header/Header';
 import './Seasons.css';
+import { useNavigate } from 'react-router-dom';
 
 const Seasons = () => {
+  const navigate = useNavigate();
   const [temporadaActual, setTemporadaActual] = useState(null);
   const [recompensas, setRecompensas] = useState([]);
   const [ranking, setRanking] = useState([]);
