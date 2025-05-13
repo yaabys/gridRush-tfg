@@ -11,6 +11,20 @@ const IndependentRace = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchCarreras = async () => {
       try {
         const response = await axios.get('/api/carreras-libres');

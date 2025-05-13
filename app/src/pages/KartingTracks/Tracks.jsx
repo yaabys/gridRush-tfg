@@ -9,6 +9,20 @@ const Tracks = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);

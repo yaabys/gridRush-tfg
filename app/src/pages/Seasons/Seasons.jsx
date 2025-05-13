@@ -11,6 +11,20 @@ const Seasons = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -20,11 +34,11 @@ const Seasons = () => {
         const temporada = temporadaResponse.data;
         setTemporadaActual(temporada);
 
-        /*const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`);
+        const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`);
         setRecompensas(recompensasResponse.data);
 
         const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`);
-        setRanking(rankingResponse.data);*/
+        setRanking(rankingResponse.data);
       } catch (err) {
         setError('Error al cargar los datos. Por favor, inténtalo de nuevo más tarde.');
         console.error('Error:', err);

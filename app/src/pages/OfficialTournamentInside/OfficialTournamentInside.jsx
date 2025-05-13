@@ -11,6 +11,20 @@ const OfficialTournamentInside = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const comprobarSesion = async () => {
+      try {
+        const res = await axios.get('/api/comprobarSesion');
+        if (!res.data.logueado) {
+          navigate('/registro');
+        }
+      } catch (err) {
+        console.log("Error al comprobar sesión:", err);
+      }
+    };
+    comprobarSesion();
+  }, [navigate]);
+
+  useEffect(() => {
     // Aquí irían las llamadas a la API para obtener los datos
     // Por ahora usamos datos de ejemplo
     setTorneo({
