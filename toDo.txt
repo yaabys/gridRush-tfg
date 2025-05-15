@@ -4,11 +4,9 @@
 
 - 8 Mayo
 
-- Rellenar kartings HECHOOOOOOO
-- Dejar base de datos rellena. HECHOOOO
-- Comprobar el login para que funcione con usuario y gmail.
-- Para perfil poder modificar sus datos.
+- Crear dos actualizarFirebase uno para el nombre y otro para el email.
+  Que el boton de guardar cambios y cancelar se ponga al lado de lo que quieras eliminar.
 
-- 9 Mayo
+- Enviar un correo cuando te registres o cuando cambies el correo por ejemplo que te pida X numeros para confirmar.
 
-- Hacer las busquedas de Kartings con su ciudad (primero cargar todas)
+- Mirar lo de cambiar la foto de perfil

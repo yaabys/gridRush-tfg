@@ -5,7 +5,6 @@ import { actualizarFirebase } from "../firebase/conexionFirebase.mjs";
 
 const router = express.Router();
 
-// Ruta para actualizar el perfil del usuario
 router.put("/cambiarperfil", async (req, res) => {
   const { usernameActual, username, email } = req.body;
 
@@ -19,7 +18,6 @@ router.put("/cambiarperfil", async (req, res) => {
     const usernameLower = username.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-
     if (usernameLower !== usernameActualLower) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
@@ -29,7 +27,6 @@ router.put("/cambiarperfil", async (req, res) => {
         return res.status(400).json({ error: "El nombre de usuario ya está registrado" });
       }
     }
-
 
     if (emailLower !== usernameActualLower) {
       const result = await conn.execute({

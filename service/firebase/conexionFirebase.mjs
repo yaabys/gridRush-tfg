@@ -91,10 +91,8 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
     const usernameLower = usernameNuevo.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-
     const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameLower);
-
 
     const q = query(collection(db, "gridrush_fb"), 
       where("username", "==", usernameActual)
