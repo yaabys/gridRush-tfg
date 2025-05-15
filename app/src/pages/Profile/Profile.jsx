@@ -14,6 +14,8 @@ const Perfil = () => {
   const [editandoCampo, setEditandoCampo] = useState(null); 
   const [nuevoValor, setNuevoValor] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [imagenSeleccionada, setImagenSeleccionada] = useState(null);
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -42,6 +44,24 @@ const Perfil = () => {
     obtenerPerfil();
   }, []);
 
+  useEffect(() => {
+    const obtenerAvatar = async () => {
+      try {
+        const response = await axios.get('/api/avatar', {
+          responseType: 'blob' // Muy importante para tratar la imagen como archivo
+        });
+
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+        console.log("Imagen cargada:", imageUrl);
+      } catch (error) {
+        console.error("Error al cargar avatar:", error);
+      }
+    };
+
+    obtenerAvatar();
+  }, []);
+
   const handleEditarUsername = () => {
     setEditandoCampo('username');
     setNuevoValor(usuario.username);
@@ -52,7 +72,22 @@ const Perfil = () => {
     setNuevoValor(usuario.email);
     setMensaje("");
   };
-  const handleEditarAvatar = () => alert('Función para cambiar foto de perfil');
+  const handleEditarAvatar = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const imageUrl = URL.createObjectURL(file);
+      setImagenSeleccionada({ file, url: imageUrl });
+      setEditandoCampo('avatar');
+    };
+
+    input.click();
+  };  
 
   const handleGuardarCambio = async () => {
     try {
@@ -137,10 +172,59 @@ const Perfil = () => {
 
         <div className="profile-content">
           <div className="profile-avatar">
-            <img src={usuario.avatar || "https://via.placeholder.com/150"} alt="Avatar" />
+            {imagenSeleccionada ? (
+              <img src={imagenSeleccionada.url} alt="Previsualización del avatar" />
+            ) : avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar cargado" />
+            ) : (
+              <p>Cargando imagen...</p>
+            )}
             <button className="edit-btn" onClick={handleEditarAvatar}>
               Cambiar Avatar
             </button>
+            {editandoCampo === 'avatar' && (
+              <div className="avatar-save">
+                <button
+                  className="edit-btn"
+                  onClick={async () => {
+                    const formData = new FormData();
+                    formData.append('file', imagenSeleccionada.file);
+
+                    try {
+                      await axios.post('/api/upload', formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                      });
+                      setMensaje('Imagen actualizada correctamente');
+                      setImagenSeleccionada(null);
+                      setEditandoCampo(null);
+
+                      // Recargar avatar
+                      const response = await axios.get('/api/avatar', {
+                        responseType: 'blob',
+                      });
+                      const imageUrl = URL.createObjectURL(response.data);
+                      setAvatarUrl(imageUrl);
+                    } catch (error) {
+                      console.error(error);
+                      setMensaje('Error al subir imagen');
+                    }
+                  }}
+                >
+                  Guardar Cambios
+                </button>
+                <button
+                  className="edit-btn"
+                  onClick={() => {
+                    setImagenSeleccionada(null);
+                    setEditandoCampo(null);
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="profile-info">
@@ -148,12 +232,20 @@ const Perfil = () => {
               <p>
                 <strong>Usuario:</strong>
                 {editandoCampo === 'username' ? (
-                  <input
-                    type="text"
-                    value={nuevoValor}
-                    onChange={(e) => setNuevoValor(e.target.value)}
-                    className="edit-input"
-                  />
+                  <div className="edit-inline">
+                    <input
+                      type="text"
+                      value={nuevoValor}
+                      onChange={(e) => setNuevoValor(e.target.value)}
+                      className="edit-input"
+                    />
+                    <button className="edit-btn" onClick={handleGuardarCambio}>
+                      Guardar
+                    </button>
+                    <button className="edit-btn" onClick={handleCancelar}>
+                      Cancelar
+                    </button>
+                  </div>
                 ) : (
                   <span>{usuario.username}</span>
                 )}
@@ -166,12 +258,20 @@ const Perfil = () => {
               <p>
                 <strong>Email:</strong>
                 {editandoCampo === 'email' ? (
-                  <input
-                    type="email"
-                    value={nuevoValor}
-                    onChange={(e) => setNuevoValor(e.target.value)}
-                    className="edit-input"
-                  />
+                  <div className="edit-inline">
+                    <input
+                      type="email"
+                      value={nuevoValor}
+                      onChange={(e) => setNuevoValor(e.target.value)}
+                      className="edit-input"
+                    />
+                    <button className="edit-btn" onClick={handleGuardarCambio}>
+                      Guardar
+                    </button>
+                    <button className="edit-btn" onClick={handleCancelar}>
+                      Cancelar
+                    </button>
+                  </div>
                 ) : (
                   <span>{usuario.email}</span>
                 )}

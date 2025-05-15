@@ -582,3 +582,43 @@
   }
 }
 
+.edit-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaciado entre elementos */
+}
+
+.edit-input {
+  padding: 5px;
+  font-size: 14px;
+}
+
+.edit-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.avatar-save {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px; 
+}
+
+.edit-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.avatar-save {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px; /* Espaciado entre los botones */
+}
+
+.edit-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
