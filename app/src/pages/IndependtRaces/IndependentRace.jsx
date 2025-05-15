@@ -51,6 +51,23 @@ const IndependentRace = () => {
     return coincideNivel && coincideComunidad;
   });
 
+  const handleReservar = async (carreraId) => {
+    try {
+      const username = localStorage.getItem("username"); // O usar contexto
+      const response = await axios.put('/api/reservar-carreraLibre', { idCarrera: carreraId, username });
+  
+      if (response.data.success) {
+        alert("Reserva realizada con éxito");
+        // Opcional: recargar carreras
+      } else if (response.data.inscrito) {
+        alert("Ya estás inscrito en esta carrera");
+      }
+    } catch (err) {
+      console.error('Error al reservar plaza:', err);
+      alert("Ocurrió un error al reservar");
+    }
+  };  
+
   return (
     <div className='independentRace'>
       <Header />
@@ -93,7 +110,10 @@ const IndependentRace = () => {
                 <p><strong>⏰ Horario:</strong> {carrera.horario}</p>
                 <p><strong>🎯 Nivel:</strong> {carrera.nivel}</p>
                 <p><strong>👥 Plazas:</strong> {carrera.plazasOcupadas}/{carrera.plazasTotales}</p>
-                <button disabled={carrera.plazasOcupadas >= carrera.plazasTotales}>
+                <button 
+                  disabled={carrera.plazasOcupadas >= carrera.plazasTotales} 
+                  onClick={() => handleReservar(carrera.id)}
+                >
                   {carrera.plazasOcupadas >= carrera.plazasTotales ? 'Completo' : 'Reservar Plaza'}
                 </button>
               </div>

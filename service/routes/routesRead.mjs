@@ -42,8 +42,6 @@ router.get('/temporada-actual', async (req, res) => {
     const result = await conn.execute(
       "SELECT * FROM Temporadas"
     );
-    console.log('▶️ Resultado:', JSON.stringify(result, null, 2));
-
 
     const temporadas = result.rows;
 
@@ -63,7 +61,6 @@ router.get('/temporada-actual', async (req, res) => {
 
     return res.json(temporadas[0]);
   } catch (error) {
-    console.error('💥 Error al obtener temporada actual:', error);
     return res.status(500).json({ error: 'Error del servidor' });
   }
 });
@@ -73,8 +70,7 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
   try {
     const { temporadaId } = req.params;
 
-    // Obtener las recompensas asociadas a la temporada
-    const [recompensas] = await conn.execute(
+    const result = await conn.execute(
       `SELECT tr.id, tr.nombre_recompensa, tr.descripcion, tr.posicion_min, tr.posicion_max, r.nombre as nombre_base, r.imagen 
        FROM TemporadaRecompensas tr 
        JOIN Recompensas r ON tr.id_recompensa = r.id 
@@ -83,6 +79,8 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
       [temporadaId]
     );
 
+    let recompensas = result.rows;
+
     return res.json(recompensas);
   } catch (error) {
     console.error("Error al obtener recompensas:", error);
@@ -90,13 +88,11 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
   }
 });
 
-// Ruta para obtener el ranking de una temporada
 router.get("/ranking/:temporadaId", async (req, res) => {
   try {
     const { temporadaId } = req.params;
 
-    // Obtener el ranking de usuarios en la temporada
-    const [ranking] = await conn.execute(
+    const result = await conn.execute(
       `SELECT u.username, u.nombre, u.apellidos, tu.puntos 
        FROM TemporadaUsuarios tu 
        JOIN Usuarios u ON tu.id_piloto = u.id 
@@ -106,6 +102,8 @@ router.get("/ranking/:temporadaId", async (req, res) => {
       [temporadaId]
     );
 
+    let ranking = result.rows;
+
     return res.json(ranking);
   } catch (error) {
     console.error("Error al obtener ranking:", error);
@@ -113,9 +111,6 @@ router.get("/ranking/:temporadaId", async (req, res) => {
   }
 });
 
-
-
-// Ruta para obtener los kartings
 router.get("/kartings", async (req, res) => {
   try {
     if (!conn) {
@@ -123,19 +118,15 @@ router.get("/kartings", async (req, res) => {
       return res.status(500).json({ error: "Error de conexión a la base de datos" });
     }
 
-
     const kartings = await conn.execute(
       `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
     );
 
     const kartingRows = kartings.rows
 
-    console.log('▶️ Resultado:', JSON.stringify(kartingRows, null, 2));
-    // Verificamos si se obtuvieron resultados
     if (!Array.isArray(kartingRows) || kartingRows.length === 0) {
       return res.status(404).json({ error: "No se encontraron circuitos de karting" });
     }
-    // Devolvemos los circuitos de karting
     res.json(kartingRows);
 
   } catch (error) {
@@ -147,8 +138,6 @@ router.get("/kartings", async (req, res) => {
   }
 });
 
-
-// Consulta los torneos oficiales
 router.get("/torneos", async (req, res) => {
   try {
     if (!conn) {
@@ -156,7 +145,6 @@ router.get("/torneos", async (req, res) => {
       return res.status(500).json({ error: "Error de conexión a la base de datos" });
     }
 
-    // Consulta los torneos oficiales
     const torneos = await conn.execute(`
           SELECT 
             t.id,
@@ -181,14 +169,10 @@ router.get("/torneos", async (req, res) => {
 
     const torneosRows = torneos.rows;
 
-    console.log('▶️ Resultado torneos:', JSON.stringify(torneosRows, null, 2));
-
-    // Verificamos si se obtuvieron resultados
     if (!Array.isArray(torneosRows) || torneosRows.length === 0) {
       return res.status(404).json({ error: "No se encontraron torneos oficiales" });
     }
 
-    // Devolvemos los torneos
     res.json(torneosRows);
 
   } catch (error) {
@@ -200,7 +184,6 @@ router.get("/torneos", async (req, res) => {
   }
 });
 
-// Ruta para obtener carreras libres
 router.get("/carreras-libres", async (req, res) => {
   try {
     const result = await conn.execute(`
@@ -212,9 +195,9 @@ router.get("/carreras-libres", async (req, res) => {
   strftime('%d/%m/%Y', c.fecha) AS fechaFormateada,
   '--:-- - --:--' AS horario,
   CASE 
-    WHEN c.nivelMin = 1 THEN 'Principiante'
-    WHEN c.nivelMin = 2 THEN 'Intermedio'
-    WHEN c.nivelMin = 3 THEN 'Avanzado'
+    WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
+    WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
+    WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
     ELSE 'Desconocido'
   END AS nivel,
   (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
@@ -239,8 +222,5 @@ ORDER BY c.fecha ASC
     res.status(500).json({ error: "Error al obtener las carreras libres" });
   }
 });
-
-
-
 
 export default router;

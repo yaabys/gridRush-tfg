@@ -41,6 +41,7 @@ const Seasons = () => {
 
         const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`);
         setRanking(rankingResponse.data);
+        
       } catch (err) {
         setError('Error al cargar los datos. Por favor, inténtalo de nuevo más tarde.');
         console.error('Error:', err);
@@ -109,7 +110,7 @@ const Seasons = () => {
                     {ranking.map((piloto, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{piloto.nombre} {piloto.apellidos}</td>
+                        <td>{piloto.username}</td>
                         <td>{piloto.puntos}</td>
                       </tr>
                     ))}

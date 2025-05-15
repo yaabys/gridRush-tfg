@@ -62,7 +62,7 @@ const Tracks = () => {
         ) : (
           <div className="tracks-container">
             <div className="tracks-header">
-              <h2>Pistas de Karting en Madrid</h2>
+              <h2>Pistas de Karting</h2>
               <p>Descubre los mejores circuitos para poner a prueba tus habilidades</p>
             </div>
 
@@ -75,8 +75,8 @@ const Tracks = () => {
                 >
                   <h3>{pista.nombre}</h3>
                   <div className="track-details">
+                    <p><a href={pista.link} target="_blank"><span>🗺️ Maps</span> {pista.direccion}</a></p>
                     <p><span>📍 Ubicación:</span> {pista.ubicacion}</p>
-                    <p><a href={pista.link} target="_blank"><span>🗺️ Maps:</span> {pista.direccion}</a></p>
                   </div>
                 </div>
               ))}
