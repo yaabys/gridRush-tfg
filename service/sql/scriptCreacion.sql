@@ -10,6 +10,7 @@ CREATE TABLE Usuarios (
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     fotoPerfil BLOB, -- imagen JPG/PNG
+    avatar_tipo TEXT,
     carrerasVictorias INTEGER DEFAULT 0,
     torneosVictorias INTEGER DEFAULT 0,
     provincia TEXT,

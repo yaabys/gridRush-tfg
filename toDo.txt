@@ -4,7 +4,7 @@
 
 - 8 Mayo
 
-- Cambiar el favicon (logo inicio sesion)
+- Cambiar el favicon (logo inicio sesion) HECHOOOOOOOOOOOOOOOOOOO
 
 - Mirar bien como funcionan las sesiones y si las estamos utilizando bien
 

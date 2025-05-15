@@ -4,6 +4,7 @@ import rutasEliminar from "./routes/routesDelete.mjs"
 import rutasRead from "./routes/routesRead.mjs"
 import rutasModificar from "./routes/routesUpdate.mjs"
 import rutasRegister from "./routes/routesRegister.mjs"
+import rutasUploadFoto from "./routes/routesUploadFoto.mjs"
 import express from 'express'
 
 const app = express()
@@ -19,6 +20,7 @@ app.use("/api",rutasEliminar)
 app.use("/api",rutasModificar)
 app.use("/api", rutasRegister)
 app.use("/api", rutasRead)
+app.use("/api",rutasUploadFoto)
 
 app.get("/", (req, res) =>{
     res.sendStatus(200)
