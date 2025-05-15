@@ -4,6 +4,10 @@
 
 - 8 Mayo
 
+- Cambiar el favicon
+
+- Mirar bien como funcionan las sesiones y si las estamos utilizando bien
+
 - Crear dos actualizarFirebase uno para el nombre y otro para el email.
   Que el boton de guardar cambios y cancelar se ponga al lado de lo que quieras eliminar.
 
