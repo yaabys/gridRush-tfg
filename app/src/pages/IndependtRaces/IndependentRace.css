@@ -132,6 +132,208 @@
   animation: shine 0.75s linear;
 }
 
+
+.card-carrera button.btn-desapuntarse {
+  background-color: #dc3545;
+  color: white;
+}
+
+.card-carrera button.btn-desapuntarse:hover {
+  background-color: #c82333;
+}
+
+.card-carrera button.btn-desapuntarse:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilos del Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.modal-header.success { 
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+}
+
+.modal-header.error { 
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
+}
+
+.modal-header.warning { 
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); 
+}
+
+.modal-header.info { 
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-body p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn.cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.modal-btn.cancel:hover {
+  background: #5a6268;
+}
+
+.modal-btn.confirm {
+  color: white;
+}
+
+.modal-btn.confirm.success { 
+  background: #28a745; 
+}
+
+.modal-btn.confirm.success:hover { 
+  background: #218838; 
+}
+
+.modal-btn.confirm.error { 
+  background: #dc3545; 
+}
+
+.modal-btn.confirm.error:hover { 
+  background: #c82333; 
+}
+
+.modal-btn.confirm.warning { 
+  background: #ffc107; 
+  color: #212529; 
+}
+
+.modal-btn.confirm.warning:hover { 
+  background: #e0a800; 
+}
+
+.modal-btn.confirm.info { 
+  background: #007bff; 
+}
+
+.modal-btn.confirm.info:hover { 
+  background: #0056b3; 
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos adicionales para el botón de desapuntarse */
+.card-carrera button.btn-desapuntarse {
+  background-color: #dc3545;
+  color: white;
+}
+
+.card-carrera button.btn-desapuntarse:hover {
+  background-color: #c82333;
+}
+
+.card-carrera button.btn-desapuntarse:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .card-carrera:nth-child(1) {
   animation-delay: 0.1s;
 }

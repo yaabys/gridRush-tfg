@@ -79,11 +79,10 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 });
 
+
+
 router.put("/reservar-carreraLibre", async (req, res) => {
-
-  const username = req.session.usuario?.username;
-
-  const { idCarrera } = req.body;
+  const { idCarrera, username } = req.body;
 
   if (!idCarrera || !username) {
     return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -98,7 +97,6 @@ router.put("/reservar-carreraLibre", async (req, res) => {
 
     if (userResult.rows.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });
-      console.log("Usuario no encontrado");
     }
 
     const idUsuario = userResult.rows[0].id;
@@ -113,10 +111,8 @@ router.put("/reservar-carreraLibre", async (req, res) => {
       return res.status(200).json({
         success: false,
         message: "El usuario ya está inscrito en esta carrera",
-        inscrito: true,
-  
+        inscrito: true
       });
-      console.log("El usuario ya está inscrito en esta carrera");
     }
 
     // Hacer la inscripción
@@ -136,4 +132,39 @@ router.put("/reservar-carreraLibre", async (req, res) => {
   }
 });
 
+router.post("/check-inscripcion", async (req, res) => {
+  const { username, idCarrera } = req.body;
+
+  if (!username || !idCarrera) {
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
+  }
+
+  try {
+    // Obtener ID del usuario
+    const userResult = await conn.execute({
+      sql: "SELECT id FROM Usuarios WHERE username = ?",
+      args: [username]
+    });
+
+    if (userResult.rows.length === 0) {
+      return res.json({ inscrito: false });
+    }
+
+    const idUsuario = userResult.rows[0].id;
+
+    // Verificar inscripción
+    const inscripcionResult = await conn.execute({
+      sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
+      args: [idCarrera, idUsuario]
+    });
+
+    return res.json({ inscrito: inscripcionResult.rows.length > 0 });
+  } catch (error) {
+    console.error("Error al verificar inscripción:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
 export default router;
+
+
