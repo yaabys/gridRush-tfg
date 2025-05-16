@@ -8,6 +8,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [animateStats, setAnimateStats] = useState(false);
 
   // Inicializa userData con valores por defecto
   const [userData, setUserData] = useState({
@@ -66,6 +67,11 @@ const Index = () => {
         });
         
         setLoading(false);
+        
+        // Retrasar la animación de las estadísticas para efecto visual
+        setTimeout(() => {
+          setAnimateStats(true);
+        }, 500);
       } catch (err) {
         console.error("Error al obtener perfil:", err);
         setError("No se pudo cargar el perfil. ¿Estás logueado?");
@@ -76,13 +82,22 @@ const Index = () => {
     obtenerPerfil();
   }, []);
 
+  // Función para mostrar iconos según el tipo de torneo
+  const getTournamentEmoji = (nombreTorneo) => {
+    if (nombreTorneo.toLowerCase().includes('campeonato')) return '🏆';
+    if (nombreTorneo.toLowerCase().includes('copa')) return '🏁';
+    if (nombreTorneo.toLowerCase().includes('gran premio')) return '🏎️';
+    return '🏆';
+  };
+
   if (loading) {
     return (
       <>
         <Header />
         <div className='main-container'>
           <div className='loading-message'>
-            <p>Cargando datos del usuario...</p>
+            <div className="loading-icon">🏎️</div>
+            <p>Cargando tu panel de control...</p>
           </div>
         </div>
       </>
@@ -95,6 +110,7 @@ const Index = () => {
         <Header />
         <div className='main-container'>
           <div className='error-message'>
+            <div className="error-icon">⚠️</div>
             <p>{error}</p>
             <button onClick={() => navigate('/registro')}>Ir a Registro</button>
           </div>
@@ -128,28 +144,28 @@ const Index = () => {
           <section className='stats-section'>
             <h2>Estadísticas</h2>
             <div className='stats-grid'>
-              <div className='stat-card'>
+              <div className={`stat-card ${animateStats ? 'animate' : ''}`}>
                 <div className='stat-icon'>⏱️</div>
                 <div className='stat-content'>
                   <h3>Mejor Tiempo</h3>
                   <p className='stat-value'>{userData.mejorTiempo}</p>
                 </div>
               </div>
-              <div className='stat-card'>
+              <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.1s' }}>
                 <div className='stat-icon'>🏅</div>
                 <div className='stat-content'>
                   <h3>Ranking Global</h3>
-                  <p className='stat-value'>{userData.ranking}º de {userData.totalPilotos}</p>
+                  <p className='stat-value'>{userData.ranking}º <span className="stat-subtitle">de {userData.totalPilotos}</span></p>
                 </div>
               </div>
-              <div className='stat-card'>
+              <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.2s' }}>
                 <div className='stat-icon'>🏢</div>
                 <div className='stat-content'>
                   <h3>Circuitos Visitados</h3>
                   <p className='stat-value'>{userData.circuitosVisitados}</p>
                 </div>
               </div>
-              <div className='stat-card'>
+              <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.3s' }}>
                 <div className='stat-icon'>🚗</div>
                 <div className='stat-content'>
                   <h3>Carreras Totales</h3>
@@ -170,7 +186,7 @@ const Index = () => {
               <div className='progress-container'>
                 <div className='progress-bar'>
                   <div 
-                    className='progress-fill' 
+                    className={`progress-fill ${animateStats ? 'animate' : ''}`}
                     style={{ width: `${(userData.objetivoSemanal.completado / userData.objetivoSemanal.total) * 100}%` }}
                   ></div>
                 </div>
@@ -188,13 +204,13 @@ const Index = () => {
             <section className='tournaments-section'>
               <h2>Próximos Torneos</h2>
               <div className='tournaments-grid'>
-                {userData.proximosTorneos.map(torneo => (
-                  <div key={torneo.id} className='tournament-card'>
+                {userData.proximosTorneos.map((torneo, index) => (
+                  <div key={torneo.id} className='tournament-card' style={{ animationDelay: `${0.1 * index}s` }}>
                     <div className='tournament-header'>
-                      <h3>{torneo.nombre}</h3>
+                      <h3>{getTournamentEmoji(torneo.nombre)} {torneo.nombre}</h3>
                       <span className='tournament-date'>{torneo.fecha}</span>
                     </div>
-                    <p className='tournament-location'>📍 {torneo.karting}</p>
+                    <p className='tournament-location'>{torneo.karting}</p>
                     <Link to={`/torneo/${torneo.id}`} className='tournament-link'>
                       Ver detalles
                     </Link>
@@ -208,8 +224,12 @@ const Index = () => {
             <section className='suggestions-section'>
               <h2>Recomendados para ti</h2>
               <div className='suggestions-grid'>
-                {userData.sugerencias.map(sugerencia => (
-                  <div key={sugerencia.id} className={`suggestion-card ${sugerencia.destacado ? 'highlighted' : ''}`}>
+                {userData.sugerencias.map((sugerencia, index) => (
+                  <div 
+                    key={sugerencia.id} 
+                    className={`suggestion-card ${sugerencia.destacado ? 'highlighted' : ''}`}
+                    style={{ animationDelay: `${0.15 * index}s` }}
+                  >
                     {sugerencia.tipo === 'carrera' ? (
                       <>
                         <div className='suggestion-icon'>🔥</div>
