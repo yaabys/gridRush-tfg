@@ -138,6 +138,16 @@
   color: white;
 }
 
+.main-container {
+  padding: 6rem 2rem;
+  background-color: e;
+  min-height: 50vh;
+  min-width: 100vh;
+  color: var(--color-text);
+  width: 80%;
+  margin: 0 auto;
+}
+
 .card-carrera button.btn-desapuntarse:hover {
   background-color: #c82333;
 }

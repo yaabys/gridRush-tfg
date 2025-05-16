@@ -77,7 +77,7 @@ const OfficialTournaments = () => {
   return (
     <div className='officialTournaments'>
       <Header />
-      <div className='officialTournaments__container'>
+      <div className='main-container'>
         <h1>Torneos Oficiales</h1>
         <p>Filtra por nivel y comunidad para encontrar tu próximo reto.</p>
 
