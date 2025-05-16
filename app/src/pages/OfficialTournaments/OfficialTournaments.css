@@ -6,6 +6,8 @@
   justify-content: center;
 }
 
+
+
 .filters label {
 display: flex;
 flex-direction: column;
@@ -28,10 +30,14 @@ color: var(--color-text);
 min-height: 100vh;
 }
 
-.officialTournaments__container {
-max-width: 1000px;
-margin: 0 auto;
-padding: 2rem;
+.main-container {
+  padding: 6rem 2rem;
+  background-color: e;
+  min-height: 50vh;
+  min-width: 100vh;
+  color: var(--color-text);
+  width: 80%;
+  margin: 0 auto;
 }
 
 .officialTournaments__container h1 {

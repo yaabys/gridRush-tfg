@@ -317,17 +317,6 @@ const Perfil = () => {
           </div>
         </div>
 
-        {editandoCampo && (
-          <div className="edit-form">
-            <button className="edit-btn" onClick={handleGuardarCambio}>
-              Guardar Cambios
-            </button>
-            <button className="edit-btn" onClick={handleCancelar}>
-              Cancelar
-            </button>
-          </div>
-        )}
-
         {mensaje && <p className="mensaje">{mensaje}</p>}
       </div>
     </>

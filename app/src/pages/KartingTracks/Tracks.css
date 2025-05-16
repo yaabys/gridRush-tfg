@@ -1,9 +1,10 @@
 .main-container {
   padding: 6rem 2rem;
-  background-color: var(--color-bg);
-  min-height: 100vh;
+  background-color: e;
+  min-height: 50vh;
+  min-width: 100vh;
   color: var(--color-text);
-  max-width: 1000px;
+  width: 80%;
   margin: 0 auto;
 }
 

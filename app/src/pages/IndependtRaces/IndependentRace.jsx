@@ -185,7 +185,7 @@ const IndependentRace = () => {
   return (
     <div className='independentRace'>
       <Header />
-      <div className='independentRace__container'>
+      <div className='main-container'>
         <h1>Carreras Libres</h1>
         <p>Encuentra tu próxima carrera libre en los mejores kartings.</p>
 

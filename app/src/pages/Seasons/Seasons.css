@@ -1,14 +1,13 @@
-/* Variables globales */
+
 :root {
   --transition-speed: 0.3s;
   --hover-scale: 1.05;
   --card-shadow: 0 8px 24px rgba(0,0,0,0.2);
   --card-hover-shadow: 0 12px 32px rgba(0,0,0,0.3);
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-  --glow-effect: 0 0 20px rgba(255, 0, 0, 0.5);
+  --glow-effect: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
-/* Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -29,13 +28,6 @@
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
-}
-
-.main-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0.95) 100%);
-  padding-top: 80px;
-  width: 100%;
 }
 
 .seasons-container {

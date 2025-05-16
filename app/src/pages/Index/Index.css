@@ -32,8 +32,9 @@
 .error-message button:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(var(--color-primary-rgb), 0.5);
-}.main-container {
-  padding: 8rem 3rem 3rem;
+}
+.main-container {
+  padding: 8rem 0rem 3rem;
   background-color: var(--color-bg);
   /* Añadir un degradado sutil como fondo */
   background-image: 
@@ -178,6 +179,7 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2rem;
+  
 }
 
 .dashboard-grid > section {
