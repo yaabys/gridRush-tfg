@@ -50,7 +50,7 @@ router.get("/avatar", async (req, res) => {
             [username]
         );
 
-        const rows = result.rows || result[0]; // Ajusta según el formato de retorno de `conn.execute`
+        const rows = result.rows || result[0];
 
         if (!rows.length || !rows[0].fotoPerfil) {
             return res.status(404).json({ message: "Imagen no encontrada" });

@@ -4,13 +4,9 @@
 
 - 8 Mayo
 
-- Cambiar el favicon (logo inicio sesion) HECHOOOOOOOOOOOOOOOOOOO
-
 - Mirar bien como funcionan las sesiones y si las estamos utilizando bien
 
 - Crear dos actualizarFirebase uno para el nombre y otro para el email.
   Que el boton de guardar cambios y cancelar se ponga al lado de lo que quieras eliminar.
 
 - Enviar un correo cuando te registres o cuando cambies el correo por ejemplo que te pida X numeros para confirmar.
-
-- Mirar lo de cambiar la foto de perfil
