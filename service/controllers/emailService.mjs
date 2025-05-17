@@ -37,7 +37,6 @@ export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
       html: `
         <h1>¡Hola, ${nombreUsuario}!</h1>
         <p>Gracias por unirte a <strong>GridRush</strong>, la plataforma definitiva para los amantes del karting.</p>
-        <img src="http://localhost:3000/public/img/kart.png" alt="Bienvenido a GridRush" style="width:100%; max-width:600px; margin:20px 0;" />
         <p>Ahora puedes explorar carreras, competir con otros pilotos y mejorar tu nivel de Elo.</p>
         <p>Prepárate para la emoción de la pista y demuestra tus habilidades al volante.</p>
         <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
