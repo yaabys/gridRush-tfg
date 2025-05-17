@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import express from "express";
+
+const app = express();
 
 const CLIENT_ID = process.env.ID_CLIENT_GOOGLE;
 const CLIENT_SECRET = process.env.SECRET_CLIENT_GOOGLE;
@@ -8,6 +11,8 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+app.use('/public', express.static('public'));
 
 export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
   try {
@@ -38,7 +43,7 @@ export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
         <p>¡Nos vemos en la pista!</p>
         <p>Atentamente,</p>
         <p>El equipo de GridRush</p>
-      `, 
+      `,
     });
 
     console.log("Correo enviado: %s", info.messageId);
