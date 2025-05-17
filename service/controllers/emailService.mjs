@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import express from "express";
+
+const app = express();
 
 const CLIENT_ID = process.env.ID_CLIENT_GOOGLE;
 const CLIENT_SECRET = process.env.SECRET_CLIENT_GOOGLE;
