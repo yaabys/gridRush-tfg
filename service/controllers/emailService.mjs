@@ -6,15 +6,12 @@ const CLIENT_SECRET = process.env.SECRET_CLIENT_GOOGLE;
 const REDIRECT_URI = "http://localhost";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
-console.log({ CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN });
-
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
-    console.log("Access Token:", accessToken.token);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
