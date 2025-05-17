@@ -3,6 +3,7 @@ import { registrarFirebase,comprobarLogin } from "../firebase/conexionFirebase.m
 import { comprobarUser,hashearPassword,comprobarEmail,comprobarSesion } from "../controllers/userController.mjs"
 import { conn } from "../sql/conexionSQL.mjs"
 import session from "express-session"
+import { enviarCorreoRegistro } from "../controllers/emailService.mjs";
 
 const router = express.Router();
 
@@ -54,6 +55,8 @@ router.post("/register", async (req, res) => {
     if (!firebaseResult) {
       return res.status(500).json({ success: false, error: 'Error al registrar en Firebase' });
     }
+
+    await enviarCorreoRegistro(email, username);
 
     const sql = `INSERT INTO Usuarios (username, nombre, apellidos, email, password, provincia, fechaNacimiento)
                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
