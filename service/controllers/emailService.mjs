@@ -9,6 +9,8 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+app.use('/public', express.static('public'));
+
 export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
@@ -32,13 +34,14 @@ export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
       html: `
         <h1>¡Hola, ${nombreUsuario}!</h1>
         <p>Gracias por unirte a <strong>GridRush</strong>, la plataforma definitiva para los amantes del karting.</p>
+        <img src="http://localhost:3000/public/img/kart.png" alt="Bienvenido a GridRush" style="width:100%; max-width:600px; margin:20px 0;" />
         <p>Ahora puedes explorar carreras, competir con otros pilotos y mejorar tu nivel de Elo.</p>
         <p>Prepárate para la emoción de la pista y demuestra tus habilidades al volante.</p>
         <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
         <p>¡Nos vemos en la pista!</p>
         <p>Atentamente,</p>
         <p>El equipo de GridRush</p>
-      `, 
+      `,
     });
 
     console.log("Correo enviado: %s", info.messageId);
