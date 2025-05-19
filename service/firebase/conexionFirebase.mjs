@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import { getFirestore, collection, doc, getDoc,getDocs, setDoc, query,where} from "firebase/firestore"
 import { hashearPassword } from "../controllers/userController.mjs"
 import { deleteDoc } from 'firebase/firestore'; 
+import { conn } from "../sql/conexionSQL.mjs";
 
 const firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -85,18 +86,21 @@ export const comprobarLogin = async (username, password) => {
   }
 };
 
-export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNuevo) => {
+export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) => {
   try {
-    const emailLower = emailNuevo.toLowerCase();
     const usernameLower = usernameNuevo.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-    const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameLower);
 
-    const q = query(collection(db, "gridrush_fb"), 
-      where("username", "==", usernameActual)
-    );
+    // Comprobar si el nuevo username ya existe
+    const usernameDoc = await getDoc(usernameDocRef);
+    if (usernameDoc.exists()) {
+      return { success: false, error: "El nombre de usuario ya está registrado." };
+    }
+
+    // Buscar el usuario actual en Firebase
+    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
     const result = await getDocs(q);
 
     if (result.empty) {
@@ -105,41 +109,72 @@ export const actualizarFirebase = async (usernameActual, usernameNuevo, emailNue
 
     const userDoc = result.docs[0];
     const userData = userDoc.data();
-    const emailActualLower = userData.email.toLowerCase();
-
-    // Comprobar si el nuevo username ya existe
-    if (usernameLower !== usernameActualLower) {
-      const usernameDoc = await getDoc(usernameDocRef);
-      if (usernameDoc.exists()) {
-        return { success: false, error: "El nombre de usuario ya está registrado." };
-      }
-    }
-
-    // Comprobar si el nuevo email ya existe 
-    if (emailLower !== emailActualLower) {
-      const emailDoc = await getDoc(emailDocRef);
-      if (emailDoc.exists()) {
-        return { success: false, error: "El correo ya está registrado." };
-      }
-    }
-
 
     const nuevosDatos = {
       ...userData,
       username: usernameNuevo,
-      email: emailLower
     };
 
-    // Guardar en los nuevos documentos
-    await setDoc(emailDocRef, nuevosDatos);
+    // Guardar en el nuevo documento en Firebase
     await setDoc(usernameDocRef, nuevosDatos);
+
+    // Eliminar el documento antiguo en Firebase
+    await deleteDoc(doc(collection(db, "gridrush_fb"), userDoc.id));
+
+    // Actualizar en SQL
+    const resultadoSQL = await conn.execute({
+      sql: "UPDATE Usuarios SET username = ? WHERE username = ?",
+      args: [usernameNuevo, usernameActual]
+    });
+
+    if (resultadoSQL.affectedRows === 0) {
+      return { success: false, error: "No se pudo actualizar el nombre de usuario en SQL." };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error en actualizarUsernameFirebase:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
+  try {
+    const emailLower = emailNuevo.toLowerCase();
+
+    const emailDocRef = doc(collection(db, "gridrush_fb"), emailLower);
+
+    // Comprobar si el nuevo email ya existe
+    const emailDoc = await getDoc(emailDocRef);
+    if (emailDoc.exists()) {
+      return { success: false, error: "El correo ya está registrado." };
+    }
+
+    // Buscar el usuario actual
+    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
+    const result = await getDocs(q);
+
+    if (result.empty) {
+      return { success: false, error: "Usuario no encontrado en Firebase." };
+    }
+
+    const userDoc = result.docs[0];
+    const userData = userDoc.data();
+
+    const nuevosDatos = {
+      ...userData,
+      email: emailLower,
+    };
+
+    // Guardar en el nuevo documento
+    await setDoc(emailDocRef, nuevosDatos);
 
     // Eliminar el documento antiguo
     await deleteDoc(doc(collection(db, "gridrush_fb"), userDoc.id));
 
     return { success: true };
   } catch (error) {
-    console.error("Error en actualizarFirebase:", error);
+    console.error("Error en actualizarEmailFirebase:", error);
     return { success: false, error: error.message };
   }
-}
+};

@@ -1,24 +1,25 @@
 import express from "express";
 import { actualizarPerfil } from "../controllers/userController.mjs";
 import { conn } from "../sql/conexionSQL.mjs";
-import { actualizarFirebase } from "../firebase/conexionFirebase.mjs";
+import { actualizarUsernameFirebase, actualizarEmailFirebase } from "../firebase/conexionFirebase.mjs";
+import session from "express-session";
 
 const router = express.Router();
 
 router.put("/cambiarperfil", async (req, res) => {
   const { usernameActual, username, email } = req.body;
 
-  if (!usernameActual || !username || !email) {
+  if (!usernameActual || (!username && !email)) {
     return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
 
   try {
-
-    const emailLower = email.toLowerCase();
-    const usernameLower = username.toLowerCase();
+    const emailLower = email?.toLowerCase();
+    const usernameLower = username?.toLowerCase();
     const usernameActualLower = usernameActual.toLowerCase();
 
-    if (usernameLower !== usernameActualLower) {
+    // Verificar si el nuevo nombre de usuario ya está registrado
+    if (username && usernameLower !== usernameActualLower) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
         args: [username, usernameActual]
@@ -28,7 +29,8 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    if (emailLower !== usernameActualLower) {
+    // Verificar si el nuevo correo ya está registrado
+    if (email) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE email = ? AND username != ?",
         args: [email, usernameActual]
@@ -38,40 +40,29 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    const resultadoFirebase = await actualizarFirebase(usernameActual, username, email);
-    if (!resultadoFirebase.success) {
-      return res.status(400).json({ error: resultadoFirebase.error });
+    // Actualizar en Firebase
+    if (username && usernameLower !== usernameActualLower) {
+      const resultadoFirebaseUsername = await actualizarUsernameFirebase(usernameActual, username);
+      if (!resultadoFirebaseUsername.success) {
+        return res.status(400).json({ error: resultadoFirebaseUsername.error });
+      }
     }
 
-    // Si Firebase se actualizó correctamente, actualizamos en la base de datos SQL
-    const result = await conn.execute({
-      sql: "SELECT id FROM Usuarios WHERE username = ?",
-      args: [usernameActual]
-    });
-    
-    if (!result.rows.length) {
-      await actualizarFirebase(username, usernameActual, email);
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-    
-    const id = result.rows[0].id;
-    const resultado = await actualizarPerfil(id, username, email);
-    
-    if (!resultado.success) {
-      await actualizarFirebase(username, usernameActual, email);
-      return res.status(400).json({ error: resultado.error });
+    if (email) {
+      const resultadoFirebaseEmail = await actualizarEmailFirebase(usernameActual, email);
+      if (!resultadoFirebaseEmail.success) {
+        return res.status(400).json({ error: resultadoFirebaseEmail.error });
+      }
     }
 
-    // Devolvemos el usuario actualizado
-    const usuarioActualizado = await conn.execute({
-      sql: "SELECT * FROM Usuarios WHERE id = ?",
-      args: [id]
-    });
+    // Actualizar la sesión si el nombre de usuario cambia
+    if (username && usernameLower !== usernameActualLower) {
+      await setSession(req, res, username);
+    }
 
-    res.json({ 
-      success: true, 
-      mensaje: "Perfil actualizado correctamente",
-      usuario: usuarioActualizado.rows[0]
+    res.json({
+      success: true,
+      mensaje: "Perfil actualizado correctamente"
     });
   } catch (error) {
     console.error("Error en actualización:", error);

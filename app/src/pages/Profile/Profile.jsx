@@ -96,21 +96,21 @@ const Perfil = () => {
         username: editandoCampo === 'username' ? nuevoValor : usuario.username,
         email: editandoCampo === 'email' ? nuevoValor : usuario.email
       };
-      console.log('Enviando payload:', payload);
 
       const res = await axios.put('/api/cambiarperfil', payload);
-      
 
-      if (res.data.usuario) {
-        setUsuario(res.data.usuario);
+      if (res.data.success) {
+        const response = await axios.get("/api/perfil");
+        setUsuario(response.data);
+        setMensaje('¡Perfil actualizado correctamente!');
       }
-
-      setMensaje('¡Perfil actualizado correctamente!');
-      setEditandoCampo(null);
-      setMostrarOpciones(false);
     } catch (err) {
       console.error(err);
       setMensaje(err.response?.data?.error || 'Error al actualizar el perfil');
+    } finally {
+      // Asegúrate de cerrar el modo de edición incluso si hay un error
+      setEditandoCampo(null);
+      setMostrarOpciones(false);
     }
   };
 
