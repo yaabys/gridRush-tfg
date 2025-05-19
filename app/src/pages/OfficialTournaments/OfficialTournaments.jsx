@@ -10,12 +10,30 @@ const OfficialTournaments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [inscripciones, setInscripciones] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalType, setModalType] = useState('');
   const [nivelSeleccionado, setNivelSeleccionado] = useState('');
   const [comunidadSeleccionada, setComunidadSeleccionada] = useState('');
-  const [modalAction, setModalAction] = useState(null);
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null
+  });
+
+  const showModal = (title, message, type = 'info', onConfirm = null) => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      type,
+      onConfirm
+    });
+  };
+
+  const closeModal = () => {
+    setModal(prev => ({ ...prev, isOpen: false }));
+  };
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -39,8 +57,7 @@ const OfficialTournaments = () => {
 
         const response = await axios.get('/api/torneos');
         setTorneos(response.data);
-        
-        // Verificar inscripciones para cada torneo
+
         const username = localStorage.getItem('username');
         if (username) {
           const inscripcionesPromises = response.data.map(torneo =>
@@ -49,7 +66,7 @@ const OfficialTournaments = () => {
               idTorneo: torneo.id
             })
           );
-          
+
           const inscripcionesResults = await Promise.all(inscripcionesPromises);
           const inscripcionesMap = {};
           response.data.forEach((torneo, index) => {
@@ -68,13 +85,8 @@ const OfficialTournaments = () => {
     fetchTorneos();
   }, []);
 
-  // Niveles predefinidos según tu sistema
   const niveles = ['Principiante', 'Intermedio', 'Avanzado'];
-
-  // Obtenemos las comunidades únicas de los torneos cargados
-  const comunidades = torneos.length > 0
-    ? [...new Set(torneos.map(t => t.comunidad))]
-    : [];
+  const comunidades = torneos.length > 0 ? [...new Set(torneos.map(t => t.comunidad))] : [];
 
   const torneosFiltrados = torneos.filter(t => {
     const coincideNivel = nivelSeleccionado ? t.nivelMinimo === nivelSeleccionado : true;
@@ -90,9 +102,7 @@ const OfficialTournaments = () => {
     try {
       const response = await axios.get('/api/comprobarSesion');
       if (!response.data.logueado) {
-        setModalMessage('Debes iniciar sesión para inscribirte');
-        setModalType('error');
-        setShowModal(true);
+        showModal('Debes iniciar sesión', 'Inicia sesión para inscribirte', 'error');
         navigate('/registro');
         return;
       }
@@ -108,27 +118,21 @@ const OfficialTournaments = () => {
           ...prev,
           [idTorneo]: true
         }));
-        setModalMessage('¡Inscripción realizada con éxito!');
-        setModalType('success');
+        showModal('¡Inscripción realizada con éxito!', 'Te has inscrito correctamente al torneo', 'success');
       } else {
-        setModalMessage(inscripcionResponse.data.message);
-        setModalType('info');
+        showModal('Información', inscripcionResponse.data.message, 'info');
       }
     } catch (err) {
       console.error('Error al inscribirse:', err);
-      setModalMessage(err.response?.data?.error || 'Error al realizar la inscripción');
-      setModalType('error');
+      showModal('Error', err.response?.data?.error || 'Error al realizar la inscripción', 'error');
     }
-    setShowModal(true);
   };
 
   const handleDesapuntarse = async (idTorneo) => {
     try {
       const response = await axios.get('/api/comprobarSesion');
       if (!response.data.logueado) {
-        setModalMessage('Debes iniciar sesión para desapuntarte');
-        setModalType('error');
-        setShowModal(true);
+        showModal('Debes iniciar sesión', 'Inicia sesión para desapuntarte', 'error');
         navigate('/registro');
         return;
       }
@@ -146,43 +150,23 @@ const OfficialTournaments = () => {
           ...prev,
           [idTorneo]: false
         }));
-        setModalMessage('Te has desapuntado correctamente del torneo');
-        setModalType('success');
+        showModal('Cancelación exitosa', 'Te has desapuntado correctamente del torneo', 'success');
       } else {
-        setModalMessage(desapuntarseResponse.data.message);
-        setModalType('info');
+        showModal('Información', desapuntarseResponse.data.message, 'info');
       }
     } catch (err) {
       console.error('Error al desapuntarse:', err);
-      setModalMessage(err.response?.data?.error || 'Error al desapuntarse del torneo');
-      setModalType('error');
+      showModal('Error', err.response?.data?.error || 'Error al desapuntarse del torneo', 'error');
     }
-    setShowModal(true);
   };
 
   const confirmarDesapuntarse = (idTorneo) => {
-    setModalMessage('¿Estás seguro de que quieres desapuntarte de este torneo?');
-    setModalType('warning');
-    setShowModal(true);
-    setModalAction(() => () => handleDesapuntarse(idTorneo));
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setModalMessage('');
-    setModalType('');
-    setModalAction(null);
-  };
-
-  // Función para mostrar fechas en formato adecuado
-  const formatDateRange = (fechaInicio, fechaFin) => {
-    // Si no tenemos la fecha de inicio o fin en formato Date, usamos la fecha ya formateada
-    if (!fechaInicio || !fechaFin) {
-      return torneos.fecha || 'Fecha no disponible';
-    }
-
-    // Si tenemos las fechas completas, formateamos el rango
-    return `${fechaInicio} al ${fechaFin}`;
+    showModal(
+      '¿Desapuntarse del torneo?',
+      '¿Estás seguro de que quieres desapuntarte de este torneo?',
+      'warning',
+      () => handleDesapuntarse(idTorneo)
+    );
   };
 
   return (
@@ -235,12 +219,16 @@ const OfficialTournaments = () => {
                     <button
                       className={`btn-apuntarse ${inscripciones[torneo.id] ? 'inscrito' : ''}`}
                       disabled={torneo.inscritos >= torneo.maximo && !inscripciones[torneo.id]}
-                      onClick={() => inscripciones[torneo.id] ? confirmarDesapuntarse(torneo.id) : handleInscripcion(torneo.id)}
+                      onClick={() =>
+                        inscripciones[torneo.id]
+                          ? confirmarDesapuntarse(torneo.id)
+                          : handleInscripcion(torneo.id)
+                      }
                     >
-                      {inscripciones[torneo.id] 
-                        ? 'Desapuntarse' 
-                        : torneo.inscritos >= torneo.maximo 
-                          ? 'Completo' 
+                      {inscripciones[torneo.id]
+                        ? 'Desapuntarse'
+                        : torneo.inscritos >= torneo.maximo
+                          ? 'Completo'
                           : '¡Apuntarme!'}
                     </button>
                     <button
@@ -257,59 +245,27 @@ const OfficialTournaments = () => {
         )}
       </div>
 
-      {showModal && (
-        <div className="modal-overlay">
-          <div className={`modal ${modalType}`}>
-            <div className="modal-content">
-              <div className="modal-header">
-                <h3>
-                  {modalType === 'success' ? '¡Operación Exitosa!' : 
-                   modalType === 'error' ? 'Error' : 
-                   modalType === 'warning' ? 'Confirmar Acción' :
-                   'Información'}
-                </h3>
-                <button className="close-button" onClick={closeModal}>×</button>
-              </div>
-              <div className="modal-body">
-                <p>{modalMessage}</p>
-                {modalType === 'error' && modalMessage.includes('nivel') && (
-                  <div className="error-details">
-                    <p>Requisitos del torneo:</p>
-                    <ul>
-                      <li>Nivel mínimo: {modalMessage.includes('nivelMin') ? modalMessage.split('nivelMin: ')[1].split(',')[0] : 'No especificado'}</li>
-                      <li>Tu nivel actual: {modalMessage.includes('Tu nivel') ? modalMessage.split('Tu nivel: ')[1].split(' ')[0] : 'No disponible'}</li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-              <div className="modal-footer">
-                {modalType === 'warning' ? (
-                  <>
-                    <button 
-                      className="modal-button cancel" 
-                      onClick={closeModal}
-                    >
-                      Cancelar
-                    </button>
-                    <button 
-                      className="modal-button confirm" 
-                      onClick={() => {
-                        modalAction();
-                        closeModal();
-                      }}
-                    >
-                      Confirmar
-                    </button>
-                  </>
-                ) : (
-                  <button 
-                    className={`modal-button ${modalType}`} 
-                    onClick={closeModal}
-                  >
-                    {modalType === 'success' ? '¡Entendido!' : 'Cerrar'}
+      {modal.isOpen && (
+        <div className="modal-backdrop" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-header ${modal.type}`}>
+              <h3>{modal.title}</h3>
+              <button className="modal-close" onClick={closeModal}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>{modal.message}</p>
+            </div>
+            <div className="modal-footer">
+              {modal.onConfirm ? (
+                <>
+                  <button className="modal-btn cancel" onClick={closeModal}>Cancelar</button>
+                  <button className={`modal-btn confirm ${modal.type}`} onClick={() => { modal.onConfirm(); closeModal(); }}>
+                    Confirmar
                   </button>
-                )}
-              </div>
+                </>
+              ) : (
+                <button className={`modal-btn confirm ${modal.type}`} onClick={closeModal}>Aceptar</button>
+              )}
             </div>
           </div>
         </div>
