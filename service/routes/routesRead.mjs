@@ -276,4 +276,88 @@ router.get("/carrera-libre/:id", async (req, res) => {
   }
 });
 
+router.get("/torneo/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Obtener detalles del torneo
+    const torneoResult = await conn.execute(`
+      SELECT 
+        t.id,
+        t.nombreTorneo as nombre,
+        k.nombre as ubicacion,
+        k.ciudad as comunidad,
+        strftime('%d/%m/%Y', t.fecha_inicio) as fechaInicio,
+        strftime('%d/%m/%Y', t.fecha_fin) as fechaFin,
+        CASE 
+          WHEN t.nivelMin = 1 THEN 'Principiante'
+          WHEN t.nivelMin = 2 THEN 'Intermedio'
+          WHEN t.nivelMin = 3 THEN 'Avanzado'
+          ELSE 'Desconocido'
+        END as nivelMinimo,
+        (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as inscritos,
+        t.maxInscripciones as maximo
+      FROM Torneos t
+      JOIN TorneoKartings tk ON t.id = tk.id_torneo
+      JOIN Kartings k ON tk.id_karting = k.id
+      WHERE t.id = ?
+    `, [id]);
+
+    if (!torneoResult.rows || torneoResult.rows.length === 0) {
+      return res.status(404).json({ error: "Torneo no encontrado" });
+    }
+
+    // Obtener clasificación del torneo
+    const clasificacionResult = await conn.execute(`
+      SELECT 
+        rt.id_piloto,
+        u.username as piloto,
+        rt.puntosTorneo as puntos,
+        (SELECT COUNT(*) FROM ResultadosCarreras rc 
+         WHERE rc.id_carrera IN (SELECT id FROM Carreras WHERE id_torneo = ?)
+         AND rc.id_piloto = rt.id_piloto) as vueltas
+      FROM ResultadosTorneo rt
+      JOIN Usuarios u ON rt.id_piloto = u.id
+      WHERE rt.id_torneo = ?
+      ORDER BY rt.puntosTorneo DESC
+    `, [id, id]);
+
+    // Obtener próximas carreras del torneo
+    const carrerasResult = await conn.execute(`
+      SELECT 
+        c.id,
+        strftime('%d/%m/%Y', c.fecha) as fecha,
+        strftime('%H:%M', c.fecha) as hora,
+        k.nombre as circuito
+      FROM Carreras c
+      JOIN Kartings k ON c.id_karting = k.id
+      WHERE c.id_torneo = ? AND date(c.fecha) >= date('now')
+      ORDER BY c.fecha ASC
+    `, [id]);
+
+    // Obtener premios del torneo (usando TemporadaRecompensas)
+    const premiosResult = await conn.execute(`
+      SELECT 
+        tr.posicion_min as posicion,
+        tr.nombre_recompensa as premio,
+        tr.descripcion
+      FROM TemporadaRecompensas tr
+      JOIN Temporadas t ON tr.id_temporada = t.id
+      WHERE t.fecha_inicio <= date('now') AND t.fecha_fin >= date('now')
+      ORDER BY tr.posicion_min ASC
+    `);
+
+    res.json({
+      torneo: torneoResult.rows[0],
+      clasificacion: clasificacionResult.rows || [],
+      proximasCarreras: carrerasResult.rows || [],
+      premios: premiosResult.rows || []
+    });
+
+  } catch (error) {
+    console.error("Error al obtener detalles del torneo:", error);
+    res.status(500).json({ error: "Error al obtener los detalles del torneo" });
+  }
+});
+
 export default router;

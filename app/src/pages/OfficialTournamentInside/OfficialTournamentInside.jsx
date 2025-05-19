@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams,useNavigate  } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Header from '../../components/Header/Header';
 import './OfficialTournamentInside.css';
 
@@ -9,7 +10,9 @@ const OfficialTournamentInside = () => {
   const [torneo, setTorneo] = useState(null);
   const [clasificacion, setClasificacion] = useState([]);
   const [proximasCarreras, setProximasCarreras] = useState([]);
+  const [premios, setPremios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -26,39 +29,22 @@ const OfficialTournamentInside = () => {
   }, [navigate]);
 
   useEffect(() => {
-    // Aquí irían las llamadas a la API para obtener los datos
-    // Por ahora usamos datos de ejemplo
-    setTorneo({
-      nombre: 'Gran Premio de Sevilla',
-      ubicacion: 'Karting Sevilla Pro',
-      comunidad: 'Andalucía',
-      fechaInicio: '15 mayo 2025',
-      fechaFin: '15 junio 2025',
-      nivelMinimo: 'Intermedio',
-      inscritos: 7,
-      maximo: 12,
-      premios: [
-        { posicion: 1, premio: '1000€ + Trofeo' },
-        { posicion: 2, premio: '500€ + Trofeo' },
-        { posicion: 3, premio: '250€ + Trofeo' }
-      ]
-    });
+    const fetchTorneoData = async () => {
+      try {
+        const response = await axios.get(`/api/torneo/${id}`);
+        setTorneo(response.data.torneo);
+        setClasificacion(response.data.clasificacion);
+        setProximasCarreras(response.data.proximasCarreras);
+        setPremios(response.data.premios);
+      } catch (err) {
+        console.error('Error al cargar datos del torneo:', err);
+        setError('Error al cargar los datos del torneo');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setClasificacion([
-      { posicion: 1, piloto: 'Carlos García', puntos: 75, vueltas: 3 },
-      { posicion: 2, piloto: 'Ana Martínez', puntos: 68, vueltas: 3 },
-      { posicion: 3, piloto: 'Juan Pérez', puntos: 62, vueltas: 3 },
-      { posicion: 4, piloto: 'María López', puntos: 55, vueltas: 3 },
-      { posicion: 5, piloto: 'Pedro Sánchez', puntos: 48, vueltas: 3 }
-    ]);
-
-    setProximasCarreras([
-      { fecha: '22 mayo 2025', hora: '17:00', circuito: 'Circuito Principal' },
-      { fecha: '29 mayo 2025', hora: '18:30', circuito: 'Circuito Sprint' },
-      { fecha: '5 junio 2025', hora: '19:00', circuito: 'Circuito Nocturno' }
-    ]);
-
-    setLoading(false);
+    fetchTorneoData();
   }, [id]);
 
   if (loading) {
@@ -70,10 +56,32 @@ const OfficialTournamentInside = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="tournament-inside">
+        <Header />
+        <div className="error-message">{error}</div>
+      </div>
+    );
+  }
+
+  if (!torneo) {
+    return (
+      <div className="tournament-inside">
+        <Header />
+        <div className="no-data">No se encontró el torneo</div>
+      </div>
+    );
+  }
+
   return (
     <div className="tournament-inside">
       <Header />
       <div className="tournament-inside__container">
+        <button className="back-button" onClick={() => navigate('/torneosOficiales')}>
+          ← Volver a Torneos
+        </button>
+
         <div className="tournament-header">
           <h1>{torneo.nombre}</h1>
           <div className="tournament-info">
@@ -87,53 +95,68 @@ const OfficialTournamentInside = () => {
         <div className="tournament-sections">
           <section className="clasificacion-section">
             <h2>Clasificación General</h2>
-            <div className="clasificacion-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Pos</th>
-                    <th>Piloto</th>
-                    <th>Puntos</th>
-                    <th>Vueltas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clasificacion.map((piloto) => (
-                    <tr key={piloto.posicion}>
-                      <td>{piloto.posicion}º</td>
-                      <td>{piloto.piloto}</td>
-                      <td>{piloto.puntos}</td>
-                      <td>{piloto.vueltas}</td>
+            {clasificacion.length === 0 ? (
+              <p className="no-data">No hay clasificación disponible todavía</p>
+            ) : (
+              <div className="clasificacion-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pos</th>
+                      <th>Piloto</th>
+                      <th>Puntos</th>
+                      <th>Vueltas</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {clasificacion.map((piloto, index) => (
+                      <tr key={piloto.id_piloto}>
+                        <td>{index + 1}º</td>
+                        <td>{piloto.piloto}</td>
+                        <td>{piloto.puntos}</td>
+                        <td>{piloto.vueltas}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
 
           <section className="proximas-carreras">
             <h2>Próximas Carreras</h2>
-            <div className="carreras-grid">
-              {proximasCarreras.map((carrera, index) => (
-                <div key={index} className="carrera-card">
-                  <h3>{carrera.circuito}</h3>
-                  <p><strong>🗓 Fecha:</strong> {carrera.fecha}</p>
-                  <p><strong>⏰ Hora:</strong> {carrera.hora}</p>
-                </div>
-              ))}
-            </div>
+            {proximasCarreras.length === 0 ? (
+              <p className="no-data">No hay próximas carreras programadas</p>
+            ) : (
+              <div className="carreras-grid">
+                {proximasCarreras.map((carrera) => (
+                  <div key={carrera.id} className="carrera-card">
+                    <h3>{carrera.circuito}</h3>
+                    <p><strong>🗓 Fecha:</strong> {carrera.fecha}</p>
+                    <p><strong>⏰ Hora:</strong> {carrera.hora}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="premios-section">
             <h2>Premios</h2>
-            <div className="premios-grid">
-              {torneo.premios.map((premio) => (
-                <div key={premio.posicion} className="premio-card">
-                  <h3>{premio.posicion}º Lugar</h3>
-                  <p>{premio.premio}</p>
-                </div>
-              ))}
-            </div>
+            {premios.length === 0 ? (
+              <p className="no-data">No hay premios definidos para este torneo</p>
+            ) : (
+              <div className="premios-grid">
+                {premios.map((premio) => (
+                  <div key={premio.posicion} className="premio-card">
+                    <h3>{premio.posicion}º Lugar</h3>
+                    <p className="premio-nombre">{premio.premio}</p>
+                    {premio.descripcion && (
+                      <p className="premio-descripcion">{premio.descripcion}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </div>
