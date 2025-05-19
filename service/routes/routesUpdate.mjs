@@ -165,6 +165,143 @@ router.post("/check-inscripcion", async (req, res) => {
   }
 });
 
+const calcularNivel = (elo) => {
+  const niveles = [
+    { min: 0, max: 1000, nivel: 1 },
+    { min: 1000, max: 2000, nivel: 2 },
+    { min: 2000, max: 3000, nivel: 3 },
+    { min: 3000, max: 4000, nivel: 4 },
+    { min: 4000, max: 5000, nivel: 5 },
+    { min: 5000, max: 6000, nivel: 6 },
+    { min: 6000, max: 7000, nivel: 7 },
+    { min: 7000, max: 8000, nivel: 8 },
+    { min: 8000, max: 9000, nivel: 9 },
+    { min: 9000, max: 10000, nivel: 10 }
+  ];
+
+  for (const rango of niveles) {
+    if (elo >= rango.min && elo < rango.max) {
+      return rango.nivel;
+    }
+  }
+  return 1; // Nivel por defecto si no se encuentra en ningún rango
+};
+
+router.put("/reservar-torneo", async (req, res) => {
+  const { idTorneo, username } = req.body;
+
+  if (!idTorneo || !username) {
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
+  }
+
+  try {
+    // Obtener ID del usuario
+    const userResult = await conn.execute({
+      sql: "SELECT id, elo FROM Usuarios WHERE username = ?",
+      args: [username]
+    });
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const idUsuario = userResult.rows[0].id;
+    const eloUsuario = userResult.rows[0].elo;
+    const nivelUsuario = calcularNivel(eloUsuario);
+
+    // Verificar si ya está inscrito
+    const inscripcionResult = await conn.execute({
+      sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
+      args: [idTorneo, idUsuario]
+    });
+
+    if (inscripcionResult.rows.length > 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Ya estás inscrito en este torneo"
+      });
+    }
+
+    // Obtener información del torneo
+    const torneoResult = await conn.execute({
+      sql: "SELECT nivelMin, maxInscripciones FROM Torneos WHERE id = ?",
+      args: [idTorneo]
+    });
+
+    if (torneoResult.rows.length === 0) {
+      return res.status(404).json({ error: "Torneo no encontrado" });
+    }
+
+    const torneo = torneoResult.rows[0];
+
+    // Verificar nivel mínimo
+    if (nivelUsuario < torneo.nivelMin) {
+      return res.status(400).json({
+        error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`
+      });
+    }
+
+    // Verificar plazas disponibles
+    const inscritosResult = await conn.execute({
+      sql: "SELECT COUNT(*) as inscritos FROM InscripcionesTorneo WHERE id_torneo = ?",
+      args: [idTorneo]
+    });
+
+    if (inscritosResult.rows[0].inscritos >= torneo.maxInscripciones) {
+      return res.status(400).json({
+        error: "El torneo ya está completo"
+      });
+    }
+
+    // Realizar la inscripción
+    await conn.execute({
+      sql: "INSERT INTO InscripcionesTorneo (id_torneo, id_piloto) VALUES (?, ?)",
+      args: [idTorneo, idUsuario]
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Inscripción realizada correctamente"
+    });
+  } catch (error) {
+    console.error("Error al inscribirse en el torneo:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+router.post("/check-inscripcion-torneo", async (req, res) => {
+  const { username, idTorneo } = req.body;
+
+  if (!username || !idTorneo) {
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
+  }
+
+  try {
+    // Obtener ID del usuario
+    const userResult = await conn.execute({
+      sql: "SELECT id FROM Usuarios WHERE username = ?",
+      args: [username]
+    });
+
+    if (userResult.rows.length === 0) {
+      return res.json({ inscrito: false });
+    }
+
+    const idUsuario = userResult.rows[0].id;
+
+    // Verificar inscripción
+    const inscripcionResult = await conn.execute({
+      sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
+      args: [idTorneo, idUsuario]
+    });
+
+    return res.json({ inscrito: inscripcionResult.rows.length > 0 });
+  } catch (error) {
+    console.error("Error al verificar inscripción al torneo:", error);
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
 export default router;
 
 
