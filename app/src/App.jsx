@@ -4,6 +4,7 @@ import Home from './pages/Home/Home';
 import Register from './pages/Register/Register';
 import Index from './pages/Index/Index';
 import IndependentRace from './pages/IndependtRaces/IndependentRace';
+import IndependentRaceInside from './pages/IndependtRacesInside/IndependentRaceInside';
 import Seasons from './pages/Seasons/Seasons';
 import OfficialTournaments from './pages/OfficialTournaments/OfficialTournaments';
 import OfficialTournamentInside from './pages/OfficialTournamentInside/OfficialTournamentInside';
@@ -19,6 +20,7 @@ function App() {
           <Route path='/registro' element={<Register />} />
           <Route path='/principal' element={<Index />} />
           <Route path='/carrerasLibres' element={<IndependentRace />} />
+          <Route path='/carrera-libre/:id' element={<IndependentRaceInside />} />
           <Route path='/temporadas' element={<Seasons />} />
           <Route path='/torneosOficiales' element={<OfficialTournaments />} />
           <Route path='/torneo/:id' element={<OfficialTournamentInside />} />
