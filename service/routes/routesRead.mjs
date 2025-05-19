@@ -223,4 +223,57 @@ ORDER BY c.fecha ASC
   }
 });
 
+router.get("/carrera-libre/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Obtener detalles de la carrera
+    const carreraResult = await conn.execute(`
+      SELECT 
+        c.id,
+        c.fecha,
+        k.nombre AS karting,
+        k.ciudad AS comunidad,
+        strftime('%d/%m/%Y', c.fecha) AS fecha,
+        '--:-- - --:--' AS horario,
+        CASE 
+          WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
+          WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
+          WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
+          ELSE 'Desconocido'
+        END AS nivel,
+        (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
+        c.maxInscripciones AS plazasTotales
+      FROM Carreras c
+      JOIN Kartings k ON c.id_karting = k.id
+      WHERE c.id = ? AND c.id_torneo IS NULL
+    `, [id]);
+
+    if (!carreraResult.rows || carreraResult.rows.length === 0) {
+      return res.status(404).json({ error: "Carrera no encontrada" });
+    }
+
+    // Obtener participantes de la carrera
+    const participantesResult = await conn.execute(`
+      SELECT 
+        ic.id,
+        u.username,
+        ic.fecha_inscripcion as fechaInscripcion
+      FROM InscripcionesCarrera ic
+      JOIN Usuarios u ON ic.id_piloto = u.id
+      WHERE ic.id_carrera = ?
+      ORDER BY ic.fecha_inscripcion ASC
+    `, [id]);
+
+    res.json({
+      carrera: carreraResult.rows[0],
+      participantes: participantesResult.rows || []
+    });
+
+  } catch (error) {
+    console.error("Error al obtener detalles de la carrera:", error);
+    res.status(500).json({ error: "Error al obtener los detalles de la carrera" });
+  }
+});
+
 export default router;

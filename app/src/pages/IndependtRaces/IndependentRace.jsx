@@ -224,17 +224,25 @@ const IndependentRace = () => {
                 <p><strong>⏰ Horario:</strong> {carrera.horario}</p>
                 <p><strong>🎯 Nivel:</strong> {carrera.nivel}</p>
                 <p><strong>👥 Plazas:</strong> {carrera.plazasOcupadas}/{carrera.plazasTotales}</p>
-                <button 
-                  disabled={carrera.plazasOcupadas >= carrera.plazasTotales && !carrera.inscrito} 
-                  onClick={() => carrera.inscrito ? handleDesapuntarse(carrera.id) : handleReservar(carrera.id)}
-                  className={carrera.inscrito ? 'btn-desapuntarse' : ''}
-                >
-                  {carrera.inscrito 
-                    ? 'Desapuntarse' 
-                    : carrera.plazasOcupadas >= carrera.plazasTotales 
-                      ? 'Completo' 
-                      : 'Reservar Plaza'}
-                </button>
+                <div className="card-buttons">
+                  <button 
+                    disabled={carrera.plazasOcupadas >= carrera.plazasTotales && !carrera.inscrito} 
+                    onClick={() => carrera.inscrito ? handleDesapuntarse(carrera.id) : handleReservar(carrera.id)}
+                    className={carrera.inscrito ? 'btn-desapuntarse' : ''}
+                  >
+                    {carrera.inscrito 
+                      ? 'Desapuntarse' 
+                      : carrera.plazasOcupadas >= carrera.plazasTotales 
+                        ? 'Completo' 
+                        : 'Reservar Plaza'}
+                  </button>
+                  <button 
+                    className="btn-info"
+                    onClick={() => navigate(`/carrera-libre/${carrera.id}`)}
+                  >
+                    Más información
+                  </button>
+                </div>
               </div>
             ))}
           </div>

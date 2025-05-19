@@ -40,7 +40,7 @@ min-height: 100vh;
   margin: 0 auto;
 }
 
-.officialTournaments__container h1 {
+.main-container h1 {
 text-align: center;
 margin-bottom: 1rem;
 color: var(--color-primary);
