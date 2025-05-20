@@ -3,6 +3,9 @@
 
 - 8 Mayo
 
+- En la imagen del profile que salga alguna por defecto por ejemplo alguna de la libreria
+MUI icons de React
+
 - Hacer buenas comprobaciones en el register y login (IMPORTANTE)
 
 - Meter en la pagina de ADMIN , un pequeño dashboard que conecte con nuestro repositorio o algo de eso
