@@ -15,7 +15,9 @@ const Seasons = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -32,14 +34,20 @@ const Seasons = () => {
         setLoading(true);
         setError(null);
 
-        const temporadaResponse = await axios.get('/api/temporada-actual');
+        const temporadaResponse = await axios.get('/api/temporada-actual',{
+          withCredentials: true,
+        });
         const temporada = temporadaResponse.data;
         setTemporadaActual(temporada);
 
-        const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`);
+        const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`,{
+          withCredentials: true,
+        });
         setRecompensas(recompensasResponse.data);
 
-        const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`);
+        const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`,{
+          withCredentials: true,
+        });
         setRanking(rankingResponse.data);
         
       } catch (err) {

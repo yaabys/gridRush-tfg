@@ -23,7 +23,9 @@ const IndependentRace = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         } else {
@@ -41,7 +43,9 @@ const IndependentRace = () => {
       if (!username) return; // Esperar a tener el username
       
       try {
-        const response = await axios.get('/api/carreras-libres');
+        const response = await axios.get('/api/carreras-libres',{
+          withCredentials: true,
+        });
         
         // Para cada carrera, verificar si el usuario está inscrito
         const carrerasConEstado = await Promise.all(
@@ -49,7 +53,8 @@ const IndependentRace = () => {
             try {
               const checkInscripcion = await axios.post('/api/check-inscripcion', {
                 username: username,
-                idCarrera: carrera.id
+                idCarrera: carrera.id,
+                withCredentials: true
               });
               return {
                 ...carrera,
@@ -109,7 +114,8 @@ const IndependentRace = () => {
 
       const response = await axios.put('/api/reservar-carreraLibre', { 
         idCarrera: carreraId,
-        username: username
+        username: username,
+        withCredentials: true
       });
   
       if (response.data.success) {
@@ -149,7 +155,8 @@ const IndependentRace = () => {
         const response = await axios.delete('/api/cancelar-inscripcion', {
           data: { 
             idCarrera: carreraId,
-            username: username
+            username: username,
+            withCredentials: true
           }
         });
     

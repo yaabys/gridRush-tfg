@@ -63,8 +63,9 @@ router.post("/register", async (req, res) => {
 
     await conn.execute(sql, [username, nombre, apellido, email, hashPassword, provincia, nacimiento]);
 
-    // Crear sesión del usuario usando setSession
-    await setSession(req, res, username);
+    if (await setSession(req, username)) {
+      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+    }
 
 
   } catch (error) {
@@ -87,9 +88,10 @@ router.post("/login", async (req, res) => {
         return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
       }
 
-      await setSession(req, res, user.username);
+      if (await setSession(req, user.username)) {
+        return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+      }
   
-      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
   } catch (error) {
     return res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }

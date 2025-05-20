@@ -1,20 +1,26 @@
 import session from "express-session";
+import express from "express";
 
-export const setSession = (req, username, onSuccess, onError) => {
-    if (!username) {
-      return onError({ status: 400, error: "El username es obligatorio para establecer la sesión" });
-    }
-  
-    req.session.usuario = { username };
-  
-    req.session.save((err) => {
-      if (err) {
-        console.error("Error al guardar la sesión:", err);
-        return onError({ status: 500, error: "Error del servidor al guardar la sesión" });
-      }
-      console.log("Sesión establecida:", req.session.usuario);
-      onSuccess();
+const app = express();
+
+export const setSession = async (req, username) => {
+  if (!username) {
+    console.error("El username es obligatorio para establecer la sesión");
+    return false;
+  }
+
+  try {
+    req.session.usuario = { username }; // Actualiza la sesión con el nuevo username
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
     });
+    console.log("Sesión actualizada:", req.session.usuario);
+    return true;
+  } catch (error) {
+    console.error("Error al guardar la sesión:", error);
+    return false;
+  }
 };
-  
-  

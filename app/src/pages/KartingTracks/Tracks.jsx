@@ -13,7 +13,9 @@ const Tracks = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -30,7 +32,9 @@ const Tracks = () => {
         setLoading(true);
         setError(null);
 
-        const pistasResponse = await axios.get('/api/kartings');
+        const pistasResponse = await axios.get('/api/kartings',{
+          withCredentials: true,
+        });
         setPistas(pistasResponse.data);
       } catch (err) {
         setError('Error al cargar las pistas. Por favor, inténtalo de nuevo más tarde.');

@@ -10,7 +10,9 @@ const Home = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         setIsLoggedIn(res.data.logueado);
       } catch (err) {
         console.error("Error al comprobar sesión:", err);

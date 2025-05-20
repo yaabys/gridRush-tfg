@@ -3,6 +3,7 @@ import { actualizarPerfil } from "../controllers/userController.mjs";
 import { conn } from "../sql/conexionSQL.mjs";
 import { actualizarUsernameFirebase, actualizarEmailFirebase } from "../firebase/conexionFirebase.mjs";
 import session from "express-session";
+import {setSession} from "../controllers/setSession.mjs";
 
 const router = express.Router();
 
@@ -46,6 +47,11 @@ router.put("/cambiarperfil", async (req, res) => {
       if (!resultadoFirebaseUsername.success) {
         return res.status(400).json({ error: resultadoFirebaseUsername.error });
       }
+
+      const sessionUpdated = await setSession(req, username);
+      if (!sessionUpdated) {
+        return res.status(500).json({ error: "No se pudo actualizar la sesión" });
+      }
     }
 
     if (email) {
@@ -53,11 +59,6 @@ router.put("/cambiarperfil", async (req, res) => {
       if (!resultadoFirebaseEmail.success) {
         return res.status(400).json({ error: resultadoFirebaseEmail.error });
       }
-    }
-
-    // Actualizar la sesión si el nombre de usuario cambia
-    if (username && usernameLower !== usernameActualLower) {
-      await setSession(req, res, username);
     }
 
     res.json({

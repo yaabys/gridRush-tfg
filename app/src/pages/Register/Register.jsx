@@ -21,7 +21,9 @@ const Register = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (res.data.logueado) {
           navigate('/principal');
         }
@@ -71,7 +73,9 @@ const Register = () => {
   
     try {
       if (formType === 'register') {
-        const response = await axios.post('/api/register', form);
+        const response = await axios.post('/api/register', form,{
+          withCredentials: true,
+        });
         switch (response.status) {
           case 400:
             setErrorMsg('Faltan campos requeridos.');
@@ -101,7 +105,9 @@ const Register = () => {
           username: form.username,
           password: form.password
         };
-        const response = await axios.post('/api/login', loginData);
+        const response = await axios.post('/api/login', loginData,{
+          withCredentials: true,
+        });
         
         if (response.status === 200) {
           setShowSemaforo(true);
