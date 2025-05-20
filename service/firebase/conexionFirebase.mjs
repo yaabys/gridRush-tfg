@@ -60,9 +60,9 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
 
 export const comprobarLogin = async (username, password) => {
   try {
-    // dependiendo si es email o username
+    // Dependiendo si es email o username
     const campo = username.includes("@") ? "email" : "username";
-    const valor = username.toLowerCase();
+    const valor = username.toLowerCase(); // Convertir a minúsculas
 
     const q = query(collection(db, "gridrush_fb"), where(campo, "==", valor));
     const result = await getDocs(q);
