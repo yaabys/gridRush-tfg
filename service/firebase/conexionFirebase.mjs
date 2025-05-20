@@ -150,7 +150,7 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
       return { success: false, error: "El correo ya está registrado." };
     }
 
-    // Buscar el usuario actual
+    // Buscar el usuario actual en Firebase
     const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
     const result = await getDocs(q);
 
@@ -166,11 +166,21 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
       email: emailLower,
     };
 
-    // Guardar en el nuevo documento
+    // Guardar en el nuevo documento en Firebase
     await setDoc(emailDocRef, nuevosDatos);
 
-    // Eliminar el documento antiguo
+    // Eliminar el documento antiguo en Firebase
     await deleteDoc(doc(collection(db, "gridrush_fb"), userDoc.id));
+
+    // Actualizar en SQL
+    const resultadoSQL = await conn.execute({
+      sql: "UPDATE Usuarios SET email = ? WHERE username = ?",
+      args: [emailNuevo, usernameActual]
+    });
+
+    if (resultadoSQL.affectedRows === 0) {
+      return { success: false, error: "No se pudo actualizar el correo electrónico en SQL." };
+    }
 
     return { success: true };
   } catch (error) {
