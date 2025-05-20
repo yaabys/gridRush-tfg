@@ -15,7 +15,9 @@ const IndependentRaceInside = () => {
   useEffect(() => {
     const fetchCarreraDetails = async () => {
       try {
-        const response = await axios.get(`/api/carrera-libre/${id}`);
+        const response = await axios.get(`/api/carrera-libre/${id}`,{
+          withCredentials: true,
+        });
         setCarrera(response.data.carrera);
         setParticipantes(response.data.participantes);
       } catch (err) {

@@ -38,7 +38,9 @@ const OfficialTournaments = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -55,7 +57,9 @@ const OfficialTournaments = () => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get('/api/torneos');
+        const response = await axios.get('/api/torneos',{
+          withCredentials: true,
+        });
         setTorneos(response.data);
 
         const username = localStorage.getItem('username');
@@ -63,7 +67,8 @@ const OfficialTournaments = () => {
           const inscripcionesPromises = response.data.map(torneo =>
             axios.post('/api/check-inscripcion-torneo', {
               username,
-              idTorneo: torneo.id
+              idTorneo: torneo.id,
+              withCredentials: true
             })
           );
 
@@ -100,7 +105,9 @@ const OfficialTournaments = () => {
 
   const handleInscripcion = async (idTorneo) => {
     try {
-      const response = await axios.get('/api/comprobarSesion');
+      const response = await axios.get('/api/comprobarSesion',{
+        withCredentials: true,
+      });
       if (!response.data.logueado) {
         showModal('Debes iniciar sesión', 'Inicia sesión para inscribirte', 'error');
         navigate('/registro');
@@ -110,7 +117,8 @@ const OfficialTournaments = () => {
       const username = response.data.username;
       const inscripcionResponse = await axios.put('/api/reservar-torneo', {
         idTorneo,
-        username
+        username,
+        withCredentials: true
       });
 
       if (inscripcionResponse.data.success) {
@@ -130,7 +138,9 @@ const OfficialTournaments = () => {
 
   const handleDesapuntarse = async (idTorneo) => {
     try {
-      const response = await axios.get('/api/comprobarSesion');
+      const response = await axios.get('/api/comprobarSesion',{
+        withCredentials: true,
+      });
       if (!response.data.logueado) {
         showModal('Debes iniciar sesión', 'Inicia sesión para desapuntarte', 'error');
         navigate('/registro');
@@ -141,7 +151,8 @@ const OfficialTournaments = () => {
       const desapuntarseResponse = await axios.delete('/api/cancelar-inscripcion-torneo', {
         data: {
           idTorneo,
-          username
+          username,
+          withCredentials: true
         }
       });
 

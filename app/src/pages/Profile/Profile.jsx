@@ -20,7 +20,9 @@ const Perfil = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -34,7 +36,9 @@ const Perfil = () => {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        const response = await axios.get("/api/perfil");
+        const response = await axios.get("/api/perfil",{
+          withCredentials: true,
+        });
         setUsuario(response.data);
       } catch (err) {
         setError("No se pudo cargar el perfil. ¿Estás logueado?");
@@ -48,7 +52,8 @@ const Perfil = () => {
     const obtenerAvatar = async () => {
       try {
         const response = await axios.get('/api/avatar', {
-          responseType: 'blob' // Muy importante para tratar la imagen como archivo
+          responseType: 'blob',
+          withCredentials: true 
         });
 
         const imageUrl = URL.createObjectURL(response.data);
@@ -96,21 +101,26 @@ const Perfil = () => {
         username: editandoCampo === 'username' ? nuevoValor : usuario.username,
         email: editandoCampo === 'email' ? nuevoValor : usuario.email
       };
-      console.log('Enviando payload:', payload);
 
-      const res = await axios.put('/api/cambiarperfil', payload);
-      
+      const res = await axios.put('/api/cambiarperfil', payload,{
+        withCredentials: true,
+      });
+      console.log("Respuesta del backend:", res.data);
 
-      if (res.data.usuario) {
-        setUsuario(res.data.usuario);
+      if (res.data.success) {
+        const response = await axios.get("/api/perfil",{
+          withCredentials: true,
+        });
+        console.log("Perfil actualizado desde el backend:", response.data);
+        setUsuario(response.data);
+        setMensaje('¡Perfil actualizado correctamente!');
       }
-
-      setMensaje('¡Perfil actualizado correctamente!');
-      setEditandoCampo(null);
-      setMostrarOpciones(false);
     } catch (err) {
       console.error(err);
       setMensaje(err.response?.data?.error || 'Error al actualizar el perfil');
+    } finally {
+      setEditandoCampo(null);
+      setMostrarOpciones(false);
     }
   };
 

@@ -17,7 +17,9 @@ const OfficialTournamentInside = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -31,7 +33,9 @@ const OfficialTournamentInside = () => {
   useEffect(() => {
     const fetchTorneoData = async () => {
       try {
-        const response = await axios.get(`/api/torneo/${id}`);
+        const response = await axios.get(`/api/torneo/${id}`,{
+          withCredentials: true,
+        });
         setTorneo(response.data.torneo);
         setClasificacion(response.data.clasificacion);
         setProximasCarreras(response.data.proximasCarreras);

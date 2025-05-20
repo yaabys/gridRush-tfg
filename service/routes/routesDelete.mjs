@@ -1,7 +1,6 @@
 import express from "express";
 import { actualizarPerfil } from "../controllers/userController.mjs";
 import { conn } from "../sql/conexionSQL.mjs";
-import { actualizarFirebase } from "../firebase/conexionFirebase.mjs";
 
 const router = express.Router();
 

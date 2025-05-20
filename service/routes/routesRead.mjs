@@ -27,7 +27,7 @@ router.get("/perfil", async (req, res) => {
 
     // eliminar contraseña antes de enviar los datos por si hay algun tipo de ataque
     const usuario = filas[0];
-    //delete usuario.password;
+    delete usuario.password;
 
     res.json(usuario);
   } catch (error) {

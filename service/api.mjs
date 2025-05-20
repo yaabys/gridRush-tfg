@@ -6,6 +6,7 @@ import rutasModificar from "./routes/routesUpdate.mjs"
 import rutasRegister from "./routes/routesRegister.mjs"
 import rutasUploadFoto from "./routes/routesUploadFoto.mjs"
 import express from 'express'
+import session from "express-session"
 
 const app = express()
 const puerto = 3000
@@ -13,6 +14,13 @@ const puerto = 3000
 //middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended:true }))
+
+app.use(session({
+  secret: "Cadena muy secreta",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 horas
+}));
 
 // app.use("/api",rutasInsertar)
 app.use("/api",rutasEliminar)

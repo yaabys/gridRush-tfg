@@ -30,7 +30,9 @@ const Index = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion');
+        const res = await axios.get('/api/comprobarSesion',{
+          withCredentials: true,
+        });
         if (!res.data.logueado) {
           navigate('/registro');
         }
@@ -46,7 +48,9 @@ const Index = () => {
     const obtenerPerfil = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/api/perfil");
+        const response = await axios.get("/api/perfil",{
+          withCredentials: true,
+        });
         
         // Actualiza userData con la respuesta
         setUserData({

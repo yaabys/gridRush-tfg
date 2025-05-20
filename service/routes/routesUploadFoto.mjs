@@ -1,7 +1,5 @@
 import express from "express";
-import { actualizarPerfil } from "../controllers/userController.mjs";
 import { conn } from "../sql/conexionSQL.mjs";
-import { actualizarFirebase } from "../firebase/conexionFirebase.mjs";
 import multer from 'multer';
 
 export const upload = multer({ storage: multer.memoryStorage() });

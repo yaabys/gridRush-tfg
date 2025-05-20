@@ -4,6 +4,7 @@ import { comprobarUser,hashearPassword,comprobarEmail,comprobarSesion } from "..
 import { conn } from "../sql/conexionSQL.mjs"
 import session from "express-session"
 import { enviarCorreoRegistro } from "../controllers/emailService.mjs";
+import { setSession } from "../controllers/setSession.mjs";
 
 const router = express.Router();
 
@@ -26,9 +27,8 @@ router.get("/comprobarSesion", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-
-  if(comprobarSesion(req)){
-      return false;
+  if (comprobarSesion(req)) {
+    return false;
   }
 
   const { nombre, apellido, username, nacimiento, email, provincia, password } = req.body;
@@ -40,7 +40,7 @@ router.post("/register", async (req, res) => {
   try {
     const userCheck = await comprobarUser(username);
     if (!userCheck.success) {
-      return res.status(409).json({ success: false,  error: 'Nombre de usuario ya registrado' });
+      return res.status(409).json({ success: false, error: 'Nombre de usuario ya registrado' });
     }
 
     const emailCheck = await comprobarEmail(email);
@@ -50,8 +50,8 @@ router.post("/register", async (req, res) => {
 
     const hashPassword = await hashearPassword(password);
 
-    // registrar en firebase
-    const firebaseResult = await registrarFirebase(email, hashPassword,username);
+    // Registrar en Firebase
+    const firebaseResult = await registrarFirebase(email, hashPassword, username);
     if (!firebaseResult) {
       return res.status(500).json({ success: false, error: 'Error al registrar en Firebase' });
     }
@@ -62,12 +62,11 @@ router.post("/register", async (req, res) => {
                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     await conn.execute(sql, [username, nombre, apellido, email, hashPassword, provincia, nacimiento]);
-    //crear sesion usuario
-    req.session.usuario = {
-      username: username
-    };
-    
-    return res.status(201).json({ success: true, message: 'Usuario registrado correctamente' });
+
+    if (await setSession(req, username)) {
+      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+    }
+
 
   } catch (error) {
     return res.status(500).json({ success: false, error: 'Error interno del servidor' });
@@ -89,9 +88,10 @@ router.post("/login", async (req, res) => {
         return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
       }
 
-      req.session.usuario = { username: user.username };
-
-      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+      if (await setSession(req, user.username)) {
+        return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+      }
+  
   } catch (error) {
     return res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
