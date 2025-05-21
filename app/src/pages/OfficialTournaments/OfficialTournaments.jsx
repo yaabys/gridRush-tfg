@@ -57,13 +57,20 @@ const OfficialTournaments = () => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get('/api/torneos',{
+        // Primero comprobamos la sesión para obtener el username
+        const sessionResponse = await axios.get('/api/comprobarSesion', {
+          withCredentials: true,
+        });
+
+        // Obtenemos los torneos
+        const response = await axios.get('/api/torneos', {
           withCredentials: true,
         });
         setTorneos(response.data);
 
-        const username = localStorage.getItem('username');
-        if (username) {
+        // Si el usuario está logueado, comprobamos sus inscripciones
+        if (sessionResponse.data.logueado) {
+          const username = sessionResponse.data.username;
           const inscripcionesPromises = response.data.map(torneo =>
             axios.post('/api/check-inscripcion-torneo', {
               username,
@@ -126,6 +133,15 @@ const OfficialTournaments = () => {
           ...prev,
           [idTorneo]: true
         }));
+        setTorneos(prev => prev.map(torneo => {
+          if (torneo.id === idTorneo) {
+            return {
+              ...torneo,
+              plazasOcupadas: torneo.plazasOcupadas + 1
+            };
+          }
+          return torneo;
+        }));
         showModal('¡Inscripción realizada con éxito!', 'Te has inscrito correctamente al torneo', 'success');
       } else {
         showModal('Información', inscripcionResponse.data.message, 'info');
@@ -160,6 +176,15 @@ const OfficialTournaments = () => {
         setInscripciones(prev => ({
           ...prev,
           [idTorneo]: false
+        }));
+        setTorneos(prev => prev.map(torneo => {
+          if (torneo.id === idTorneo) {
+            return {
+              ...torneo,
+              plazasOcupadas: torneo.plazasOcupadas - 1
+            };
+          }
+          return torneo;
         }));
         showModal('Cancelación exitosa', 'Te has desapuntado correctamente del torneo', 'success');
       } else {
@@ -225,11 +250,11 @@ const OfficialTournaments = () => {
                   <p><strong>🌍 Comunidad:</strong> {torneo.comunidad}</p>
                   <p><strong>🗓 Fecha:</strong> {torneo.fecha}</p>
                   <p><strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}</p>
-                  <p><strong>👥 Inscritos:</strong> {torneo.inscritos}/{torneo.maximo}</p>
+                  <p><strong>👥 Inscritos:</strong> {torneo.plazasOcupadas}/{torneo.maximo}</p>
                   <div className='card-torneo__buttons'>
                     <button
                       className={`btn-apuntarse ${inscripciones[torneo.id] ? 'inscrito' : ''}`}
-                      disabled={torneo.inscritos >= torneo.maximo && !inscripciones[torneo.id]}
+                      disabled={torneo.plazasOcupadas >= torneo.maximo && !inscripciones[torneo.id]}
                       onClick={() =>
                         inscripciones[torneo.id]
                           ? confirmarDesapuntarse(torneo.id)
@@ -238,7 +263,7 @@ const OfficialTournaments = () => {
                     >
                       {inscripciones[torneo.id]
                         ? 'Desapuntarse'
-                        : torneo.inscritos >= torneo.maximo
+                        : torneo.plazasOcupadas >= torneo.maximo
                           ? 'Completo'
                           : '¡Apuntarme!'}
                     </button>
