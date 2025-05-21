@@ -158,7 +158,7 @@ router.get("/torneos", async (req, res) => {
               WHEN t.nivelMin = 3 THEN 'Avanzado'
               ELSE 'Desconocido'
             END as nivelMinimo,
-            (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as inscritos,
+            (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as plazasOcupadas,
             t.maxInscripciones as maximo
           FROM Torneos t
           JOIN TorneoKartings tk ON t.id = tk.id_torneo
