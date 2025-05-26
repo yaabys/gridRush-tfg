@@ -20,7 +20,7 @@ const DarkModeToggle = () => {
 
   return (
     <button onClick={toggleTheme} className='theme-toggle-btn'>
-      {darkMode ? '☀️ Claro' : '🌙 Oscuro'}
+      {darkMode ? '☀️' : '🌙 '}
     </button>
   );
 };

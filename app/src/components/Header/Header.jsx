@@ -57,13 +57,13 @@ const Header = () => {
       </nav>
       
       <div className='header-right'>
-        <div className='dark-mode-container'>
-          <DarkModeToggle />
-        </div>
         <Link to='/perfil' className={`perfil-link ${isActive('/perfil') ? 'active' : ''}`}>
           <div className="perfil-icon">👤</div>
           <span className="perfil-text">Perfil</span>
         </Link>
+        <div className='dark-mode-container'>
+          <DarkModeToggle />
+        </div>
       </div>
     </header>
   );
