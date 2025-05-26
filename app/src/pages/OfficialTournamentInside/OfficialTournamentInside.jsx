@@ -137,7 +137,7 @@ const OfficialTournamentInside = () => {
                   <div key={carrera.id} className="carrera-card">
                     <h3>{carrera.circuito}</h3>
                     <p><strong>🗓 Fecha:</strong> {carrera.fecha}</p>
-                    <p><strong>⏰ Hora:</strong> {carrera.hora}</p>
+                    <p><strong>⏰ Hora:</strong> {String(carrera.hora).replace('.',':')}</p>
                   </div>
                 ))}
               </div>
