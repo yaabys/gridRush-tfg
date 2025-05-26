@@ -58,33 +58,30 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
   }
 };
 
-export const comprobarLogin = async (username, password) => {
-  try {
-    // Dependiendo si es email o username
-    const campo = username.includes("@") ? "email" : "username";
-    const valor = username.toLowerCase(); // Convertir a minúsculas
+export const comprobarLogin = async (email,password) => {
+    try {
+      const docRef = doc(db, "gridrush_fb", email.toLowerCase())
+      const userDoc = await getDoc(docRef)
 
-    const q = query(collection(db, "gridrush_fb"), where(campo, "==", valor));
-    const result = await getDocs(q);
+      if (!userDoc.exists()) {
+          return null
+      }
 
-    if (result.empty) {
-      return null;
-    }
+      const userData = userDoc.data()
+      const hashedPassword = userData.password
 
-    const userDoc = result.docs[0];
-    const userData = userDoc.data();
+      const isMatch = await bcrypt.compare(password, hashedPassword)
 
-    const isMatch = await bcrypt.compare(password, userData.password);
-    if (!isMatch) {
-      return null;
-    }
+      if (!isMatch) {
+          return null
+      }
 
-    return userData;
+      return userData
   } catch (error) {
-    console.error("Error en comprobarLogin:", error);
-    return null;
+      console.error("Error en comprobarLogin:", error)
+      return null
   }
-};
+}
 
 export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) => {
   try {
