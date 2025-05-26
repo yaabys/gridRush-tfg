@@ -1,4 +1,3 @@
-- Corregir la base de datos , hemos puesto el usuario que sea unique para la sesion que no de problemas.
 - Corregir log in solo funciona con correo (valorar si poner solo correo y fuera o solo usuario)
 
 - 8 Mayo
@@ -26,6 +25,8 @@ MUI icons de React
 - Añadir el campo Hora, para las carreras independientemente que esten asociadas a un torneo o no
 
 - Modo administrador para poder ver las fotos que suban los usuarios y una forma de ordenar la parrilla para confirmar las posiciones
+
+- Poner : en la hora carreras libres (dividir los dos primeros digitos literal : y los otros dos digitos)
 
 
 

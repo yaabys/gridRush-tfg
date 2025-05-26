@@ -241,7 +241,7 @@ const Register = () => {
                   <input 
                     type='text' 
                     name='username' 
-                    placeholder='Nombre de usuario o correo' 
+                    placeholder='Correo electrónico' 
                     value={form.username} 
                     onChange={handleChange} 
                     required 

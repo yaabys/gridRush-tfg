@@ -187,7 +187,7 @@ const Perfil = () => {
             ) : avatarUrl ? (
               <img src={avatarUrl} alt="Avatar cargado" />
             ) : (
-              <p>Cargando imagen...</p>
+              <img src="/img/defaultIconProfile.webp" alt="Avatar por defecto" />
             )}
             <button className="edit-btn" onClick={handleEditarAvatar}>
               Cambiar Avatar
