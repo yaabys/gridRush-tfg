@@ -41,6 +41,41 @@ body {
   padding: 0.8rem 2rem;
 }
 
+/* Modo claro para el header */
+html.light .header {
+  background-color: rgba(249, 249, 249, 0.85); /* Fondo claro semitransparente */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+html.light .header.scrolled {
+  background-color: rgba(249, 249, 249, 0.95);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+html.light .app-name-grid {
+  color: var(--color-text);
+}
+
+html.light .nav-links a,
+html.light .perfil-link {
+  color: var(--color-muted);
+}
+
+html.light .nav-links a:hover .link-text,
+html.light .nav-links a.active .link-text {
+  color: var(--color-primary);
+}
+
+html.light .perfil-link:hover,
+html.light .perfil-link.active {
+  color: var(--color-primary);
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+}
+
 /* Logo GRIDRUSH con efecto */
 .app-name {
   font-size: 1.8rem;
