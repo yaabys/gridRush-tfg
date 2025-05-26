@@ -76,9 +76,11 @@ CREATE TABLE InscripcionesTorneo ( -- Solo para torneos
 );
 
 -- Carreras (parte de un torneo o sueltas)
+-- Versión actualizada de la tabla Carreras con fecha y hora separadas
 CREATE TABLE Carreras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    fecha TEXT NOT NULL, -- Incluye fecha y hora
+    fecha TEXT NOT NULL, -- Formato: 'YYYY-MM-DD'
+    hora TEXT NOT NULL, -- Formato: 'HH:MM:SS' o 'HH:MM'
     id_karting INTEGER NOT NULL,
     id_torneo INTEGER, -- Puede ser NULL si es una carrera suelta
     nivelMin INTEGER NOT NULL,
@@ -148,5 +150,19 @@ CREATE TABLE TemporadaRecompensas (
     posicion_min INTEGER,
     posicion_max INTEGER,
     FOREIGN KEY (id_temporada) REFERENCES Temporadas(id),
+    FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id)
+);
+
+
+-- Relación de torneos con recompensas
+CREATE TABLE TorneoRecompensas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_torneo INTEGER NOT NULL,
+    id_recompensa INTEGER NOT NULL,
+    nombre_recompensa TEXT NOT NULL,
+    descripcion TEXT,
+    posicion_min INTEGER NOT NULL, -- Posición mínima para obtener la recompensa (ej: 1 para el 1er lugar)
+    posicion_max INTEGER NOT NULL, -- Posición máxima para obtener la recompensa (ej: 3 para podio)
+    FOREIGN KEY (id_torneo) REFERENCES Torneos(id),
     FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id)
 );
