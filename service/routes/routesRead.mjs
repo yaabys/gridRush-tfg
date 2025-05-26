@@ -193,7 +193,7 @@ router.get("/carreras-libres", async (req, res) => {
   k.nombre AS karting,
   k.ciudad AS comunidad,
   strftime('%d/%m/%Y', c.fecha) AS fechaFormateada,
-  '--:-- - --:--' AS horario,
+  strftime('%H:%M', c.hora) as hora,
   CASE 
     WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
     WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
@@ -235,7 +235,7 @@ router.get("/carrera-libre/:id", async (req, res) => {
         k.nombre AS karting,
         k.ciudad AS comunidad,
         strftime('%d/%m/%Y', c.fecha) AS fecha,
-        '--:-- - --:--' AS horario,
+        strftime('%H:%M', c.hora) as hora,
         CASE 
           WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
           WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
@@ -327,7 +327,7 @@ router.get("/torneo/:id", async (req, res) => {
       SELECT 
         c.id,
         strftime('%d/%m/%Y', c.fecha) as fecha,
-        strftime('%H:%M', c.fecha) as hora,
+        strftime('%H:%M', c.hora) as hora,
         k.nombre as circuito
       FROM Carreras c
       JOIN Kartings k ON c.id_karting = k.id
