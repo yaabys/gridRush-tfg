@@ -228,7 +228,7 @@ const IndependentRace = () => {
                 <p><strong>🏁 Karting:</strong> {carrera.karting}</p>
                 <p><strong>📍 Comunidad:</strong> {carrera.comunidad}</p>
                 <p><strong>🗓 Fecha:</strong> {carrera.fecha}</p>
-                <p><strong>⏰ Horario:</strong> {carrera.horario}</p>
+                <p><strong>⏰ Horario:</strong> {String(carrera.hora)}</p>
                 <p><strong>🎯 Nivel:</strong> {carrera.nivel}</p>
                 <p><strong>👥 Plazas:</strong> {carrera.plazasOcupadas}/{carrera.plazasTotales}</p>
                 <div className="card-buttons">

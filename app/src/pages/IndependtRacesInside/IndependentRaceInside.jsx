@@ -60,7 +60,7 @@ const IndependentRaceInside = () => {
             </div>
             <div className='info-item'>
               <h3>⏰ Horario</h3>
-              <p>{carrera.horario}</p>
+              <p>{carrera.hora}</p>
             </div>
             <div className='info-item'>
               <h3>🎯 Nivel</h3>
