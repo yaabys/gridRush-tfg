@@ -96,9 +96,18 @@ const Register = () => {
 
         if (response.status === 201) {
           setShowSemaforo(true);
-          setTimeout(() => {
-            navigate('/principal');
-          }, 4000);
+          setTimeout(async () => {
+            try {
+              const sesion = await axios.get('/api/comprobarSesion', { withCredentials: true });
+              if (sesion.data.logueado) {
+                navigate('/principal');
+              } else {
+                setErrorMsg('No se pudo iniciar sesión automaticamente. Por favor, inicia sesion.');
+              }
+            } catch {
+              setErrorMsg('Error al comprobar la sesion tras el registro.');
+            }
+          }, 3000);
         }
       } else {
         const loginData = {
