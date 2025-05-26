@@ -265,4 +265,70 @@
   .premio-card {
     padding: 1.5rem;
   }
+}
+
+/* Modo claro para OfficialTournamentInside */
+html.light .tournament-inside {
+  background-color: var(--color-bg); /* Usa el color de fondo claro global */
+  color: var(--color-text); /* Usa el color de texto claro global */
+}
+
+html.light .tournament-header {
+  background: var(--color-bg-dark); /* Usa un color de fondo oscuro más claro para el header */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde más sutil */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+}
+
+html.light .tournament-header h1 {
+  color: var(--color-primary); /* Mantiene el color primario para el título */
+  text-shadow: none; /* Elimina la sombra del texto oscuro */
+}
+
+html.light .tournament-info,
+html.light .clasificacion-section,
+html.light .proximas-carreras,
+html.light .premios-section {
+  background: var(--color-bg-dark); /* Fondo oscuro más claro para las secciones */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+html.light .tournament-info p,
+html.light .clasificacion-table td,
+html.light .carrera-card p,
+html.light .premio-nombre,
+html.light .premio-descripcion {
+  color: var(--color-text); /* Color de texto principal */
+}
+
+html.light .tournament-info strong,
+html.light .clasificacion-table th,
+html.light .carrera-card h3,
+html.light .premio-card h3 {
+  color: var(--color-primary); /* Color primario para elementos destacados */
+  text-shadow: none; /* Elimina sombras de texto oscuras */
+}
+
+html.light .clasificacion-table {
+  background: var(--color-bg); /* Fondo claro para la tabla */
+}
+
+html.light .clasificacion-table th {
+  background-color: var(--color-bg-dark); /* Fondo más oscuro para los encabezados de tabla */
+}
+
+html.light .clasificacion-table tr:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Efecto hover sutil */
+}
+
+html.light .carrera-card,
+html.light .premio-card {
+   border-left-color: var(--color-primary); /* Borde izquierdo con color primario */
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+html.light .carrera-card:hover,
+html.light .premio-card:hover {
+  border-color: var(--color-primary-light); /* Borde más claro al pasar el mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el mouse */
 } 
