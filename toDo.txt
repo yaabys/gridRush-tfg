@@ -16,17 +16,17 @@ MUI icons de React
 - Al iniciar sesion que lo del cuadrado rojo ese sea mas pequeño
 
 
-- 23 Mayo 
 
-- Corregir inicios de sesion, asi como cambiar nombres etc..
 
-- Añadir una tabla para las recompensas de Torneos
-
-- Añadir el campo Hora, para las carreras independientemente que esten asociadas a un torneo o no
+- Corregir inicios de sesion, asi como cambiar nombres etc.., Registro (Va mal)
 
 - Modo administrador para poder ver las fotos que suban los usuarios y una forma de ordenar la parrilla para confirmar las posiciones
 
+- Sistema de puntos para carreras y torneos asi como subir ELO, para el nivel
+
 - Poner : en la hora carreras libres (dividir los dos primeros digitos literal : y los otros dos digitos)
+
+- Cambiar Index para poner algunas otras cosas (API noticias mirar), 
 
 
 
