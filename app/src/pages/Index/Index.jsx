@@ -16,21 +16,7 @@ const Index = () => {
   const [newsError, setNewsError] = useState(null);
   // -----------------------------------------
 
-  const [userData, setUserData] = useState({
-      nombre: '',
-      mejorTiempo: '0:00.0',
-      ranking: 0,
-      totalPilotos: 0,
-      circuitosVisitados: 0,
-      carrerasTotales: 0,
-      objetivoSemanal: {
-      completado: 0,
-      total: 10,
-      nombre: 'Cargando...'
-      },
-      proximosTorneos: [],
-      sugerencias: []
-  });
+  const [userData, setUserData] = useState({})  
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -58,20 +44,12 @@ const Index = () => {
         }); //
         
         setUserData({
-          nombre: response.data.nombre || 'Usuario',
           username: response.data.username || 'Username',
-          mejorTiempo: response.data.mejorTiempo || '0:00.0',
-          ranking: response.data.ranking || 0,
-          totalPilotos: response.data.totalPilotos || 0,
-          circuitosVisitados: response.data.circuitosVisitados || 0,
           carrerasTotales: response.data.carrerasTotales || 0,
-          objetivoSemanal: response.data.objetivoSemanal || {
-            completado: 0,
-            total: 10,
-            nombre: 'Objetivo Semanal'
-          },
-          proximosTorneos: response.data.proximosTorneos || [],
-          sugerencias: response.data.sugerencias || []
+          torneosVictorias: response.data.torneosVictorias,
+          carrerasVictorias: response.data.carrerasVictorias,
+          carrerasParticipadas: response.data.carrerasParticipadas,
+          torneosParticipados: response.data.torneosParticipados
         }); //
         
         setLoading(false); //
@@ -192,28 +170,28 @@ const Index = () => {
                     <div className='stat-icon'>🏆</div>
                     <div className='stat-content'>
                     <h3>Victorias en Carreras</h3>
-                    <p className='stat-value'>{userData.carrerasVictorias ?? 0}</p>
+                    <p className='stat-value'>{userData.carrerasVictorias}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.1s' }}>
                     <div className='stat-icon'>🏁</div>
                     <div className='stat-content'>
                     <h3>Carreras Participadas</h3>
-                    <p className='stat-value'>{userData.carrerasParticipadas ?? 0}</p>
+                    <p className='stat-value'>{userData.carrerasParticipadas}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.2s' }}>
                     <div className='stat-icon'>🥇</div>
                     <div className='stat-content'>
                     <h3>Victorias en Torneos</h3>
-                    <p className='stat-value'>{userData.torneosVictorias ?? 0}</p>
+                    <p className='stat-value'>{userData.torneosVictorias}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.3s' }}>
                     <div className='stat-icon'>🏅</div>
                     <div className='stat-content'>
                     <h3>Torneos Participados</h3>
-                    <p className='stat-value'>{userData.torneosParticipados ?? 0}</p>
+                    <p className='stat-value'>{userData.torneosParticipados}</p>
                     </div>
                 </div>
                 </div>
@@ -233,61 +211,6 @@ const Index = () => {
                     <Link to="/noticias" className="see-more-link">Ver todas las noticias →</Link>
                 )}
             </section>
-
-            {userData.proximosTorneos.length > 0 && (
-                <section className='tournaments-section'>
-                    <h2>Próximos Torneos</h2>
-                    <div className='tournaments-grid'>
-                    {userData.proximosTorneos.map((torneo, index) => (
-                    <div key={torneo.id} className='tournament-card' style={{ animationDelay: `${0.1 * index}s` }}>
-                        <div className='tournament-header'>
-                        <h3>{getTournamentEmoji(torneo.nombre)} {torneo.nombre}</h3>
-                        <span className='tournament-date'>{torneo.fecha}</span>
-                        </div>
-                        <p className='tournament-location'>{torneo.karting}</p>
-                        <Link to={`/torneo/${torneo.id}`} className='tournament-link'>
-                        Ver detalles
-                        </Link>
-                    </div>
-                    ))}
-                    </div>
-                </section>
-            )}
-
-            {userData.sugerencias.length > 0 && (
-                <section className='suggestions-section'>
-                    <h2>Recomendados para ti</h2>
-                    <div className='suggestions-grid'>
-                    {userData.sugerencias.map((sugerencia, index) => (
-                    <div 
-                        key={sugerencia.id} 
-                        className={`suggestion-card ${sugerencia.destacado ? 'highlighted' : ''}`}
-                        style={{ animationDelay: `${0.15 * index}s` }}
-                    >
-                        {sugerencia.tipo === 'carrera' ? (
-                        <>
-                            <div className='suggestion-icon'>🔥</div>
-                            <div className='suggestion-content'>
-                            <h3>Carrera Abierta</h3>
-                            <p><strong>{sugerencia.karting}</strong> - {sugerencia.fecha}</p>
-                            <Link to='/carrerasLibres' className='suggestion-link'>Apúntate ahora</Link>
-                            </div>
-                        </>
-                        ) : (
-                        <>
-                            <div className='suggestion-icon'>🎯</div>
-                            <div className='suggestion-content'>
-                            <h3>Nuevo Reto</h3>
-                            <p><strong>{sugerencia.nombre}</strong> - {sugerencia.descripcion}</p>
-                            <Link to='/perfil' className='suggestion-link'>Ver retos</Link>
-                            </div>
-                        </>
-                        )}
-                    </div>
-                    ))}
-                    </div>
-                </section>
-            )}
         </div>
       </div>
     </>
