@@ -12,7 +12,9 @@ CREATE TABLE Usuarios (
     fotoPerfil BLOB, -- imagen JPG/PNG
     avatar_tipo TEXT,
     carrerasVictorias INTEGER DEFAULT 0,
+    carrerasParticipadas INTEGER DEFAULT 0, 
     torneosVictorias INTEGER DEFAULT 0,
+    torneosParticipados INTEGER DEFAULT 0, 
     provincia TEXT,
     fechaNacimiento TEXT,
     elo INTEGER NOT NULL DEFAULT 0 -- Elo inicial 0
