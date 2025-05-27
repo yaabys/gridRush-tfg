@@ -58,49 +58,55 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
   }
 };
 
-export const comprobarLogin = async (email,password) => {
-    try {
-      const docRef = doc(db, "gridrush_fb", email.toLowerCase())
-      const userDoc = await getDoc(docRef)
+export const comprobarLogin = async (email, password) => {
+  try {
+    const usersRef = collection(db, "gridrush_fb");
+    const q = query(usersRef, where("email", "==", email));
 
-      if (!userDoc.exists()) {
-          return null
-      }
+    const querySnapshot = await getDocs(q);
 
-      const userData = userDoc.data()
-      const hashedPassword = userData.password
+    if (querySnapshot.empty) {
+      console.log("Usuario no encontrado con email:", email);
+      return null;
+    }
 
-      const isMatch = await bcrypt.compare(password, hashedPassword)
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
 
-      if (!isMatch) {
-          return null
-      }
+    const hashedPassword = userData.password;
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    console.log("Contraseña coincide:", isMatch);
 
-      return userData
+    if (!isMatch) {
+      return null;
+    }
+
+    return userData;
   } catch (error) {
-      console.error("Error en comprobarLogin:", error)
-      return null
+    console.error("Error en comprobarLogin:", error);
+    return null;
   }
-}
+};
 
 export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) => {
   try {
     const usernameLower = usernameNuevo.toLowerCase();
-    const usernameActualLower = usernameActual.toLowerCase();
 
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameLower);
 
     // Comprobar si el nuevo username ya existe
     const usernameDoc = await getDoc(usernameDocRef);
     if (usernameDoc.exists()) {
+      console.log("El username ya existe en Firebase:", usernameLower);
       return { success: false, error: "El nombre de usuario ya está registrado." };
     }
 
     // Buscar el usuario actual en Firebase usando el username en minúsculas
-    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActualLower));
+    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
     const result = await getDocs(q);
 
     if (result.empty) {
+      console.log("Usuario no encontrado en Firebase:", usernameActual);
       return { success: false, error: "Usuario no encontrado en Firebase." };
     }
 
@@ -121,10 +127,11 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
     // Actualizar en SQL
     const resultadoSQL = await conn.execute({
       sql: "UPDATE Usuarios SET username = ? WHERE username = ?",
-      args: [usernameLower, usernameActualLower],
+      args: [usernameLower, usernameActual],
     });
 
     if (resultadoSQL.affectedRows === 0) {
+      console.log("No se actualizó el usuario en SQL");
       return { success: false, error: "No se pudo actualizar el nombre de usuario en SQL." };
     }
 

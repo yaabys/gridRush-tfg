@@ -9,18 +9,24 @@ export const setSession = async (req, username) => {
     return false;
   }
 
-  try {
-    req.session.usuario = { username }; // Actualiza la sesión con el nuevo username
-    await new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error("Error al regenerar la sesión:", err);
+        return resolve(false);
+      }
+
+      req.session.usuario = { username };
+
       req.session.save((err) => {
-        if (err) reject(err);
-        else resolve();
+        if (err) {
+          console.error("Error al guardar la sesión:", err);
+          return resolve(false);
+        }
+
+        console.log("Sesión regenerada y actualizada:", req.session.usuario);
+        resolve(true);
       });
     });
-    console.log("Sesión actualizada:", req.session.usuario);
-    return true;
-  } catch (error) {
-    console.error("Error al guardar la sesión:", error);
-    return false;
-  }
+  });
 };

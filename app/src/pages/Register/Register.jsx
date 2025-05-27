@@ -68,33 +68,26 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-  
-    try {
-      if (formType === 'register') {
-        const response = await axios.post('/api/register', form,{
-          withCredentials: true,
-        });
-        switch (response.status) {
-          case 400:
-            setErrorMsg('Faltan campos requeridos.');
-            break;
-          case 409:
-            setErrorMsg('El correo o el nombre de usuario ya están registrados.');
-            break;
-          case 500:
-            setErrorMsg('Error en el servidor. Intenta nuevamente.');
-            break;
-          case false:
-            navigate('/principal');
-            break;
-          default:
-            setErrorMsg('Algo salió mal. Intenta de nuevo.');
-            break;
-        }      
+  e.preventDefault();
+  setIsLoading(true);
 
-        if (response.status === 201) {
+  try {
+    if (formType === 'register') {
+      const response = await axios.post('/api/register', form, {
+        withCredentials: true,
+      });
+
+      switch (response.status) {
+        case 400:
+          setErrorMsg('Faltan campos requeridos.');
+          break;
+        case 409:
+          setErrorMsg('El correo o el nombre de usuario ya están registrados.');
+          break;
+        case 500:
+          setErrorMsg('Error en el servidor. Intenta nuevamente.');
+          break;
+        case 201:
           setShowSemaforo(true);
           setTimeout(async () => {
             try {
@@ -102,41 +95,60 @@ const Register = () => {
               if (sesion.data.logueado) {
                 navigate('/principal');
               } else {
-                setErrorMsg('No se pudo iniciar sesión automaticamente. Por favor, inicia sesion.');
+                setErrorMsg('No se pudo iniciar sesión automáticamente. Por favor, inicia sesión.');
               }
             } catch {
-              setErrorMsg('Error al comprobar la sesion tras el registro.');
+              setErrorMsg('Error al comprobar la sesión tras el registro.');
             }
           }, 3000);
-        }
-      } else {
-        const loginData = {
-          username: form.username,
-          password: form.password
-        };
-        const response = await axios.post('/api/login', loginData,{
-          withCredentials: true,
-        });
-        
-        if (response.status === 200) {
+          break;
+        default:
+          setErrorMsg('Algo salió mal. Intenta de nuevo.');
+          break;
+      }
+
+    } else {
+      const loginData = {
+        email: form.email,
+        password: form.password
+      };
+      console.log("Datos de inicio de sesión:", loginData);
+
+      const response = await axios.post('/api/login', loginData, {
+        withCredentials: true,
+      });
+
+      switch (response.status) {
+        case 200:
           setShowSemaforo(true);
           setTimeout(() => {
             navigate('/principal');
           }, 4000);
-        } else {
-          setErrorMsg('Credenciales incorrectas o error en el servidor.');
-        }
+          break;
+        case 422:
+          setErrorMsg('Faltan campos requeridos.');
+          break;
+        case 401:
+          setErrorMsg('Credenciales incorrectas.');
+          break;
+        case 500:
+          setErrorMsg('Error en el servidor. Intenta nuevamente.');
+          break;
+        default:
+          setErrorMsg('Algo salió mal. Intenta de nuevo.');
+          break;
       }
-    } catch (error) {
-      if (error.response) {
-        setErrorMsg(error.response.data.error || "Error desconocido pongase en contacto con el administrador");
-      } else {
-        setErrorMsg("no se pudo conectar con el servidor verifica tu conexión con el servidor");
-      }
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    if (error.response) {
+      setErrorMsg(error.response.data.error || "Error desconocido, contacte al administrador");
+    } else {
+      setErrorMsg("No se pudo conectar con el servidor. Verifica tu conexión.");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   if (showSemaforo) {
     return <SemaforoAnimacion />;
@@ -248,10 +260,10 @@ const Register = () => {
               <>
                 <div className="form-group">
                   <input 
-                    type='text' 
-                    name='username' 
+                    type='email' 
+                    name='email' 
                     placeholder='Correo electrónico' 
-                    value={form.username} 
+                    value={form.email} 
                     onChange={handleChange} 
                     required 
                   />

@@ -36,6 +36,6 @@ app.get("/", (req, res) =>{
     res.sendStatus(200)
 })
 
-app.listen(puerto, () =>{
+app.listen(puerto,() =>{
     console.log("Servidor corriendo en el puerto", puerto)
 })
