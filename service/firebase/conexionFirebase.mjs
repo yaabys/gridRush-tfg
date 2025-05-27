@@ -96,8 +96,8 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
       return { success: false, error: "El nombre de usuario ya está registrado." };
     }
 
-    // Buscar el usuario actual en Firebase
-    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
+    // Buscar el usuario actual en Firebase usando el username en minúsculas
+    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActualLower));
     const result = await getDocs(q);
 
     if (result.empty) {
@@ -109,7 +109,7 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
 
     const nuevosDatos = {
       ...userData,
-      username: usernameNuevo,
+      username: usernameLower,
     };
 
     // Guardar en el nuevo documento en Firebase
@@ -121,7 +121,7 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
     // Actualizar en SQL
     const resultadoSQL = await conn.execute({
       sql: "UPDATE Usuarios SET username = ? WHERE username = ?",
-      args: [usernameNuevo, usernameActual]
+      args: [usernameLower, usernameActualLower],
     });
 
     if (resultadoSQL.affectedRows === 0) {

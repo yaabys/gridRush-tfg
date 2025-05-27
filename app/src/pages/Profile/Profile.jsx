@@ -96,22 +96,31 @@ const Perfil = () => {
 
   const handleGuardarCambio = async () => {
     try {
-      const payload = {
-        usernameActual: usuario.username.toLowerCase(),
-        username: editandoCampo === 'username' ? nuevoValor : usuario.username,
-        email: editandoCampo === 'email' ? nuevoValor : usuario.email
-      };
+      let payload = { usernameActual: usuario.username.toLowerCase() };
 
-      const res = await axios.put('/api/cambiarperfil', payload,{
+      if (editandoCampo === 'username' && nuevoValor !== usuario.username) {
+        payload.username = nuevoValor;
+      }
+      if (editandoCampo === 'email' && nuevoValor !== usuario.email) {
+        payload.email = nuevoValor;
+      }
+
+      if (Object.keys(payload).length === 1) {
+        setMensaje('No hay cambios para guardar');
+        setEditandoCampo(null);
+        setMostrarOpciones(false);
+        return;
+      }
+
+      const res = await axios.put('/api/cambiarperfil', payload, {
         withCredentials: true,
       });
       console.log("Respuesta del backend:", res.data);
 
       if (res.data.success) {
-        const response = await axios.get("/api/perfil",{
+        const response = await axios.get("/api/perfil", {
           withCredentials: true,
         });
-        console.log("Perfil actualizado desde el backend:", response.data);
         setUsuario(response.data);
         setMensaje('¡Perfil actualizado correctamente!');
       }

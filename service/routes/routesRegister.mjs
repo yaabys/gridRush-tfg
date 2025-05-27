@@ -64,7 +64,7 @@ router.post("/register", async (req, res) => {
     await conn.execute(sql, [username, nombre, apellido, email, hashPassword, provincia, nacimiento]);
 
     if (await setSession(req, username)) {
-      return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+      return res.status(201).json({ success: true, message: 'Inicio de sesión exitoso' });
     }
 
 
