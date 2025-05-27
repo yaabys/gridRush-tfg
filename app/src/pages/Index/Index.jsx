@@ -166,9 +166,8 @@ const Index = () => {
   return (
     <>
       <Header />
-      <div className='main-container'>
+      <div className='main-container index-main-container'>
         <div className='dashboard-header'>
-          {/* ... Tu código del header ... */}
             <div className='welcome-section'>
                 <h1>¡Bienvenido de nuevo, <span className='highlight'>{userData.username}</span>!</h1>
                 <p className='subtitle'>Tu panel de control personalizado para dominar el asfalto</p>
@@ -187,86 +186,56 @@ const Index = () => {
 
         <div className='dashboard-grid'>
             <section className='stats-section'>
-                {/* ... Tu código de estadísticas ... */}
                 <h2>Estadísticas</h2>
                 <div className='stats-grid'>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`}>
-                    <div className='stat-icon'>⏱️</div>
+                    <div className='stat-icon'>🏆</div>
                     <div className='stat-content'>
-                    <h3>Mejor Tiempo</h3>
-                    <p className='stat-value'>{userData.mejorTiempo}</p>
+                    <h3>Victorias en Carreras</h3>
+                    <p className='stat-value'>{userData.carrerasVictorias ?? 0}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.1s' }}>
-                    <div className='stat-icon'>🏅</div>
+                    <div className='stat-icon'>🏁</div>
                     <div className='stat-content'>
-                    <h3>Ranking Global</h3>
-                    <p className='stat-value'>{userData.ranking}º <span className="stat-subtitle">de {userData.totalPilotos}</span></p>
+                    <h3>Carreras Participadas</h3>
+                    <p className='stat-value'>{userData.carrerasParticipadas ?? 0}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.2s' }}>
-                    <div className='stat-icon'>🏢</div>
+                    <div className='stat-icon'>🥇</div>
                     <div className='stat-content'>
-                    <h3>Circuitos Visitados</h3>
-                    <p className='stat-value'>{userData.circuitosVisitados}</p>
+                    <h3>Victorias en Torneos</h3>
+                    <p className='stat-value'>{userData.torneosVictorias ?? 0}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.3s' }}>
-                    <div className='stat-icon'>🚗</div>
+                    <div className='stat-icon'>🏅</div>
                     <div className='stat-content'>
-                    <h3>Carreras Totales</h3>
-                    <p className='stat-value'>{userData.carrerasTotales}</p>
+                    <h3>Torneos Participados</h3>
+                    <p className='stat-value'>{userData.torneosParticipados ?? 0}</p>
                     </div>
                 </div>
                 </div>
             </section>
 
-            <section className='challenge-section'>
-                {/* ... Tu código de desafíos ... */}
-                <div className='challenge-header'>
-                <h2>Desafío Semanal</h2>
-                <span className='challenge-badge'>🏆</span>
-                </div>
-                <div className='challenge-content'>
-                <h3>{userData.objetivoSemanal.nombre}</h3>
-                <p>¡Completa {userData.objetivoSemanal.total} vueltas esta semana para desbloquear este reto!</p>
-                <div className='progress-container'>
-                    <div className='progress-bar'>
-                    <div 
-                        className={`progress-fill ${animateStats ? 'animate' : ''}`}
-                        style={{ width: `${(userData.objetivoSemanal.completado / userData.objetivoSemanal.total) * 100}%` }}
-                    ></div>
-                    </div>
-                    <div className='progress-text'>
-                    <span>{userData.objetivoSemanal.completado} / {userData.objetivoSemanal.total} vueltas</span>
-                    <span className='progress-percentage'>
-                        {Math.round((userData.objetivoSemanal.completado / userData.objetivoSemanal.total) * 100)}%
-                    </span>
-                    </div>
-                </div>
-                </div>
-            </section>
-
-            {/* --- ¡NUEVA SECCIÓN DE NOTICIAS! --- */}
             <section className='news-section'>
                 <h2>Desde el Paddock</h2>
                 <div className='news-grid'>
                 {newsLoading && <p className='news-loading'>Buscando noticias a toda velocidad...</p>}
                 {newsError && <p className='news-error'>{newsError}</p>}
                 {!newsLoading && !newsError && news.length === 0 && <p>Parece que hoy hay silencio en los motores...</p>}
-                {!newsLoading && !newsError && news.slice(0, 4).map((article, index) => ( // Mostramos solo 4
-                    <NewsCard key={article.url || index} article={article} /> // Usamos article.url como key si es posible
+                {!newsLoading && !newsError && news.slice(0, 4).map((article, index) => (
+                    <NewsCard key={article.url || index} article={article} />
                 ))}
                 </div>
                 {!newsLoading && news.length > 4 && (
                     <Link to="/noticias" className="see-more-link">Ver todas las noticias →</Link>
                 )}
             </section>
-            {/* --- FIN SECCIÓN --- */}
 
             {userData.proximosTorneos.length > 0 && (
                 <section className='tournaments-section'>
-                    {/* ... Tu código de torneos ... */}
                     <h2>Próximos Torneos</h2>
                     <div className='tournaments-grid'>
                     {userData.proximosTorneos.map((torneo, index) => (
@@ -287,7 +256,6 @@ const Index = () => {
 
             {userData.sugerencias.length > 0 && (
                 <section className='suggestions-section'>
-                    {/* ... Tu código de sugerencias ... */}
                     <h2>Recomendados para ti</h2>
                     <div className='suggestions-grid'>
                     {userData.sugerencias.map((sugerencia, index) => (
