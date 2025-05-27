@@ -75,14 +75,14 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
     }
 
     try {
-      const user = await comprobarLogin(username, password);
+      const user = await comprobarLogin(email, password);
 
       if (!user) {
         return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });

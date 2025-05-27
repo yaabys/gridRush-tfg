@@ -96,7 +96,7 @@ const Perfil = () => {
 
   const handleGuardarCambio = async () => {
     try {
-      let payload = { usernameActual: usuario.username.toLowerCase() };
+      let payload = { usernameActual: usuario.username };
 
       if (editandoCampo === 'username' && nuevoValor !== usuario.username) {
         payload.username = nuevoValor;
@@ -125,7 +125,7 @@ const Perfil = () => {
         setMensaje('¡Perfil actualizado correctamente!');
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error en guardar cambio:", err.response?.data?.error);
       setMensaje(err.response?.data?.error || 'Error al actualizar el perfil');
     } finally {
       setEditandoCampo(null);

@@ -15,7 +15,7 @@ router.get("/perfil", async (req, res) => {
 
   try {
     const result = await conn.execute({
-      sql: "SELECT id, username, nombre, carrerasVictorias, carrerasParticipadas, torneosVictorias, torneosParticipados FROM Usuarios WHERE username = ?",
+      sql: "SELECT id, username, email ,nombre, carrerasVictorias, carrerasParticipadas, torneosVictorias, torneosParticipados FROM Usuarios WHERE username = ?",
       args: [username]
     });
 
