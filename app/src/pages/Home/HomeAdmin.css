@@ -1,0 +1,283 @@
+    /* Contenedor principal */
+  .home-admin-container {
+    padding: 6rem 2rem 4rem; /* Ajusta el padding superior si tienes Header */
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .admin-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 1.5rem;
+  }
+  
+  .admin-header h1 {
+      color: var(--color-primary);
+      font-size: 2.2rem;
+  }
+  
+  .admin-header p {
+      color: var(--color-muted);
+      font-size: 1.1rem;
+  }
+  
+
+  .admin-race-view {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background-color: var(--color-bg-dark);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  
+  .admin-race-view h2 {
+      color: var(--color-primary-light);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+  }
+  .admin-race-view p {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--color-muted);
+  }
+
+  .racer-list-container {
+    background-color: var(--color-bg-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #3a3a3a;
+    min-height: 300px; 
+  }
+  
+ 
+  .racer-item {
+    background-color: #333;
+    color: var(--color-text);
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.8rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    border: 1px solid #444;
+    transition: all var(--transition-speed) ease;
+    cursor: grab;
+  }
+  
+  .racer-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .racer-item:active {
+      cursor: grabbing;
+  }
+
+  .drag-handle {
+    margin-right: 1.5rem;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: grab;
+    touch-action: none; 
+  }
+  
+
+  .racer-position {
+    font-weight: bold;
+    color: var(--color-primary);
+    margin-right: 1rem;
+    font-size: 1.1rem;
+    width: 40px; 
+    text-align: right;
+    background-color: rgba(0,0,0,0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .racer-name {
+    flex-grow: 1;
+    font-size: 1.1rem;
+  }
+  
+
+  .view-photo-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform var(--transition-speed);
+      padding: 0 0.5rem;
+      color: #888;
+  }
+  .view-photo-btn:hover {
+      transform: scale(1.2);
+      color: var(--color-primary-light);
+  }
+  
+
+  .confirm-button {
+      display: block;
+      width: 80%;
+      margin: 2.5rem auto 1rem;
+      padding: 1rem 1.5rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+  }
+  
+  .confirm-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(255, 69, 0, 0.5);
+  }
+
+
+.selection-view {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: var(--border-radius);
+  }
+  
+  .selection-view h2 {
+      margin-bottom: 2.5rem;
+      color: var(--color-text);
+      font-size: 1.8rem;
+  }
+  
+  .selection-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .selection-buttons button {
+    background-color: var(--color-bg-dark);
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    padding: 2rem 2.5rem;
+    border-radius: var(--border-radius);
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 250px;
+  }
+  
+  .selection-buttons button:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.4);
+  }
+  
+  .selection-buttons .btn-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .list-view {
+    padding: 2rem;
+    background-color: var(--color-bg-dark);
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  
+  .list-view h2 {
+    color: var(--color-primary-light);
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0.8rem;
+    font-size: 1.6rem;
+  }
+  
+  .item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .item-list li {
+    background-color: #333;
+    margin-bottom: 1rem;
+    padding: 1.2rem 1.5rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    border-left: 5px solid #444;
+  }
+  
+  .item-list li:hover {
+    background-color: #3a3a3a;
+    border-left-color: var(--color-primary);
+    transform: translateX(5px);
+  }
+  
+  .item-list li span {
+    color: var(--color-text);
+    font-size: 1.1rem;
+  }
+  
+  .item-list .item-date {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+  
+  .item-list .item-action {
+      color: var(--color-primary);
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity var(--transition-speed) ease;
+  }
+  
+  .item-list li:hover .item-action {
+      opacity: 1;
+  }
+  
+  .no-items-message {
+      color: var(--color-muted);
+      font-size: 1.1rem;
+      text-align: center;
+      padding: 3rem 0;
+  }
+  
+
+  .back-button {
+      background: none;
+      border: 1px solid #555;
+      color: var(--color-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      transition: all var(--transition-speed) ease;
+      float: left; 
+  }
+  
+  .back-button:hover {
+      background-color: #444;
+      color: var(--color-text);
+      border-color: #777;
+  }
+  
+  .list-view h2, .admin-race-view h2 {
+      clear: both;
+  }
