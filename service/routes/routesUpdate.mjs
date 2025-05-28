@@ -15,11 +15,9 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 
   try {
-    const usernameLower = username?.toLowerCase();
-    const usernameActualLower = usernameActual.toLowerCase();
 
     // Verificar si el nuevo nombre de usuario ya está registrado
-    if (username && usernameLower !== usernameActualLower) {
+    if (username && username !== usernameActual) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
         args: [username, usernameActual]
@@ -40,7 +38,7 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    if (username && usernameLower !== usernameActualLower) {
+    if (username && username !== usernameActual) {
       const resultadoFirebaseUsername = await actualizarUsernameFirebase(usernameActual, username);
       if (!resultadoFirebaseUsername.success) {
         return res.status(400).json({ error: resultadoFirebaseUsername.error });

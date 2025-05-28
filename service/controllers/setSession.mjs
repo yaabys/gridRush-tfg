@@ -24,7 +24,7 @@ export const setSession = async (req, username) => {
           return resolve(false);
         }
 
-        console.log("Sesión regenerada y actualizada:", req.session.usuario);
+        console.log("Sesión establecida:", req.session.usuario);
         resolve(true);
       });
     });
