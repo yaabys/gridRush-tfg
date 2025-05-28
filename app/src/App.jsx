@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import Home from './pages/Home/Home';
+import HomeAdmin from './pages/Home/HomeAdmin';
 import Register from './pages/Register/Register';
 import Index from './pages/Index/Index';
 import IndependentRace from './pages/IndependtRaces/IndependentRace';
@@ -17,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/admin' element={<HomeAdmin />} />
           <Route path='/registro' element={<Register />} />
           <Route path='/principal' element={<Index />} />
           <Route path='/carrerasLibres' element={<IndependentRace />} />
