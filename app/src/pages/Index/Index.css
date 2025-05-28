@@ -198,10 +198,11 @@
   background: var(--color-primary);
 }
 
+/* En Index.css */
+
 .stats-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   padding: 0 1rem;
 }
@@ -211,8 +212,8 @@
   backdrop-filter: blur(10px);
   padding: 1rem;
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
+  display: flex; 
+  flex-direction: column; 
   align-items: center;
   gap: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -220,8 +221,8 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
-  flex: 1 1 auto;
-  max-width: 280px;
+  width: 100%; 
+  box-sizing: border-box; 
 }
 
 .stat-card::before {
@@ -828,39 +829,39 @@
   }
 }
 
-/* --- Estilos para la Nueva Sección de Noticias --- */
 
 .news-section {
-  grid-column: span 12; /* Ocupa todo el ancho */
-  background: rgba(var(--color-bg-dark-rgb), 0.6); /* Fondo similar */
-  backdrop-filter: blur(8px); /* Mantenemos el blur */
+  grid-column: span 12; 
+  background: rgba(var(--color-bg-dark-rgb), 0.6); 
+  backdrop-filter: blur(8px);
   padding: 2.5rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
-  animation: sectionFadeIn 0.8s ease forwards; /* Usamos tu animación */
-  animation-delay: 0.3s; /* Un poco de retraso */
+  animation: sectionFadeIn 0.8s ease forwards; 
+  animation-delay: 0.3s; 
+  margin-top: 15rem; 
 }
 
 .news-section h2 {
-  color: var(--color-primary); /* */
-  margin-bottom: 1.75rem; /* */
-  font-size: 1.8rem; /* */
+  color: var(--color-primary); 
+  margin-bottom: 1.75rem; 
+  font-size: 1.8rem; 
   position: relative;
-  display: inline-block; /* */
+  display: inline-block; 
 }
 
 .news-section h2::after {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -5px; /* */
-  width: 40px; /* */
-  height: 3px; /* */
-  border-radius: 3px; /* */
-  background: var(--color-primary); /* */
+  bottom: -5px; 
+  width: 40px; 
+  height: 3px; 
+  border-radius: 3px; 
+  background: var(--color-primary); 
 }
 
 .news-grid {
@@ -872,22 +873,22 @@
 
 .news-card {
   background: rgba(var(--color-bg-dark-rgb), 0.8); /* Ligeramente más oscuro */
-  border-radius: 16px; /* */
+  border-radius: 16px; 
   overflow: hidden;
   display: flex; 
   flex-direction: column;
   text-decoration: none;
   color: var(--color-text);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* */
-  border: 1px solid rgba(255, 255, 255, 0.05); /* */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  border: 1px solid rgba(255, 255, 255, 0.05); 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
   position: relative;
 }
 
 .news-card:hover {
-  transform: translateY(-8px) scale(1.03); /* */
+  transform: translateY(-8px) scale(1.03); 
   box-shadow: 0 12px 30px rgba(var(--color-primary-rgb), 0.2);
-  border-color: rgba(var(--color-primary-rgb), 0.3); /* */
+  border-color: rgba(var(--color-primary-rgb), 0.3); 
 }
 
 .news-image {
@@ -915,7 +916,7 @@
 }
 
 .news-content {
-  padding: 1.5rem; /* */
+  padding: 1.5rem; 
   flex-grow: 1; 
   display: flex;
   flex-direction: column;
@@ -926,14 +927,14 @@
   font-size: 1.15em;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: var(--color-text); /* */
+  color: var(--color-text); 
   line-height: 1.4;
   min-height: 60px; /* Asegura algo de altura */
 }
 
 .news-source {
   font-size: 0.9em;
-  color: var(--color-muted); /* */
+  color: var(--color-muted); 
   margin-top: auto; 
   padding-top: 0.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -957,10 +958,10 @@
     display: inline-block;
     float: right; /* Lo ponemos a la derecha */
     margin-top: 1rem;
-    color: var(--color-primary); /* */
+    color: var(--color-primary); 
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.3s ease; /* */
+    transition: all 0.3s ease; 
     padding: 8px 15px;
     border-radius: 8px;
     background-color: rgba(var(--color-primary-rgb), 0.1);
@@ -969,13 +970,13 @@
 .see-more-link:hover {
     color: #ffffff;
     background-color: rgba(var(--color-primary-rgb), 0.8);
-    transform: translateY(-2px); /* */
+    transform: translateY(-2px); 
     box-shadow: 0 5px 10px rgba(var(--color-primary-rgb), 0.3);
 }
 
 /* Ajuste Responsive si es necesario */
 @media (max-width: 1200px) {
   .news-section {
-    grid-column: span 12; /* */
+    grid-column: span 12; 
   }
 }

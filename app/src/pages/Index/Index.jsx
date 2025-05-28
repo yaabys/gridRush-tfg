@@ -169,29 +169,29 @@ const Index = () => {
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`}>
                     <div className='stat-icon'>🏆</div>
                     <div className='stat-content'>
-                    <h3>Victorias en Carreras</h3>
-                    <p className='stat-value'>{userData.carrerasVictorias}</p>
+                    <h3>Carreras Participadas</h3>
+                    <p className='stat-value'>{userData.carrerasParticipadas}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.1s' }}>
                     <div className='stat-icon'>🏁</div>
                     <div className='stat-content'>
-                    <h3>Carreras Participadas</h3>
-                    <p className='stat-value'>{userData.carrerasParticipadas}</p>
+                    <h3>Victorias en Carreras</h3>
+                    <p className='stat-value'>{userData.carrerasVictorias}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.2s' }}>
                     <div className='stat-icon'>🥇</div>
                     <div className='stat-content'>
-                    <h3>Victorias en Torneos</h3>
-                    <p className='stat-value'>{userData.torneosVictorias}</p>
+                    <h3>Torneos Participados</h3>
+                    <p className='stat-value'>{userData.torneosParticipados}</p>
                     </div>
                 </div>
                 <div className={`stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.3s' }}>
                     <div className='stat-icon'>🏅</div>
                     <div className='stat-content'>
-                    <h3>Torneos Participados</h3>
-                    <p className='stat-value'>{userData.torneosParticipados}</p>
+                    <h3>Victorias en Torneos</h3>
+                    <p className='stat-value'>{userData.torneosVictorias}</p>
                     </div>
                 </div>
                 </div>

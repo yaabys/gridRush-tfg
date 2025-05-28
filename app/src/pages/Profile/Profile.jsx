@@ -318,22 +318,25 @@ const Perfil = () => {
                 <span>{eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
               </div>
             </div>
-
-            <div className="profile-stats">
+          </div>
+          <div className="profile-stats">
               <div className="stats-card">
-                <h3>Partidas Jugadas</h3>
-                <p>{usuario.partidasJugadas || 0}</p>
+                <h3>Carreras Participadas</h3>
+                <p>{usuario.carrerasParticipadas}</p>
               </div>
               <div className="stats-card">
-                <h3>Victorias</h3>
-                <p>{usuario.victorias || 0}</p>
+                <h3>Victorias en Carreras</h3>
+                <p>{usuario.carrerasVictorias}</p>
               </div>
               <div className="stats-card">
-                <h3>Derrotas</h3>
-                <p>{usuario.derrotas || 0}</p>
+                <h3>Torneos Participados</h3>
+                <p>{usuario.torneosParticipados}</p>
+              </div>
+              <div className="stats-card">
+                <h3>Victorias en Torneos</h3>
+                <p>{usuario.torneosVictorias}</p>
               </div>
             </div>
-          </div>
         </div>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}
