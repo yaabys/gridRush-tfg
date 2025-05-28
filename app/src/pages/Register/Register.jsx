@@ -48,7 +48,6 @@ const Register = () => {
   const [showSemaforo, setShowSemaforo] = useState(false);
   const [formType, setFormType] = useState('register');
   const [errorMsg, setErrorMsg] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -69,7 +68,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-  setIsLoading(true);
 
   try {
     if (formType === 'register') {
@@ -145,9 +143,7 @@ const Register = () => {
     } else {
       setErrorMsg("No se pudo conectar con el servidor. Verifica tu conexión.");
     }
-  } finally {
-    setIsLoading(false);
-  }
+  } 
 };
 
   if (showSemaforo) {
@@ -283,19 +279,14 @@ const Register = () => {
             
             <button 
               type='submit' 
-              className={`submit-button ${isLoading ? 'loading' : ''}`}
-              disabled={isLoading}
+              className="submit-button"
             >
-              {isLoading ? (
-                <span className="loading-spinner"></span>
-              ) : (
-                <>
-                  <span className="button-icon">
-                    {formType === 'register' ? '🏁' : '🚀'}
-                  </span>
-                  {formType === 'register' ? '¡A rodar!' : 'Iniciar Sesión'}
-                </>
-              )}
+              <>
+                <span className="button-icon">
+                  {formType === 'register' ? '🏁' : '🚀'}
+                </span>
+                {formType === 'register' ? '¡A rodar!' : 'Iniciar Sesión'}
+              </>
             </button>
 
             {errorMsg && (
