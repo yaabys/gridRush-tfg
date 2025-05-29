@@ -3,12 +3,12 @@
   color: var(--color-text);
   min-height: 100vh;
   padding: 6rem 2rem 2rem;
+  margin-top: 20px;
 }
 
 .tournament-inside__container {
   max-width: 1200px;
   margin: 0px auto;
-
 }
 
 .back-button {
@@ -19,17 +19,13 @@
   border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 1rem;
-  margin-bottom: 2rem;
   transition: all 0.3s ease;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 2rem;
-}
-
-.back-button:hover {
-  background: var(--color-primary-dark);
-  transform: translateY(-2px);
+  margin-bottom: 1.5rem;
+  float: left; 
+  clear: both; 
 }
 
 .tournament-header {
@@ -39,6 +35,8 @@
   margin-bottom: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--color-primary-light);
+  margin-top: 0; /* Aseguramos que no haya margen superior */
+  clear: both; 
 }
 
 .tournament-header h1 {
@@ -267,30 +265,29 @@
   }
 }
 
-/* Modo claro para OfficialTournamentInside */
 html.light .tournament-inside {
-  background-color: var(--color-bg); /* Usa el color de fondo claro global */
-  color: var(--color-text); /* Usa el color de texto claro global */
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 html.light .tournament-header {
-  background: var(--color-bg-dark); /* Usa un color de fondo oscuro más claro para el header */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde más sutil */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+  background: var(--color-bg-dark);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 html.light .tournament-header h1 {
-  color: var(--color-primary); /* Mantiene el color primario para el título */
-  text-shadow: none; /* Elimina la sombra del texto oscuro */
+  color: var(--color-primary);
+  text-shadow: none;
 }
 
 html.light .tournament-info,
 html.light .clasificacion-section,
 html.light .proximas-carreras,
 html.light .premios-section {
-  background: var(--color-bg-dark); /* Fondo oscuro más claro para las secciones */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra */
+  background: var(--color-bg-dark);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 html.light .tournament-info p,
@@ -298,37 +295,37 @@ html.light .clasificacion-table td,
 html.light .carrera-card p,
 html.light .premio-nombre,
 html.light .premio-descripcion {
-  color: var(--color-text); /* Color de texto principal */
+  color: var(--color-text);
 }
 
 html.light .tournament-info strong,
 html.light .clasificacion-table th,
 html.light .carrera-card h3,
 html.light .premio-card h3 {
-  color: var(--color-primary); /* Color primario para elementos destacados */
-  text-shadow: none; /* Elimina sombras de texto oscuras */
+  color: var(--color-primary);
+  text-shadow: none;
 }
 
 html.light .clasificacion-table {
-  background: var(--color-bg); /* Fondo claro para la tabla */
+  background: var(--color-bg);
 }
 
 html.light .clasificacion-table th {
-  background-color: var(--color-bg-dark); /* Fondo más oscuro para los encabezados de tabla */
+  background-color: var(--color-bg-dark);
 }
 
 html.light .clasificacion-table tr:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* Efecto hover sutil */
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 html.light .carrera-card,
 html.light .premio-card {
-   border-left-color: var(--color-primary); /* Borde izquierdo con color primario */
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+   border-left-color: var(--color-primary);
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 html.light .carrera-card:hover,
 html.light .premio-card:hover {
-  border-color: var(--color-primary-light); /* Borde más claro al pasar el mouse */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el mouse */
-} 
+  border-color: var(--color-primary-light);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}

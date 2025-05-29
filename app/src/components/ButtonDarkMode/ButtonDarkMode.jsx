@@ -18,9 +18,11 @@ const DarkModeToggle = () => {
     localStorage.setItem('theme', newTheme);
   };
 
+  const toggleIcon = darkMode ? '☀️' : '🌙';
+
   return (
     <button onClick={toggleTheme} className='theme-toggle-btn'>
-      {darkMode ? '☀️' : '🌙 '}
+      {toggleIcon}
     </button>
   );
 };

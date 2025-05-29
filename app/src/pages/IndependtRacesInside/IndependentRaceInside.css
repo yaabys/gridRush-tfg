@@ -35,6 +35,7 @@
 }
 
 .carrera-details {
+  margin-top: 6rem;
   background-color: var(--color-bg-dark);
   border-radius: var(--border-radius);
   padding: 2rem;
