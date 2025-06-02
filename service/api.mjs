@@ -6,6 +6,7 @@ import rutasModificar from "./routes/routesUpdate.mjs"
 import rutasRegister from "./routes/routesRegister.mjs"
 import rutasUploadFoto from "./routes/routesUploadFoto.mjs"
 import rutasNews from "./routes/routerNews.mjs"
+import rutasAdmin from "./routes/routesAdmin.mjs"
 import express from 'express'
 import session from "express-session"
 
@@ -31,7 +32,7 @@ app.use("/api", rutasRegister)
 app.use("/api", rutasRead)
 app.use("/api",rutasUploadFoto)
 app.use("/api",rutasNews)
-
+app.use("/api/admin",rutasAdmin)
 app.get("/", (req, res) =>{
     res.sendStatus(200)
 })
