@@ -1,9 +1,9 @@
 .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
 }
 
 .filters label {
@@ -57,7 +57,7 @@
   padding: 1.5rem;
   border-radius: var(--border-radius);
   border-left: 4px solid var(--color-primary);
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
 }
 
@@ -103,7 +103,7 @@
   padding: 1.5rem;
   border-radius: var(--border-radius);
   border-left: 4px solid var(--color-primary);
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
   position: relative;
   overflow: hidden;
@@ -117,13 +117,18 @@
 }
 
 .card-carrera::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(120deg, transparent, rgba(0, 0, 0, 0.187), transparent);
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(0, 0, 0, 0.187),
+    transparent
+  );
   transform: rotate(25deg);
   pointer-events: none;
 }
@@ -131,7 +136,6 @@
 .card-carrera:hover::before {
   animation: shine 0.75s linear;
 }
-
 
 .card-carrera button.btn-desapuntarse {
   background-color: #dc3545;
@@ -191,20 +195,20 @@
   color: white;
 }
 
-.modal-header.success { 
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+.modal-header.success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
 }
 
-.modal-header.error { 
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); 
+.modal-header.error {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
 }
 
-.modal-header.warning { 
-  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); 
+.modal-header.warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
 }
 
-.modal-header.info { 
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
+.modal-header.info {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
 }
 
 .modal-header h3 {
@@ -275,46 +279,46 @@
   color: white;
 }
 
-.modal-btn.confirm.success { 
-  background: #28a745; 
+.modal-btn.confirm.success {
+  background: #28a745;
 }
 
-.modal-btn.confirm.success:hover { 
-  background: #218838; 
+.modal-btn.confirm.success:hover {
+  background: #218838;
 }
 
-.modal-btn.confirm.error { 
-  background: #dc3545; 
+.modal-btn.confirm.error {
+  background: #dc3545;
 }
 
-.modal-btn.confirm.error:hover { 
-  background: #c82333; 
+.modal-btn.confirm.error:hover {
+  background: #c82333;
 }
 
-.modal-btn.confirm.warning { 
-  background: #ffc107; 
-  color: #212529; 
+.modal-btn.confirm.warning {
+  background: #ffc107;
+  color: #212529;
 }
 
-.modal-btn.confirm.warning:hover { 
-  background: #e0a800; 
+.modal-btn.confirm.warning:hover {
+  background: #e0a800;
 }
 
-.modal-btn.confirm.info { 
-  background: #007bff; 
+.modal-btn.confirm.info {
+  background: #007bff;
 }
 
-.modal-btn.confirm.info:hover { 
-  background: #0056b3; 
+.modal-btn.confirm.info:hover {
+  background: #0056b3;
 }
 
 /* Animaciones */
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
   }
 }
 
@@ -405,4 +409,3 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-

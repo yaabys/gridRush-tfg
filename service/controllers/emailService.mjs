@@ -9,10 +9,14 @@ const CLIENT_SECRET = process.env.SECRET_CLIENT_GOOGLE;
 const REDIRECT_URI = "http://localhost";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI,
+);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-app.use('/public', express.static('public'));
+app.use("/public", express.static("public"));
 
 export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
   try {

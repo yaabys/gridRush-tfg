@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../../components/Header/Header';
-import './Profile.css';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import Header from "../../components/Header/Header";
+import "./Profile.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Perfil = () => {
-
   const navigate = useNavigate();
 
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
-  const [editandoCampo, setEditandoCampo] = useState(null); 
+  const [editandoCampo, setEditandoCampo] = useState(null);
   const [nuevoValor, setNuevoValor] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -20,11 +19,11 @@ const Perfil = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion',{
+        const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
         if (!res.data.logueado) {
-          navigate('/registro');
+          navigate("/registro");
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
@@ -36,7 +35,7 @@ const Perfil = () => {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        const response = await axios.get("/api/perfil",{
+        const response = await axios.get("/api/perfil", {
           withCredentials: true,
         });
         setUsuario(response.data);
@@ -51,9 +50,9 @@ const Perfil = () => {
   useEffect(() => {
     const obtenerAvatar = async () => {
       try {
-        const response = await axios.get('/api/avatar', {
-          responseType: 'blob',
-          withCredentials: true 
+        const response = await axios.get("/api/avatar", {
+          responseType: "blob",
+          withCredentials: true,
         });
 
         const imageUrl = URL.createObjectURL(response.data);
@@ -68,19 +67,19 @@ const Perfil = () => {
   }, []);
 
   const handleEditarUsername = () => {
-    setEditandoCampo('username');
+    setEditandoCampo("username");
     setNuevoValor(usuario.username);
     setMensaje("");
   };
   const handleEditarEmail = () => {
-    setEditandoCampo('email');
+    setEditandoCampo("email");
     setNuevoValor(usuario.email);
     setMensaje("");
   };
   const handleEditarAvatar = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
 
     input.onchange = (e) => {
       const file = e.target.files[0];
@@ -88,31 +87,31 @@ const Perfil = () => {
 
       const imageUrl = URL.createObjectURL(file);
       setImagenSeleccionada({ file, url: imageUrl });
-      setEditandoCampo('avatar');
+      setEditandoCampo("avatar");
     };
 
     input.click();
-  };  
+  };
 
   const handleGuardarCambio = async () => {
     try {
       let payload = { usernameActual: usuario.username };
 
-      if (editandoCampo === 'username' && nuevoValor !== usuario.username) {
+      if (editandoCampo === "username" && nuevoValor !== usuario.username) {
         payload.username = nuevoValor;
       }
-      if (editandoCampo === 'email' && nuevoValor !== usuario.email) {
+      if (editandoCampo === "email" && nuevoValor !== usuario.email) {
         payload.email = nuevoValor;
       }
 
       if (Object.keys(payload).length === 1) {
-        setMensaje('No hay cambios para guardar');
+        setMensaje("No hay cambios para guardar");
         setEditandoCampo(null);
         setMostrarOpciones(false);
         return;
       }
 
-      const res = await axios.put('/api/cambiarperfil', payload, {
+      const res = await axios.put("/api/cambiarperfil", payload, {
         withCredentials: true,
       });
       console.log("Respuesta del backend:", res.data);
@@ -122,11 +121,11 @@ const Perfil = () => {
           withCredentials: true,
         });
         setUsuario(response.data);
-        setMensaje('¡Perfil actualizado correctamente!');
+        setMensaje("¡Perfil actualizado correctamente!");
       }
     } catch (err) {
       console.error("Error en guardar cambio:", err.response?.data?.error);
-      setMensaje(err.response?.data?.error || 'Error al actualizar el perfil');
+      setMensaje(err.response?.data?.error || "Error al actualizar el perfil");
     } finally {
       setEditandoCampo(null);
       setMostrarOpciones(false);
@@ -149,31 +148,32 @@ const Perfil = () => {
       { min: 6000, max: 7000, nivel: 7 },
       { min: 7000, max: 8000, nivel: 8 },
       { min: 8000, max: 9000, nivel: 9 },
-      { min: 9000, max: 10000, nivel: 10 }
+      { min: 9000, max: 10000, nivel: 10 },
     ];
 
-    const nivelActual = niveles.find(n => elo >= n.min && elo < n.max);
-    const progreso = ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
-    
+    const nivelActual = niveles.find((n) => elo >= n.min && elo < n.max);
+    const progreso =
+      ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
+
     return {
       nivel: nivelActual.nivel,
       progreso: Math.min(100, Math.max(0, progreso)),
       eloActual: elo,
-      siguienteNivel: nivelActual.max
+      siguienteNivel: nivelActual.max,
     };
   };
 
   if (error) {
     return (
-      <div className='profile-container'>
-        <p className='error-message'>{error}</p>
+      <div className="profile-container">
+        <p className="error-message">{error}</p>
       </div>
     );
   }
 
   if (!usuario) {
     return (
-      <div className='profile-container'>
+      <div className="profile-container">
         <p>Cargando perfil...</p>
       </div>
     );
@@ -184,7 +184,7 @@ const Perfil = () => {
   return (
     <>
       <Header />
-      <div className='profile-container'>
+      <div className="profile-container">
         <div className="profile-header">
           <h2>Perfil de Usuario</h2>
         </div>
@@ -192,42 +192,48 @@ const Perfil = () => {
         <div className="profile-content">
           <div className="profile-avatar">
             {imagenSeleccionada ? (
-              <img src={imagenSeleccionada.url} alt="Previsualización del avatar" />
+              <img
+                src={imagenSeleccionada.url}
+                alt="Previsualización del avatar"
+              />
             ) : avatarUrl ? (
               <img src={avatarUrl} alt="Avatar cargado" />
             ) : (
-              <img src="/img/defaultIconProfile.webp" alt="Avatar por defecto" />
+              <img
+                src="/img/defaultIconProfile.webp"
+                alt="Avatar por defecto"
+              />
             )}
             <button className="edit-btn" onClick={handleEditarAvatar}>
               Cambiar Avatar
             </button>
-            {editandoCampo === 'avatar' && (
+            {editandoCampo === "avatar" && (
               <div className="avatar-save">
                 <button
                   className="edit-btn"
                   onClick={async () => {
                     const formData = new FormData();
-                    formData.append('file', imagenSeleccionada.file);
+                    formData.append("file", imagenSeleccionada.file);
 
                     try {
-                      await axios.post('/api/upload', formData, {
+                      await axios.post("/api/upload", formData, {
                         headers: {
-                          'Content-Type': 'multipart/form-data',
+                          "Content-Type": "multipart/form-data",
                         },
                       });
-                      setMensaje('Imagen actualizada correctamente');
+                      setMensaje("Imagen actualizada correctamente");
                       setImagenSeleccionada(null);
                       setEditandoCampo(null);
 
                       // Recargar avatar
-                      const response = await axios.get('/api/avatar', {
-                        responseType: 'blob',
+                      const response = await axios.get("/api/avatar", {
+                        responseType: "blob",
                       });
                       const imageUrl = URL.createObjectURL(response.data);
                       setAvatarUrl(imageUrl);
                     } catch (error) {
                       console.error(error);
-                      setMensaje('Error al subir imagen');
+                      setMensaje("Error al subir imagen");
                     }
                   }}
                 >
@@ -250,7 +256,7 @@ const Perfil = () => {
             <div className="profile-data">
               <p>
                 <strong>Usuario:</strong>
-                {editandoCampo === 'username' ? (
+                {editandoCampo === "username" ? (
                   <div className="edit-inline">
                     <input
                       type="text"
@@ -268,7 +274,7 @@ const Perfil = () => {
                 ) : (
                   <span>{usuario.username}</span>
                 )}
-                {editandoCampo !== 'username' && (
+                {editandoCampo !== "username" && (
                   <button className="edit-btn" onClick={handleEditarUsername}>
                     Editar
                   </button>
@@ -276,7 +282,7 @@ const Perfil = () => {
               </p>
               <p>
                 <strong>Email:</strong>
-                {editandoCampo === 'email' ? (
+                {editandoCampo === "email" ? (
                   <div className="edit-inline">
                     <input
                       type="email"
@@ -294,7 +300,7 @@ const Perfil = () => {
                 ) : (
                   <span>{usuario.email}</span>
                 )}
-                {editandoCampo !== 'email' && (
+                {editandoCampo !== "email" && (
                   <button className="edit-btn" onClick={handleEditarEmail}>
                     Editar
                   </button>
@@ -308,35 +314,37 @@ const Perfil = () => {
                 <span className="elo-level">Nivel {eloInfo.nivel}</span>
               </div>
               <div className="elo-progress">
-                <div 
-                  className="elo-progress-bar" 
+                <div
+                  className="elo-progress-bar"
                   style={{ width: `${eloInfo.progreso}%` }}
                 />
               </div>
               <div className="elo-stats">
                 <span>{eloInfo.eloActual} Elo</span>
-                <span>{eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
+                <span>
+                  {eloInfo.siguienteNivel} Elo para el siguiente nivel
+                </span>
               </div>
             </div>
           </div>
           <div className="profile-stats">
-              <div className="stats-card">
-                <h3>Carreras Participadas</h3>
-                <p>{usuario.carrerasParticipadas}</p>
-              </div>
-              <div className="stats-card">
-                <h3>Victorias en Carreras</h3>
-                <p>{usuario.carrerasVictorias}</p>
-              </div>
-              <div className="stats-card">
-                <h3>Torneos Participados</h3>
-                <p>{usuario.torneosParticipados}</p>
-              </div>
-              <div className="stats-card">
-                <h3>Victorias en Torneos</h3>
-                <p>{usuario.torneosVictorias}</p>
-              </div>
+            <div className="stats-card">
+              <h3>Carreras Participadas</h3>
+              <p>{usuario.carrerasParticipadas}</p>
             </div>
+            <div className="stats-card">
+              <h3>Victorias en Carreras</h3>
+              <p>{usuario.carrerasVictorias}</p>
+            </div>
+            <div className="stats-card">
+              <h3>Torneos Participados</h3>
+              <p>{usuario.torneosParticipados}</p>
+            </div>
+            <div className="stats-card">
+              <h3>Victorias en Torneos</h3>
+              <p>{usuario.torneosVictorias}</p>
+            </div>
+          </div>
         </div>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Header from '../../components/Header/Header';
-import './Seasons.css';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Header from "../../components/Header/Header";
+import "./Seasons.css";
+import { useNavigate } from "react-router-dom";
 
 const Seasons = () => {
   const navigate = useNavigate();
@@ -15,11 +15,11 @@ const Seasons = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion',{
+        const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
         if (!res.data.logueado) {
-          navigate('/registro');
+          navigate("/registro");
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
@@ -34,25 +34,32 @@ const Seasons = () => {
         setLoading(true);
         setError(null);
 
-        const temporadaResponse = await axios.get('/api/temporada-actual',{
+        const temporadaResponse = await axios.get("/api/temporada-actual", {
           withCredentials: true,
         });
         const temporada = temporadaResponse.data;
         setTemporadaActual(temporada);
 
-        const recompensasResponse = await axios.get(`/api/recompensas/${temporada.id}`,{
-          withCredentials: true,
-        });
+        const recompensasResponse = await axios.get(
+          `/api/recompensas/${temporada.id}`,
+          {
+            withCredentials: true,
+          },
+        );
         setRecompensas(recompensasResponse.data);
 
-        const rankingResponse = await axios.get(`/api/ranking/${temporada.id}`,{
-          withCredentials: true,
-        });
+        const rankingResponse = await axios.get(
+          `/api/ranking/${temporada.id}`,
+          {
+            withCredentials: true,
+          },
+        );
         setRanking(rankingResponse.data);
-        
       } catch (err) {
-        setError('Error al cargar los datos. Por favor, inténtalo de nuevo más tarde.');
-        console.error('Error:', err);
+        setError(
+          "Error al cargar los datos. Por favor, inténtalo de nuevo más tarde.",
+        );
+        console.error("Error:", err);
       } finally {
         setLoading(false);
       }
@@ -62,8 +69,8 @@ const Seasons = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("es-ES", options);
   };
 
   return (
@@ -75,14 +82,18 @@ const Seasons = () => {
         ) : error ? (
           <div className="error-message">{error}</div>
         ) : !temporadaActual ? (
-          <div className="no-data">No hay temporada activa en este momento.</div>
+          <div className="no-data">
+            No hay temporada activa en este momento.
+          </div>
         ) : (
           <div className="seasons-container">
             <div className="current-season">
               <h2>Temporada Actual</h2>
               <div className="season-info">
                 <h3>{temporadaActual.nombre}</h3>
-                <p>Fecha de inicio: {formatDate(temporadaActual.fecha_inicio)}</p>
+                <p>
+                  Fecha de inicio: {formatDate(temporadaActual.fecha_inicio)}
+                </p>
                 <p>Fecha de fin: {formatDate(temporadaActual.fecha_fin)}</p>
               </div>
             </div>
@@ -92,11 +103,17 @@ const Seasons = () => {
               <div className="rewards-grid">
                 {recompensas.map((recompensa) => (
                   <div key={recompensa.id} className="reward-card">
-                    <img src={recompensa.imagen} alt={recompensa.nombre_recompensa} />
+                    <img
+                      src={recompensa.imagen}
+                      alt={recompensa.nombre_recompensa}
+                    />
                     <h3>{recompensa.nombre_recompensa}</h3>
-                    <p className="reward-description">{recompensa.descripcion}</p>
+                    <p className="reward-description">
+                      {recompensa.descripcion}
+                    </p>
                     <p className="reward-position">
-                      Posiciones {recompensa.posicion_min} - {recompensa.posicion_max}
+                      Posiciones {recompensa.posicion_min} -{" "}
+                      {recompensa.posicion_max}
                     </p>
                   </div>
                 ))}

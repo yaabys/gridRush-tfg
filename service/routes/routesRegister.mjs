@@ -1,22 +1,33 @@
 import express from "express";
-import { registrarFirebase,comprobarLogin } from "../firebase/conexionFirebase.mjs"
-import { comprobarUser,hashearPassword,comprobarEmail,comprobarSesion } from "../controllers/userController.mjs"
-import { conn } from "../sql/conexionSQL.mjs"
-import session from "express-session"
+import {
+  registrarFirebase,
+  comprobarLogin,
+} from "../firebase/conexionFirebase.mjs";
+import {
+  comprobarUser,
+  hashearPassword,
+  comprobarEmail,
+  comprobarSesion,
+} from "../controllers/userController.mjs";
+import { conn } from "../sql/conexionSQL.mjs";
+import session from "express-session";
 import { enviarCorreoRegistro } from "../controllers/emailService.mjs";
 import { setSession } from "../controllers/setSession.mjs";
+import { esAdmin } from "../controllers/adminAuth.mjs";
 
 const router = express.Router();
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.use(session({
-	secret: "clave_secreta",
-	resave: false, // no guardar la cookie de nuevo si no hay cambio
-	saveUninitialized: true, // guardarla sin inicializar
-	cookie: {maxAge: 1000 * 60 * 60 * 2} // 2 horas
-}))
+router.use(
+  session({
+    secret: "clave_secreta",
+    resave: false, // no guardar la cookie de nuevo si no hay cambio
+    saveUninitialized: true, // guardarla sin inicializar
+    cookie: { maxAge: 1000 * 60 * 60 * 2 }, // 2 horas
+  }),
+);
 
 router.get("/comprobarSesion", (req, res) => {
   if (req.session.usuario) {
@@ -31,29 +42,50 @@ router.post("/register", async (req, res) => {
     return false;
   }
 
-  const { nombre, apellido, username, nacimiento, email, provincia, password } = req.body;
+  const { nombre, apellido, username, nacimiento, email, provincia, password } =
+    req.body;
 
-  if (!nombre || !apellido || !username || !nacimiento || !password || !email || !provincia) {
-    return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
+  if (
+    !nombre ||
+    !apellido ||
+    !username ||
+    !nacimiento ||
+    !password ||
+    !email ||
+    !provincia
+  ) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Faltan campos requeridos" });
   }
 
   try {
     const userCheck = await comprobarUser(username);
     if (!userCheck.success) {
-      return res.status(409).json({ success: false, error: 'Nombre de usuario ya registrado' });
+      return res
+        .status(409)
+        .json({ success: false, error: "Nombre de usuario ya registrado" });
     }
 
     const emailCheck = await comprobarEmail(email);
     if (!emailCheck.success) {
-      return res.status(409).json({ success: false, error: 'Correo ya registrado' });
+      return res
+        .status(409)
+        .json({ success: false, error: "Correo ya registrado" });
     }
 
     const hashPassword = await hashearPassword(password);
 
     // Registrar en Firebase
-    const firebaseResult = await registrarFirebase(email, hashPassword, username);
+    const firebaseResult = await registrarFirebase(
+      email,
+      hashPassword,
+      username,
+    );
     if (!firebaseResult) {
-      return res.status(500).json({ success: false, error: 'Error al registrar en Firebase' });
+      return res
+        .status(500)
+        .json({ success: false, error: "Error al registrar en Firebase" });
     }
 
     await enviarCorreoRegistro(email, username);
@@ -61,40 +93,61 @@ router.post("/register", async (req, res) => {
     const sql = `INSERT INTO Usuarios (username, nombre, apellidos, email, password, provincia, fechaNacimiento)
                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-    await conn.execute(sql, [username, nombre, apellido, email, hashPassword, provincia, nacimiento]);
+    await conn.execute(sql, [
+      username,
+      nombre,
+      apellido,
+      email,
+      hashPassword,
+      provincia,
+      nacimiento,
+    ]);
 
     if (await setSession(req, username)) {
-      return res.status(201).json({ success: true, message: 'Inicio de sesión exitoso' });
+      return res
+        .status(201)
+        .json({ success: true, message: "Inicio de sesión exitoso" });
     }
-
-
   } catch (error) {
-    return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: "Error interno del servidor" });
   }
-
 });
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+  
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, error: 'Faltan campos requeridos' });
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Faltan campos requeridos" });
+  }
+
+  if (comprobarLogin(email,password) !== null && esAdmin(email)) {
+    return res.status(200).json({ admin: true });
+  }
+
+  try {
+    const user = await comprobarLogin(email, password);
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, error: "Credenciales incorrectas" });
     }
 
-    try {
-      const user = await comprobarLogin(email, password);
-
-      if (!user) {
-        return res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
-      }
-
-      if (await setSession(req, user.username)) {
-        return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
-      }
-  
+    if (await setSession(req, user.username)) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Inicio de sesión exitoso" });
+    }
   } catch (error) {
-    return res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ success: false, error: "Error interno del servidor" });
   }
 });
-  
+
 export default router;

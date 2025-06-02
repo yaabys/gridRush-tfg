@@ -1,42 +1,44 @@
-//rutas 
+//rutas
 // import rutasInsertar from "./routers/rutasInsertar.mjs"
-import rutasEliminar from "./routes/routesDelete.mjs"
-import rutasRead from "./routes/routesRead.mjs"
-import rutasModificar from "./routes/routesUpdate.mjs"
-import rutasRegister from "./routes/routesRegister.mjs"
-import rutasUploadFoto from "./routes/routesUploadFoto.mjs"
-import rutasNews from "./routes/routerNews.mjs"
-import rutasAdmin from "./routes/routesAdmin.mjs"
-import express from 'express'
-import session from "express-session"
+import rutasEliminar from "./routes/routesDelete.mjs";
+import rutasRead from "./routes/routesRead.mjs";
+import rutasModificar from "./routes/routesUpdate.mjs";
+import rutasRegister from "./routes/routesRegister.mjs";
+import rutasUploadFoto from "./routes/routesUploadFoto.mjs";
+import rutasNews from "./routes/routerNews.mjs";
+import rutasAdmin from "./routes/routesAdmin.mjs";
+import express from "express";
+import session from "express-session";
 
-const app = express()
-const puerto = 3000
+const app = express();
+const puerto = 3000;
 
 //middlewares
-app.use(express.json())
-app.use(express.urlencoded({ extended:true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: "Cadena muy secreta",
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 horas
-}));
+app.use(
+  session({
+    secret: "Cadena muy secreta",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 2 }, // 2 horas
+  }),
+);
 
 // app.use("/api",rutasInsertar)
-app.use("/api",rutasEliminar)
+app.use("/api", rutasEliminar);
 // app.use("/api",rutasListar)
-app.use("/api",rutasModificar)
-app.use("/api", rutasRegister)
-app.use("/api", rutasRead)
-app.use("/api",rutasUploadFoto)
-app.use("/api",rutasNews)
-app.use("/api/admin",rutasAdmin)
-app.get("/", (req, res) =>{
-    res.sendStatus(200)
-})
+app.use("/api", rutasModificar);
+app.use("/api", rutasRegister);
+app.use("/api", rutasRead);
+app.use("/api", rutasUploadFoto);
+app.use("/api", rutasNews);
+app.use("/api/admin", rutasAdmin);
+app.get("/", (req, res) => {
+  res.sendStatus(200);
+});
 
-app.listen(puerto,() =>{
-    console.log("Servidor corriendo en el puerto", puerto)
-})
+app.listen(puerto, () => {
+  console.log("Servidor corriendo en el puerto", puerto);
+});

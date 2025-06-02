@@ -16,11 +16,11 @@ body {
   z-index: 100;
   width: 95%;
   max-width: 1400px;
-  
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   background-color: rgba(22, 22, 26, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -28,7 +28,7 @@ body {
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  
+
   transition: all 0.3s ease;
 }
 
@@ -43,7 +43,12 @@ body {
 
 /* Modo claro para el header */
 html.light .header {
-  background-color: rgba(249, 249, 249, 0.85); /* Fondo claro semitransparente */
+  background-color: rgba(
+    249,
+    249,
+    249,
+    0.85
+  ); /* Fondo claro semitransparente */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -128,7 +133,9 @@ html.light .perfil-link.active {
 }
 
 .link-text {
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 .link-indicator {
@@ -138,7 +145,12 @@ html.light .perfil-link.active {
   transform: translateX(-50%) scaleX(0);
   height: 3px;
   width: 100%;
-  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-primary),
+    transparent
+  );
   transition: transform 0.3s ease;
   border-radius: 3px;
 }
@@ -207,25 +219,26 @@ html.light .perfil-link.active {
     padding: 0.5rem 1rem;
     top: 0.5rem;
   }
-  
+
   .nav-links {
     gap: 1rem;
   }
-  
+
   .app-name {
     font-size: 1.4rem;
   }
-  
+
   .perfil-text {
     display: none;
   }
-  
+
   .header-right {
     gap: 0.8rem;
   }
 }
 
 /* CSS para crear espacio para el header */
-main, .main-content {
+main,
+.main-content {
   padding-top: 6rem; /* Ajusta esto según la altura de tu header */
 }

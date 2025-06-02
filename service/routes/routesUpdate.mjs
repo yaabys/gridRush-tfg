@@ -1,7 +1,10 @@
 import express from "express";
 import { actualizarPerfil } from "../controllers/userController.mjs";
 import { conn } from "../sql/conexionSQL.mjs";
-import { actualizarUsernameFirebase, actualizarEmailFirebase } from "../firebase/conexionFirebase.mjs";
+import {
+  actualizarUsernameFirebase,
+  actualizarEmailFirebase,
+} from "../firebase/conexionFirebase.mjs";
 import session from "express-session";
 import { updateSession } from "../controllers/updateSession.mjs";
 
@@ -15,15 +18,16 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 
   try {
-
     // Verificar si el nuevo nombre de usuario ya está registrado
     if (username && username !== usernameActual) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
-        args: [username, usernameActual]
+        args: [username, usernameActual],
       });
       if (result.rows.length > 0) {
-        return res.status(400).json({ error: "El nombre de usuario ya está registrado" });
+        return res
+          .status(400)
+          .json({ error: "El nombre de usuario ya está registrado" });
       }
     }
 
@@ -31,15 +35,20 @@ router.put("/cambiarperfil", async (req, res) => {
     if (email) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE email = ? AND username != ?",
-        args: [email, usernameActual]
+        args: [email, usernameActual],
       });
       if (result.rows.length > 0) {
-        return res.status(400).json({ error: "El correo electrónico ya está registrado" });
+        return res
+          .status(400)
+          .json({ error: "El correo electrónico ya está registrado" });
       }
     }
 
     if (username && username !== usernameActual) {
-      const resultadoFirebaseUsername = await actualizarUsernameFirebase(usernameActual, username);
+      const resultadoFirebaseUsername = await actualizarUsernameFirebase(
+        usernameActual,
+        username,
+      );
       if (!resultadoFirebaseUsername.success) {
         return res.status(400).json({ error: resultadoFirebaseUsername.error });
       }
@@ -47,12 +56,17 @@ router.put("/cambiarperfil", async (req, res) => {
       const sessionUpdated = await updateSession(req, username);
       if (!sessionUpdated) {
         console.error("Fallo al actualizar la sesión");
-        return res.status(500).json({ error: "No se pudo actualizar la sesión" });
+        return res
+          .status(500)
+          .json({ error: "No se pudo actualizar la sesión" });
       }
     }
 
     if (email) {
-      const resultadoFirebaseEmail = await actualizarEmailFirebase(usernameActual, email);
+      const resultadoFirebaseEmail = await actualizarEmailFirebase(
+        usernameActual,
+        email,
+      );
       if (!resultadoFirebaseEmail.success) {
         return res.status(400).json({ error: resultadoFirebaseEmail.error });
       }
@@ -60,15 +74,13 @@ router.put("/cambiarperfil", async (req, res) => {
 
     res.json({
       success: true,
-      mensaje: "Perfil actualizado correctamente"
+      mensaje: "Perfil actualizado correctamente",
     });
   } catch (error) {
     console.error("Error en actualización:", error);
     res.status(500).json({ error: "Error del servidor" });
   }
 });
-
-
 
 router.put("/reservar-carreraLibre", async (req, res) => {
   const { idCarrera, username } = req.body;
@@ -81,7 +93,7 @@ router.put("/reservar-carreraLibre", async (req, res) => {
     // Obtener ID del usuario por username
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     if (userResult.rows.length === 0) {
@@ -93,27 +105,27 @@ router.put("/reservar-carreraLibre", async (req, res) => {
     // Verificar si ya está inscrito
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
-      args: [idCarrera, idUsuario]
+      args: [idCarrera, idUsuario],
     });
 
     if (inscripcionResult.rows.length > 0) {
       return res.status(200).json({
         success: false,
         message: "El usuario ya está inscrito en esta carrera",
-        inscrito: true
+        inscrito: true,
       });
     }
 
     // Hacer la inscripción
     await conn.execute({
       sql: "INSERT INTO InscripcionesCarrera (id_carrera, id_piloto) VALUES (?, ?)",
-      args: [idCarrera, idUsuario]
+      args: [idCarrera, idUsuario],
     });
 
     return res.status(200).json({
       success: true,
       message: "Inscripción realizada correctamente",
-      inscrito: false
+      inscrito: false,
     });
   } catch (error) {
     console.error("Error al reservar carrera libre:", error);
@@ -132,7 +144,7 @@ router.post("/check-inscripcion", async (req, res) => {
     // Obtener ID del usuario
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     if (userResult.rows.length === 0) {
@@ -144,7 +156,7 @@ router.post("/check-inscripcion", async (req, res) => {
     // Verificar inscripción
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
-      args: [idCarrera, idUsuario]
+      args: [idCarrera, idUsuario],
     });
 
     return res.json({ inscrito: inscripcionResult.rows.length > 0 });
@@ -165,7 +177,7 @@ const calcularNivel = (elo) => {
     { min: 6000, max: 7000, nivel: 7 },
     { min: 7000, max: 8000, nivel: 8 },
     { min: 8000, max: 9000, nivel: 9 },
-    { min: 9000, max: 10000, nivel: 10 }
+    { min: 9000, max: 10000, nivel: 10 },
   ];
 
   for (const rango of niveles) {
@@ -187,7 +199,7 @@ router.put("/reservar-torneo", async (req, res) => {
     // Obtener ID del usuario
     const userResult = await conn.execute({
       sql: "SELECT id, elo FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     if (userResult.rows.length === 0) {
@@ -201,20 +213,20 @@ router.put("/reservar-torneo", async (req, res) => {
     // Verificar si ya está inscrito
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
-      args: [idTorneo, idUsuario]
+      args: [idTorneo, idUsuario],
     });
 
     if (inscripcionResult.rows.length > 0) {
       return res.status(200).json({
         success: false,
-        message: "Ya estás inscrito en este torneo"
+        message: "Ya estás inscrito en este torneo",
       });
     }
 
     // Obtener información del torneo
     const torneoResult = await conn.execute({
       sql: "SELECT nivelMin, maxInscripciones FROM Torneos WHERE id = ?",
-      args: [idTorneo]
+      args: [idTorneo],
     });
 
     if (torneoResult.rows.length === 0) {
@@ -226,31 +238,31 @@ router.put("/reservar-torneo", async (req, res) => {
     // Verificar nivel mínimo
     if (nivelUsuario < torneo.nivelMin) {
       return res.status(400).json({
-        error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`
+        error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`,
       });
     }
 
     // Verificar plazas disponibles
     const inscritosResult = await conn.execute({
       sql: "SELECT COUNT(*) as inscritos FROM InscripcionesTorneo WHERE id_torneo = ?",
-      args: [idTorneo]
+      args: [idTorneo],
     });
 
     if (inscritosResult.rows[0].inscritos >= torneo.maxInscripciones) {
       return res.status(400).json({
-        error: "El torneo ya está completo"
+        error: "El torneo ya está completo",
       });
     }
 
     // Realizar la inscripción
     await conn.execute({
       sql: "INSERT INTO InscripcionesTorneo (id_torneo, id_piloto) VALUES (?, ?)",
-      args: [idTorneo, idUsuario]
+      args: [idTorneo, idUsuario],
     });
 
     return res.status(200).json({
       success: true,
-      message: "Inscripción realizada correctamente"
+      message: "Inscripción realizada correctamente",
     });
   } catch (error) {
     console.error("Error al inscribirse en el torneo:", error);
@@ -269,7 +281,7 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
     // Obtener ID del usuario
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     if (userResult.rows.length === 0) {
@@ -281,7 +293,7 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
     // Verificar inscripción
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
-      args: [idTorneo, idUsuario]
+      args: [idTorneo, idUsuario],
     });
 
     return res.json({ inscrito: inscripcionResult.rows.length > 0 });
@@ -292,5 +304,3 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
 });
 
 export default router;
-
-
