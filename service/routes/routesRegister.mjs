@@ -13,6 +13,7 @@ import { conn } from "../sql/conexionSQL.mjs";
 import session from "express-session";
 import { enviarCorreoRegistro } from "../controllers/emailService.mjs";
 import { setSession } from "../controllers/setSession.mjs";
+import { esAdmin } from "../controllers/adminAuth.mjs";
 
 const router = express.Router();
 
@@ -115,12 +116,17 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res
       .status(400)
       .json({ success: false, error: "Faltan campos requeridos" });
+  }
+
+  if (comprobarLogin(email,password) !== null && esAdmin(email)) {
+    return res.status(200).json({ admin: true });
   }
 
   try {

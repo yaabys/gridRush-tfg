@@ -67,12 +67,10 @@ router.get("/motorsport-news", async (req, res) => {
       });
     } else {
       console.error("[NEWS] Error genérico en la petición:", error.message);
-      res
-        .status(500)
-        .json({
-          error: "No se pudieron obtener las noticias.",
-          details: error.message,
-        });
+      res.status(500).json({
+        error: "No se pudieron obtener las noticias.",
+        details: error.message,
+      });
     }
   }
 });

@@ -203,26 +203,25 @@ router.get("/carreras-libres", async (req, res) => {
   try {
     const result = await conn.execute(`
       SELECT 
-  c.id,
-  c.fecha,
-  k.nombre AS karting,
-  k.ciudad AS comunidad,
-  strftime('%d/%m/%Y', c.fecha) AS fechaFormateada,
-  strftime('%H:%M', c.hora) as hora,
-  CASE 
-    WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
-    WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
-    WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
-    ELSE 'Desconocido'
-  END AS nivel,
-  (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
-  c.maxInscripciones AS plazasTotales
-FROM Carreras c
-JOIN Kartings k ON c.id_karting = k.id
-WHERE c.id_torneo IS NULL
-  AND date(c.fecha) >= date('now')
-ORDER BY c.fecha ASC
-
+        c.id,
+        c.fecha,
+        k.nombre AS karting,
+        k.ciudad AS comunidad,
+        strftime('%d/%m/%Y', c.fecha) AS fechaFormateada,
+        strftime('%H:%M', c.hora) as hora,
+        CASE 
+          WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
+          WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
+          WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
+          ELSE 'Desconocido'
+        END AS nivel,
+        (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
+        c.maxInscripciones AS plazasTotales
+      FROM Carreras c
+      JOIN Kartings k ON c.id_karting = k.id
+      WHERE c.id_torneo IS NULL
+        AND date(c.fecha) >= date('now')
+      ORDER BY c.fecha ASC
     `);
 
     const carreras = result.rows;

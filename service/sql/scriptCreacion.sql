@@ -17,7 +17,8 @@ CREATE TABLE Usuarios (
     torneosParticipados INTEGER DEFAULT 0, 
     provincia TEXT,
     fechaNacimiento TEXT,
-    elo INTEGER NOT NULL DEFAULT 0 -- Elo inicial 0
+    elo INTEGER NOT NULL DEFAULT 0,-- Elo inicial 0
+    rol TEXT DEFAULT 'user' 
 );
 
 -- Tabla de recompensas

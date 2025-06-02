@@ -1,13 +1,11 @@
 import express from "express";
 import { conn } from "../sql/conexionSQL.mjs";
-import { verificarAdmin } from "../controllers/adminAuth.mjs";
+import { esAdmin } from "../controllers/adminAuth.mjs";
 
 const router = express.Router();
 
-// Aplicar middleware de verificación de admin a todas las rutas
-router.use(verificarAdmin);
+router.use(esAdmin);
 
-// Obtener carreras pendientes de validación
 router.get("/carreras-pendientes", async (req, res) => {
   try {
     const result = await conn.execute(`
@@ -149,46 +147,6 @@ router.get("/torneo/:id/participantes", async (req, res) => {
     res.status(500).json({ error: "Error del servidor" });
   }
 });
-
-// Función para calcular cambio de ELO
-const calcularCambioElo = (eloA, eloB, resultado, kFactor = 32) => {
-  const expectedA = 1 / (1 + Math.pow(10, (eloB - eloA) / 400));
-  return Math.round(kFactor * (resultado - expectedA));
-};
-
-// Función para calcular nuevos ELOs después de una carrera
-const calcularNuevosElos = (participantes) => {
-  const nuevosElos = [...participantes];
-
-  // Calcular ELO basado en todas las comparaciones por pares
-  for (let i = 0; i < nuevosElos.length; i++) {
-    let cambioTotal = 0;
-    const participanteA = nuevosElos[i];
-
-    for (let j = 0; j < nuevosElos.length; j++) {
-      if (i !== j) {
-        const participanteB = nuevosElos[j];
-        // Si A terminó mejor que B, A gana (resultado = 1), sino pierde (resultado = 0)
-        const resultado =
-          participanteA.position < participanteB.position ? 1 : 0;
-        const cambio = calcularCambioElo(
-          participanteA.elo,
-          participanteB.elo,
-          resultado,
-        );
-        cambioTotal += cambio;
-      }
-    }
-
-    // Promediamos el cambio total entre todos los oponentes
-    nuevosElos[i].nuevoElo = Math.max(
-      0,
-      participanteA.elo + Math.round(cambioTotal / (nuevosElos.length - 1)),
-    );
-  }
-
-  return nuevosElos;
-};
 
 // Confirmar resultados de carrera
 router.post("/confirmar-carrera", async (req, res) => {

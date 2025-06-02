@@ -164,7 +164,13 @@ const Register = () => {
           withCredentials: true,
         });
 
-        switch (response.status) {
+        if (response.data.admin) {
+          navigate("/admin");
+        } else {
+          switch (response.status) {
+          case 666:
+              navigate("/admin");
+            break;
           case 200:
             setShowSemaforo(true);
             setTimeout(() => {
@@ -183,6 +189,7 @@ const Register = () => {
           default:
             setErrorMsg("Algo salió mal. Intenta de nuevo.");
             break;
+        }
         }
       }
     } catch (error) {
