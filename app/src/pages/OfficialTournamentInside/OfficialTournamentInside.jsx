@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Header from '../../components/Header/Header';
-import './OfficialTournamentInside.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Header from "../../components/Header/Header";
+import "./OfficialTournamentInside.css";
 
 const OfficialTournamentInside = () => {
   const navigate = useNavigate();
@@ -17,11 +17,11 @@ const OfficialTournamentInside = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion',{
+        const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
         if (!res.data.logueado) {
-          navigate('/registro');
+          navigate("/registro");
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
@@ -33,7 +33,7 @@ const OfficialTournamentInside = () => {
   useEffect(() => {
     const fetchTorneoData = async () => {
       try {
-        const response = await axios.get(`/api/torneo/${id}`,{
+        const response = await axios.get(`/api/torneo/${id}`, {
           withCredentials: true,
         });
         setTorneo(response.data.torneo);
@@ -41,8 +41,8 @@ const OfficialTournamentInside = () => {
         setProximasCarreras(response.data.proximasCarreras);
         setPremios(response.data.premios);
       } catch (err) {
-        console.error('Error al cargar datos del torneo:', err);
-        setError('Error al cargar los datos del torneo');
+        console.error("Error al cargar datos del torneo:", err);
+        setError("Error al cargar los datos del torneo");
       } finally {
         setLoading(false);
       }
@@ -82,17 +82,29 @@ const OfficialTournamentInside = () => {
     <div className="tournament-inside">
       <Header />
       <div className="tournament-inside__container">
-        <button className="back-button" onClick={() => navigate('/torneosOficiales')}>
+        <button
+          className="back-button"
+          onClick={() => navigate("/torneosOficiales")}
+        >
           ← Volver a Torneos
         </button>
 
         <div className="tournament-header">
           <h1>{torneo.nombre}</h1>
           <div className="tournament-info">
-            <p><strong>📍 Ubicación:</strong> {torneo.ubicacion}</p>
-            <p><strong>🗓 Fechas:</strong> {torneo.fechaInicio} - {torneo.fechaFin}</p>
-            <p><strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}</p>
-            <p><strong>👥 Inscritos:</strong> {torneo.inscritos}/{torneo.maximo}</p>
+            <p>
+              <strong>📍 Ubicación:</strong> {torneo.ubicacion}
+            </p>
+            <p>
+              <strong>🗓 Fechas:</strong> {torneo.fechaInicio} -{" "}
+              {torneo.fechaFin}
+            </p>
+            <p>
+              <strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}
+            </p>
+            <p>
+              <strong>👥 Inscritos:</strong> {torneo.inscritos}/{torneo.maximo}
+            </p>
           </div>
         </div>
 
@@ -136,8 +148,13 @@ const OfficialTournamentInside = () => {
                 {proximasCarreras.map((carrera) => (
                   <div key={carrera.id} className="carrera-card">
                     <h3>{carrera.circuito}</h3>
-                    <p><strong>🗓 Fecha:</strong> {carrera.fecha}</p>
-                    <p><strong>⏰ Hora:</strong> {String(carrera.hora).replace('.',':')}</p>
+                    <p>
+                      <strong>🗓 Fecha:</strong> {carrera.fecha}
+                    </p>
+                    <p>
+                      <strong>⏰ Hora:</strong>{" "}
+                      {String(carrera.hora).replace(".", ":")}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -147,7 +164,9 @@ const OfficialTournamentInside = () => {
           <section className="premios-section">
             <h2>Premios</h2>
             {premios.length === 0 ? (
-              <p className="no-data">No hay premios definidos para este torneo</p>
+              <p className="no-data">
+                No hay premios definidos para este torneo
+              </p>
             ) : (
               <div className="premios-grid">
                 {premios.map((premio) => (
@@ -168,4 +187,4 @@ const OfficialTournamentInside = () => {
   );
 };
 
-export default OfficialTournamentInside; 
+export default OfficialTournamentInside;

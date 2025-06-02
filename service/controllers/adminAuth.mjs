@@ -13,7 +13,7 @@ export const verificarAdmin = async (req, res, next) => {
     // Verificar si el usuario existe y obtener su rol (si tienes un campo role)
     const result = await conn.execute({
       sql: "SELECT id, username, role FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     if (result.rows.length === 0) {
@@ -25,8 +25,10 @@ export const verificarAdmin = async (req, res, next) => {
     // Verificar si el usuario es admin (puedes personalizar esta lógica)
     // Por ahora, cualquier usuario logueado puede ser admin
     // En el futuro puedes agregar un campo 'role' a la tabla Usuarios
-    if (usuario.role && usuario.role !== 'admin') {
-      return res.status(403).json({ error: "No tienes permisos de administrador" });
+    if (usuario.role && usuario.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "No tienes permisos de administrador" });
     }
 
     req.usuario = usuario;

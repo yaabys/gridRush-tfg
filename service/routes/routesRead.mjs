@@ -1,8 +1,16 @@
-import express from "express"
-import { registrarFirebase, comprobarLogin } from "../firebase/conexionFirebase.mjs"
-import { comprobarUser, hashearPassword, comprobarEmail, comprobarSesion } from "../controllers/userController.mjs"
-import { conn } from "../sql/conexionSQL.mjs"
-import session from "express-session"
+import express from "express";
+import {
+  registrarFirebase,
+  comprobarLogin,
+} from "../firebase/conexionFirebase.mjs";
+import {
+  comprobarUser,
+  hashearPassword,
+  comprobarEmail,
+  comprobarSesion,
+} from "../controllers/userController.mjs";
+import { conn } from "../sql/conexionSQL.mjs";
+import session from "express-session";
 
 const router = express.Router();
 
@@ -16,7 +24,7 @@ router.get("/perfil", async (req, res) => {
   try {
     const result = await conn.execute({
       sql: "SELECT id, username, email ,nombre, carrerasVictorias, carrerasParticipadas, torneosVictorias, torneosParticipados FROM Usuarios WHERE username = ?",
-      args: [username]
+      args: [username],
     });
 
     const filas = result.rows;
@@ -37,23 +45,24 @@ router.get("/perfil", async (req, res) => {
 });
 
 // Ruta para obtener la temporada actual
-router.get('/temporada-actual', async (req, res) => {
+router.get("/temporada-actual", async (req, res) => {
   try {
-    const result = await conn.execute(
-      "SELECT * FROM Temporadas"
-    );
+    const result = await conn.execute("SELECT * FROM Temporadas");
 
     const temporadas = result.rows;
 
     if (!Array.isArray(temporadas) || temporadas.length === 0) {
       const resultProximas = await conn.execute(
-        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1"
+        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1",
       );
 
       const proximasTemporadas = resultProximas.rows;
 
-      if (!Array.isArray(proximasTemporadas) || proximasTemporadas.length === 0) {
-        return res.status(404).json({ error: 'No hay temporadas disponibles' });
+      if (
+        !Array.isArray(proximasTemporadas) ||
+        proximasTemporadas.length === 0
+      ) {
+        return res.status(404).json({ error: "No hay temporadas disponibles" });
       }
 
       return res.json(proximasTemporadas[0]);
@@ -61,7 +70,7 @@ router.get('/temporada-actual', async (req, res) => {
 
     return res.json(temporadas[0]);
   } catch (error) {
-    return res.status(500).json({ error: 'Error del servidor' });
+    return res.status(500).json({ error: "Error del servidor" });
   }
 });
 
@@ -76,7 +85,7 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
        JOIN Recompensas r ON tr.id_recompensa = r.id 
        WHERE tr.id_temporada = ? 
        ORDER BY tr.posicion_min ASC`,
-      [temporadaId]
+      [temporadaId],
     );
 
     let recompensas = result.rows;
@@ -99,7 +108,7 @@ router.get("/ranking/:temporadaId", async (req, res) => {
        WHERE tu.id_temporada = ? 
        ORDER BY tu.puntos DESC 
        LIMIT 100`,
-      [temporadaId]
+      [temporadaId],
     );
 
     let ranking = result.rows;
@@ -115,25 +124,28 @@ router.get("/kartings", async (req, res) => {
   try {
     if (!conn) {
       console.error("La conexión a la base de datos no está disponible");
-      return res.status(500).json({ error: "Error de conexión a la base de datos" });
+      return res
+        .status(500)
+        .json({ error: "Error de conexión a la base de datos" });
     }
 
     const kartings = await conn.execute(
-      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
+      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`,
     );
 
-    const kartingRows = kartings.rows
+    const kartingRows = kartings.rows;
 
     if (!Array.isArray(kartingRows) || kartingRows.length === 0) {
-      return res.status(404).json({ error: "No se encontraron circuitos de karting" });
+      return res
+        .status(404)
+        .json({ error: "No se encontraron circuitos de karting" });
     }
     res.json(kartingRows);
-
   } catch (error) {
     console.error("Error al obtener kartings:", error);
     res.status(500).json({
       error: "Error al obtener la información de los circuitos de karting",
-      detalles: process.env.NODE_ENV === 'development' ? error.message : null
+      detalles: process.env.NODE_ENV === "development" ? error.message : null,
     });
   }
 });
@@ -142,7 +154,9 @@ router.get("/torneos", async (req, res) => {
   try {
     if (!conn) {
       console.error("La conexión a la base de datos no está disponible");
-      return res.status(500).json({ error: "Error de conexión a la base de datos" });
+      return res
+        .status(500)
+        .json({ error: "Error de conexión a la base de datos" });
     }
 
     const torneos = await conn.execute(`
@@ -170,16 +184,17 @@ router.get("/torneos", async (req, res) => {
     const torneosRows = torneos.rows;
 
     if (!Array.isArray(torneosRows) || torneosRows.length === 0) {
-      return res.status(404).json({ error: "No se encontraron torneos oficiales" });
+      return res
+        .status(404)
+        .json({ error: "No se encontraron torneos oficiales" });
     }
 
     res.json(torneosRows);
-
   } catch (error) {
     console.error("Error al obtener torneos:", error);
     res.status(500).json({
       error: "Error al obtener la información de los torneos oficiales",
-      detalles: process.env.NODE_ENV === 'development' ? error.message : null
+      detalles: process.env.NODE_ENV === "development" ? error.message : null,
     });
   }
 });
@@ -213,7 +228,9 @@ ORDER BY c.fecha ASC
     const carreras = result.rows;
 
     if (!carreras || carreras.length === 0) {
-      return res.status(404).json({ error: "No se encontraron carreras libres" });
+      return res
+        .status(404)
+        .json({ error: "No se encontraron carreras libres" });
     }
 
     res.json(carreras);
@@ -228,7 +245,8 @@ router.get("/carrera-libre/:id", async (req, res) => {
     const { id } = req.params;
 
     // Obtener detalles de la carrera
-    const carreraResult = await conn.execute(`
+    const carreraResult = await conn.execute(
+      `
       SELECT 
         c.id,
         c.fecha,
@@ -247,14 +265,17 @@ router.get("/carrera-libre/:id", async (req, res) => {
       FROM Carreras c
       JOIN Kartings k ON c.id_karting = k.id
       WHERE c.id = ? AND c.id_torneo IS NULL
-    `, [id]);
+    `,
+      [id],
+    );
 
     if (!carreraResult.rows || carreraResult.rows.length === 0) {
       return res.status(404).json({ error: "Carrera no encontrada" });
     }
 
     // Obtener participantes de la carrera
-    const participantesResult = await conn.execute(`
+    const participantesResult = await conn.execute(
+      `
       SELECT 
         ic.id,
         u.username,
@@ -263,16 +284,19 @@ router.get("/carrera-libre/:id", async (req, res) => {
       JOIN Usuarios u ON ic.id_piloto = u.id
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
-    `, [id]);
+    `,
+      [id],
+    );
 
     res.json({
       carrera: carreraResult.rows[0],
-      participantes: participantesResult.rows || []
+      participantes: participantesResult.rows || [],
     });
-
   } catch (error) {
     console.error("Error al obtener detalles de la carrera:", error);
-    res.status(500).json({ error: "Error al obtener los detalles de la carrera" });
+    res
+      .status(500)
+      .json({ error: "Error al obtener los detalles de la carrera" });
   }
 });
 
@@ -281,7 +305,8 @@ router.get("/torneo/:id", async (req, res) => {
     const { id } = req.params;
 
     // Obtener detalles del torneo
-    const torneoResult = await conn.execute(`
+    const torneoResult = await conn.execute(
+      `
       SELECT 
         t.id,
         t.nombreTorneo as nombre,
@@ -301,14 +326,17 @@ router.get("/torneo/:id", async (req, res) => {
       JOIN TorneoKartings tk ON t.id = tk.id_torneo
       JOIN Kartings k ON tk.id_karting = k.id
       WHERE t.id = ?
-    `, [id]);
+    `,
+      [id],
+    );
 
     if (!torneoResult.rows || torneoResult.rows.length === 0) {
       return res.status(404).json({ error: "Torneo no encontrado" });
     }
 
     // Obtener clasificación del torneo
-    const clasificacionResult = await conn.execute(`
+    const clasificacionResult = await conn.execute(
+      `
       SELECT 
         rt.id_piloto,
         u.username as piloto,
@@ -320,10 +348,13 @@ router.get("/torneo/:id", async (req, res) => {
       JOIN Usuarios u ON rt.id_piloto = u.id
       WHERE rt.id_torneo = ?
       ORDER BY rt.puntosTorneo DESC
-    `, [id, id]);
+    `,
+      [id, id],
+    );
 
     // Obtener próximas carreras del torneo
-    const carrerasResult = await conn.execute(`
+    const carrerasResult = await conn.execute(
+      `
       SELECT 
         c.id,
         strftime('%d/%m/%Y', c.fecha) as fecha,
@@ -333,7 +364,9 @@ router.get("/torneo/:id", async (req, res) => {
       JOIN Kartings k ON c.id_karting = k.id
       WHERE c.id_torneo = ? AND date(c.fecha) >= date('now')
       ORDER BY c.fecha ASC
-    `, [id]);
+    `,
+      [id],
+    );
 
     // Obtener premios del torneo (usando TemporadaRecompensas)
     const premiosResult = await conn.execute(`
@@ -351,9 +384,8 @@ router.get("/torneo/:id", async (req, res) => {
       torneo: torneoResult.rows[0],
       clasificacion: clasificacionResult.rows || [],
       proximasCarreras: carrerasResult.rows || [],
-      premios: premiosResult.rows || []
+      premios: premiosResult.rows || [],
     });
-
   } catch (error) {
     console.error("Error al obtener detalles del torneo:", error);
     res.status(500).json({ error: "Error al obtener los detalles del torneo" });

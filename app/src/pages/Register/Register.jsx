@@ -1,17 +1,60 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import SemaforoAnimacion from '../../components/SemaforoAnimacion/SemaforoAnimacion';
-import './Register.css';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import SemaforoAnimacion from "../../components/SemaforoAnimacion/SemaforoAnimacion";
+import "./Register.css";
+import axios from "axios";
 
 const provincias = [
-  'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
-  'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ciudad Real', 'Córdoba', 'Cuenca',
-  'Gerona', 'Granada', 'Guadalajara', 'Guipúzcoa', 'Huelva', 'Huesca', 'Islas Baleares', 'Jaén',
-  'La Coruña', 'La Rioja', 'Las Palmas', 'León', 'Lérida', 'Lugo', 'Madrid', 'Málaga', 'Murcia',
-  'Navarra', 'Orense', 'Palencia', 'Pontevedra', 'Salamanca', 'Santa Cruz de Tenerife', 'Segovia',
-  'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia', 'Valladolid', 'Vizcaya',
-  'Zamora', 'Zaragoza'
+  "Álava",
+  "Albacete",
+  "Alicante",
+  "Almería",
+  "Asturias",
+  "Ávila",
+  "Badajoz",
+  "Barcelona",
+  "Burgos",
+  "Cáceres",
+  "Cádiz",
+  "Cantabria",
+  "Castellón",
+  "Ciudad Real",
+  "Córdoba",
+  "Cuenca",
+  "Gerona",
+  "Granada",
+  "Guadalajara",
+  "Guipúzcoa",
+  "Huelva",
+  "Huesca",
+  "Islas Baleares",
+  "Jaén",
+  "La Coruña",
+  "La Rioja",
+  "Las Palmas",
+  "León",
+  "Lérida",
+  "Lugo",
+  "Madrid",
+  "Málaga",
+  "Murcia",
+  "Navarra",
+  "Orense",
+  "Palencia",
+  "Pontevedra",
+  "Salamanca",
+  "Santa Cruz de Tenerife",
+  "Segovia",
+  "Sevilla",
+  "Soria",
+  "Tarragona",
+  "Teruel",
+  "Toledo",
+  "Valencia",
+  "Valladolid",
+  "Vizcaya",
+  "Zamora",
+  "Zaragoza",
 ];
 
 const Register = () => {
@@ -21,39 +64,39 @@ const Register = () => {
   useEffect(() => {
     const comprobarSesion = async () => {
       try {
-        const res = await axios.get('/api/comprobarSesion',{
+        const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
         if (res.data.logueado) {
-          navigate('/principal');
+          navigate("/principal");
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
       }
     };
-    
+
     comprobarSesion();
   }, [navigate]);
 
   const [form, setForm] = useState({
-    nombre: '',
-    apellido: '',
-    username: '',
-    nacimiento: '',
-    email: '',
-    provincia: '',
-    password: '',
+    nombre: "",
+    apellido: "",
+    username: "",
+    nacimiento: "",
+    email: "",
+    provincia: "",
+    password: "",
   });
 
   const [showSemaforo, setShowSemaforo] = useState(false);
-  const [formType, setFormType] = useState('register');
+  const [formType, setFormType] = useState("register");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const type = searchParams.get('formType');
-    if (type === 'login') {
-      setFormType('login');
+    const type = searchParams.get("formType");
+    if (type === "login") {
+      setFormType("login");
     }
   }, [location]);
 
@@ -67,225 +110,237 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    if (formType === 'register') {
-      const response = await axios.post('/api/register', form, {
-        withCredentials: true,
-      });
+    try {
+      if (formType === "register") {
+        const response = await axios.post("/api/register", form, {
+          withCredentials: true,
+        });
 
-      switch (response.status) {
-        case 400:
-          setErrorMsg('Faltan campos requeridos.');
-          break;
-        case 409:
-          setErrorMsg('El correo o el nombre de usuario ya están registrados.');
-          break;
-        case 500:
-          setErrorMsg('Error en el servidor. Intenta nuevamente.');
-          break;
-        case 201:
-          setShowSemaforo(true);
-          setTimeout(async () => {
-            try {
-              const sesion = await axios.get('/api/comprobarSesion', { withCredentials: true });
-              if (sesion.data.logueado) {
-                navigate('/principal');
-              } else {
-                setErrorMsg('No se pudo iniciar sesión automáticamente. Por favor, inicia sesión.');
+        switch (response.status) {
+          case 400:
+            setErrorMsg("Faltan campos requeridos.");
+            break;
+          case 409:
+            setErrorMsg(
+              "El correo o el nombre de usuario ya están registrados.",
+            );
+            break;
+          case 500:
+            setErrorMsg("Error en el servidor. Intenta nuevamente.");
+            break;
+          case 201:
+            setShowSemaforo(true);
+            setTimeout(async () => {
+              try {
+                const sesion = await axios.get("/api/comprobarSesion", {
+                  withCredentials: true,
+                });
+                if (sesion.data.logueado) {
+                  navigate("/principal");
+                } else {
+                  setErrorMsg(
+                    "No se pudo iniciar sesión automáticamente. Por favor, inicia sesión.",
+                  );
+                }
+              } catch {
+                setErrorMsg("Error al comprobar la sesión tras el registro.");
               }
-            } catch {
-              setErrorMsg('Error al comprobar la sesión tras el registro.');
-            }
-          }, 3000);
-          break;
-        default:
-          setErrorMsg('Algo salió mal. Intenta de nuevo.');
-          break;
+            }, 3000);
+            break;
+          default:
+            setErrorMsg("Algo salió mal. Intenta de nuevo.");
+            break;
+        }
+      } else {
+        const loginData = {
+          email: form.email,
+          password: form.password,
+        };
+        console.log("Datos de inicio de sesión:", loginData);
+
+        const response = await axios.post("/api/login", loginData, {
+          withCredentials: true,
+        });
+
+        switch (response.status) {
+          case 200:
+            setShowSemaforo(true);
+            setTimeout(() => {
+              navigate("/principal");
+            }, 4000);
+            break;
+          case 422:
+            setErrorMsg("Faltan campos requeridos.");
+            break;
+          case 401:
+            setErrorMsg("Credenciales incorrectas.");
+            break;
+          case 500:
+            setErrorMsg("Error en el servidor. Intenta nuevamente.");
+            break;
+          default:
+            setErrorMsg("Algo salió mal. Intenta de nuevo.");
+            break;
+        }
       }
-
-    } else {
-      const loginData = {
-        email: form.email,
-        password: form.password
-      };
-      console.log("Datos de inicio de sesión:", loginData);
-
-      const response = await axios.post('/api/login', loginData, {
-        withCredentials: true,
-      });
-
-      switch (response.status) {
-        case 200:
-          setShowSemaforo(true);
-          setTimeout(() => {
-            navigate('/principal');
-          }, 4000);
-          break;
-        case 422:
-          setErrorMsg('Faltan campos requeridos.');
-          break;
-        case 401:
-          setErrorMsg('Credenciales incorrectas.');
-          break;
-        case 500:
-          setErrorMsg('Error en el servidor. Intenta nuevamente.');
-          break;
-        default:
-          setErrorMsg('Algo salió mal. Intenta de nuevo.');
-          break;
+    } catch (error) {
+      if (error.response) {
+        setErrorMsg(
+          error.response.data.error ||
+            "Error desconocido, contacte al administrador",
+        );
+      } else {
+        setErrorMsg(
+          "No se pudo conectar con el servidor. Verifica tu conexión.",
+        );
       }
     }
-  } catch (error) {
-    if (error.response) {
-      setErrorMsg(error.response.data.error || "Error desconocido, contacte al administrador");
-    } else {
-      setErrorMsg("No se pudo conectar con el servidor. Verifica tu conexión.");
-    }
-  } 
-};
+  };
 
   if (showSemaforo) {
     return <SemaforoAnimacion />;
   }
 
   return (
-    <div className='register-container'>
-      <div className='register-content'>
-        <div className='register-header'>
-          <h1 className='title'>GRID<span>RUSH</span></h1>
-          <p className='subtitle'>¡Únete a la parrilla de salida!</p>
+    <div className="register-container">
+      <div className="register-content">
+        <div className="register-header">
+          <h1 className="title">
+            GRID<span>RUSH</span>
+          </h1>
+          <p className="subtitle">¡Únete a la parrilla de salida!</p>
         </div>
 
-        <div className='register-box'>
+        <div className="register-box">
           <div className="form-type-buttons">
-            <button 
-              className={`form-type-button ${formType === 'register' ? 'active' : ''}`}
-              onClick={() => handleFormTypeChange('register')}
+            <button
+              className={`form-type-button ${formType === "register" ? "active" : ""}`}
+              onClick={() => handleFormTypeChange("register")}
             >
               <span className="button-icon">🏎️</span>
               Registrarse
             </button>
-            <button 
-              className={`form-type-button ${formType === 'login' ? 'active' : ''}`}
-              onClick={() => handleFormTypeChange('login')}
+            <button
+              className={`form-type-button ${formType === "login" ? "active" : ""}`}
+              onClick={() => handleFormTypeChange("login")}
             >
               <span className="button-icon">🔑</span>
               Iniciar Sesión
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className='register-form'>
-            {formType === 'register' ? (
+          <form onSubmit={handleSubmit} className="register-form">
+            {formType === "register" ? (
               <>
                 <div className="form-group">
-                  <input 
-                    type='text' 
-                    name='nombre' 
-                    placeholder='Nombre' 
-                    value={form.nombre} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Nombre"
+                    value={form.nombre}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='text' 
-                    name='apellido' 
-                    placeholder='Apellidos' 
-                    value={form.apellido} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="text"
+                    name="apellido"
+                    placeholder="Apellidos"
+                    value={form.apellido}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='text' 
-                    name='username' 
-                    placeholder='Nombre de usuario' 
-                    value={form.username} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Nombre de usuario"
+                    value={form.username}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='date' 
-                    name='nacimiento' 
-                    value={form.nacimiento} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="date"
+                    name="nacimiento"
+                    value={form.nacimiento}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='email' 
-                    name='email' 
-                    placeholder='Correo electrónico' 
-                    value={form.email} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Correo electrónico"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <select 
-                    name='provincia' 
-                    value={form.provincia} 
-                    onChange={handleChange} 
+                  <select
+                    name="provincia"
+                    value={form.provincia}
+                    onChange={handleChange}
                     required
                   >
-                    <option value=''>Selecciona tu provincia</option>
+                    <option value="">Selecciona tu provincia</option>
                     {provincias.map((provincia) => (
-                      <option key={provincia} value={provincia}>{provincia}</option>
+                      <option key={provincia} value={provincia}>
+                        {provincia}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='password' 
-                    name='password' 
-                    placeholder='Contraseña' 
-                    value={form.password} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Contraseña"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
               </>
-            ) : ( //login
+            ) : (
+              //login
               <>
                 <div className="form-group">
-                  <input 
-                    type='email' 
-                    name='email' 
-                    placeholder='Correo electrónico' 
-                    value={form.email} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Correo electrónico"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <input 
-                    type='password' 
-                    name='password' 
-                    placeholder='Contraseña' 
-                    value={form.password} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Contraseña"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
               </>
             )}
-            
-            <button 
-              type='submit' 
-              className="submit-button"
-            >
+
+            <button type="submit" className="submit-button">
               <>
                 <span className="button-icon">
-                  {formType === 'register' ? '🏁' : '🚀'}
+                  {formType === "register" ? "🏁" : "🚀"}
                 </span>
-                {formType === 'register' ? '¡A rodar!' : 'Iniciar Sesión'}
+                {formType === "register" ? "¡A rodar!" : "Iniciar Sesión"}
               </>
             </button>
 

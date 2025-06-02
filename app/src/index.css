@@ -1,14 +1,12 @@
 /* src/styles/global.css */
 
-
 /* Tipografía base */
 @font-face {
-  font-family: 'Formula1';
-  src: url('./assets/fonts/Formula1-Bold_web_0.ttf') format('truetype');
+  font-family: "Formula1";
+  src: url("./assets/fonts/Formula1-Bold_web_0.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
-
 
 :root {
   --color-bg: #0f0f0f;
@@ -18,7 +16,7 @@
   --color-text: #ffffff;
   --color-muted: #bbbbbb;
   --border-radius: 8px;
-  --font-family: 'Formula1', sans-serif;
+  --font-family: "Formula1", sans-serif;
 }
 
 html.light {
@@ -34,9 +32,11 @@ html.light {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 0.3s ease, color 0.1s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.1s ease,
+    border-color 0.3s ease;
 }
-
 
 body {
   background: var(--color-bg);
@@ -55,10 +55,10 @@ button {
   font-family: var(--font-family);
 }
 
-input, select {
+input,
+select {
   font-family: inherit;
 }
-
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -84,4 +84,3 @@ input, select {
 ::-webkit-scrollbar {
   display: none;
 }
-

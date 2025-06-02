@@ -1,28 +1,39 @@
-import { initializeApp } from "firebase/app"
-import bcrypt from "bcrypt"
-import { getFirestore, collection, doc, getDoc,getDocs, setDoc, query,where} from "firebase/firestore"
-import { hashearPassword } from "../controllers/userController.mjs"
-import { deleteDoc } from 'firebase/firestore'; 
+import { initializeApp } from "firebase/app";
+import bcrypt from "bcrypt";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+} from "firebase/firestore";
+import { hashearPassword } from "../controllers/userController.mjs";
+import { deleteDoc } from "firebase/firestore";
 import { conn } from "../sql/conexionSQL.mjs";
 
 const firebaseConfig = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: process.env.STORAGE_BUCKET,
-    messagingSenderId: process.env.SENDER_ID,
-    appId: process.env.APP_ID
-}
-  
-const firebaseApp = initializeApp(firebaseConfig)
-export const db = getFirestore(firebaseApp)
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.SENDER_ID,
+  appId: process.env.APP_ID,
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+export const db = getFirestore(firebaseApp);
 
 export const registrarFirebase = async (email, hashedPassword, username) => {
   try {
-
-    if(username.includes("@")) {
+    if (username.includes("@")) {
       console.error("El nombre de usuario no puede contener '@'.");
-      return { success: false, error: "El nombre de usuario no puede contener '@'." };
+      return {
+        success: false,
+        error: "El nombre de usuario no puede contener '@'.",
+      };
     }
 
     const emailDocRef = doc(collection(db, "gridrush_fb"), email);
@@ -38,7 +49,10 @@ export const registrarFirebase = async (email, hashedPassword, username) => {
 
     if (usernameDoc.exists()) {
       console.error("El nombre de usuario ya está registrado.");
-      return { success: false, error: "El nombre de usuario ya está registrado." };
+      return {
+        success: false,
+        error: "El nombre de usuario ya está registrado.",
+      };
     }
 
     const newUser = {
@@ -85,20 +99,28 @@ export const comprobarLogin = async (email, password) => {
   }
 };
 
-export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) => {
+export const actualizarUsernameFirebase = async (
+  usernameActual,
+  usernameNuevo,
+) => {
   try {
-
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameNuevo);
 
     // Comprobar si el nuevo username ya existe
     const usernameDoc = await getDoc(usernameDocRef);
     if (usernameDoc.exists()) {
       console.log("El username ya existe en Firebase:", usernameNuevo);
-      return { success: false, error: "El nombre de usuario ya está registrado." };
+      return {
+        success: false,
+        error: "El nombre de usuario ya está registrado.",
+      };
     }
 
     // Buscar el usuario actual en Firebase usando el username en minúsculas
-    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
+    const q = query(
+      collection(db, "gridrush_fb"),
+      where("username", "==", usernameActual),
+    );
     const result = await getDocs(q);
 
     if (result.empty) {
@@ -128,7 +150,10 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
 
     if (resultadoSQL.affectedRows === 0) {
       console.log("No se actualizó el usuario en SQL");
-      return { success: false, error: "No se pudo actualizar el nombre de usuario en SQL." };
+      return {
+        success: false,
+        error: "No se pudo actualizar el nombre de usuario en SQL.",
+      };
     }
 
     return { success: true };
@@ -140,7 +165,6 @@ export const actualizarUsernameFirebase = async (usernameActual, usernameNuevo) 
 
 export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
   try {
-
     const emailDocRef = doc(collection(db, "gridrush_fb"), emailNuevo);
 
     // Comprobar si el nuevo email ya existe
@@ -150,7 +174,10 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
     }
 
     // Buscar el usuario actual en Firebase
-    const q = query(collection(db, "gridrush_fb"), where("username", "==", usernameActual));
+    const q = query(
+      collection(db, "gridrush_fb"),
+      where("username", "==", usernameActual),
+    );
     const result = await getDocs(q);
 
     if (result.empty) {
@@ -174,11 +201,14 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
     // Actualizar en SQL
     const resultadoSQL = await conn.execute({
       sql: "UPDATE Usuarios SET email = ? WHERE username = ?",
-      args: [emailNuevo, usernameActual]
+      args: [emailNuevo, usernameActual],
     });
 
     if (resultadoSQL.affectedRows === 0) {
-      return { success: false, error: "No se pudo actualizar el correo electrónico en SQL." };
+      return {
+        success: false,
+        error: "No se pudo actualizar el correo electrónico en SQL.",
+      };
     }
 
     return { success: true };

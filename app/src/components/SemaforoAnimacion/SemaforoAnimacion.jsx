@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import './semaforoAnimacion.css';
+import { useEffect, useState } from "react";
+import "./semaforoAnimacion.css";
 
 const SemaforoAnimacion = () => {
   const [mostrarGo, setMostrarGo] = useState(false);
@@ -7,12 +7,12 @@ const SemaforoAnimacion = () => {
 
   useEffect(() => {
     const timerLuces = setTimeout(() => {
-      setMostrarLuces(false);   
-      setMostrarGo(true);        
+      setMostrarLuces(false);
+      setMostrarGo(true);
     }, 2500);
 
     const timerGo = setTimeout(() => {
-      setMostrarGo(false);       
+      setMostrarGo(false);
     }, 3500);
 
     return () => {
@@ -22,18 +22,18 @@ const SemaforoAnimacion = () => {
   }, []);
 
   return (
-    <div className='semaforo'>
+    <div className="semaforo">
       {mostrarLuces && (
-        <div className='luces'>
-          <div className='luz rojo1' />
-          <div className='luz rojo2' />
-          <div className='luz rojo3' />
-          <div className='luz rojo4' />
-          <div className='luz rojo5' />
+        <div className="luces">
+          <div className="luz rojo1" />
+          <div className="luz rojo2" />
+          <div className="luz rojo3" />
+          <div className="luz rojo4" />
+          <div className="luz rojo5" />
         </div>
       )}
 
-      {mostrarGo && <div className='go-text'>GO!</div>}
+      {mostrarGo && <div className="go-text">GO!</div>}
     </div>
   );
 };

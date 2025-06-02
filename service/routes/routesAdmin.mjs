@@ -31,12 +31,12 @@ router.get("/carreras-pendientes", async (req, res) => {
       ORDER BY c.fecha DESC
     `);
 
-    const carreras = result.rows.map(carrera => ({
+    const carreras = result.rows.map((carrera) => ({
       id: carrera.id,
       name: `Carrera en ${carrera.karting} - ${carrera.fechaFormateada}`,
       date: carrera.fecha,
-      status: 'Pendiente',
-      type: 'race'
+      status: "Pendiente",
+      type: "race",
     }));
 
     res.json(carreras);
@@ -67,12 +67,12 @@ router.get("/torneos-pendientes", async (req, res) => {
       ORDER BY t.fecha_fin DESC
     `);
 
-    const torneos = result.rows.map(torneo => ({
+    const torneos = result.rows.map((torneo) => ({
       id: torneo.id,
       name: torneo.nombreTorneo,
       date: torneo.fecha_inicio,
-      status: 'Pendiente',
-      type: 'tournament'
+      status: "Pendiente",
+      type: "tournament",
     }));
 
     res.json(torneos);
@@ -87,7 +87,8 @@ router.get("/carrera/:id/participantes", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await conn.execute(`
+    const result = await conn.execute(
+      `
       SELECT 
         u.id,
         u.username as name,
@@ -97,13 +98,15 @@ router.get("/carrera/:id/participantes", async (req, res) => {
       JOIN Usuarios u ON ic.id_piloto = u.id
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
-    `, [id]);
+    `,
+      [id],
+    );
 
     const participantes = result.rows.map((p, index) => ({
       id: p.id.toString(),
       name: p.name,
       position: index + 1,
-      elo: p.elo
+      elo: p.elo,
     }));
 
     res.json(participantes);
@@ -118,7 +121,8 @@ router.get("/torneo/:id/participantes", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await conn.execute(`
+    const result = await conn.execute(
+      `
       SELECT 
         u.id,
         u.username as name,
@@ -128,13 +132,15 @@ router.get("/torneo/:id/participantes", async (req, res) => {
       JOIN Usuarios u ON it.id_piloto = u.id
       WHERE it.id_torneo = ?
       ORDER BY it.fecha_inscripcion ASC
-    `, [id]);
+    `,
+      [id],
+    );
 
     const participantes = result.rows.map((p, index) => ({
       id: p.id.toString(),
       name: p.name,
       position: index + 1,
-      elo: p.elo
+      elo: p.elo,
     }));
 
     res.json(participantes);
@@ -153,26 +159,34 @@ const calcularCambioElo = (eloA, eloB, resultado, kFactor = 32) => {
 // Función para calcular nuevos ELOs después de una carrera
 const calcularNuevosElos = (participantes) => {
   const nuevosElos = [...participantes];
-  
+
   // Calcular ELO basado en todas las comparaciones por pares
   for (let i = 0; i < nuevosElos.length; i++) {
     let cambioTotal = 0;
     const participanteA = nuevosElos[i];
-    
+
     for (let j = 0; j < nuevosElos.length; j++) {
       if (i !== j) {
         const participanteB = nuevosElos[j];
         // Si A terminó mejor que B, A gana (resultado = 1), sino pierde (resultado = 0)
-        const resultado = participanteA.position < participanteB.position ? 1 : 0;
-        const cambio = calcularCambioElo(participanteA.elo, participanteB.elo, resultado);
+        const resultado =
+          participanteA.position < participanteB.position ? 1 : 0;
+        const cambio = calcularCambioElo(
+          participanteA.elo,
+          participanteB.elo,
+          resultado,
+        );
         cambioTotal += cambio;
       }
     }
-    
+
     // Promediamos el cambio total entre todos los oponentes
-    nuevosElos[i].nuevoElo = Math.max(0, participanteA.elo + Math.round(cambioTotal / (nuevosElos.length - 1)));
+    nuevosElos[i].nuevoElo = Math.max(
+      0,
+      participanteA.elo + Math.round(cambioTotal / (nuevosElos.length - 1)),
+    );
   }
-  
+
   return nuevosElos;
 };
 
@@ -206,65 +220,84 @@ router.post("/confirmar-carrera", async (req, res) => {
       // Guardar resultados de la carrera
       for (let i = 0; i < resultados.length; i++) {
         const piloto = resultados[i];
-        const nuevoElo = nuevosElos.find(p => p.id === piloto.id);
-        
+        const nuevoElo = nuevosElos.find((p) => p.id === piloto.id);
+
         // Insertar resultado de carrera
-        await conn.execute(`
+        await conn.execute(
+          `
           INSERT INTO ResultadosCarreras (id_carrera, id_piloto, posicion, tiempoTotal)
           VALUES (?, ?, ?, ?)
-        `, [carreraId, piloto.id, piloto.position, "00:00:00"]);
+        `,
+          [carreraId, piloto.id, piloto.position, "00:00:00"],
+        );
 
         // Actualizar ELO del usuario
-        await conn.execute(`
+        await conn.execute(
+          `
           UPDATE Usuarios 
           SET elo = ?, carrerasParticipadas = carrerasParticipadas + 1
           WHERE id = ?
-        `, [nuevoElo.nuevoElo, piloto.id]);
+        `,
+          [nuevoElo.nuevoElo, piloto.id],
+        );
 
         // Si es el ganador, incrementar victorias
         if (piloto.position === 1) {
-          await conn.execute(`
+          await conn.execute(
+            `
             UPDATE Usuarios 
             SET carrerasVictorias = carrerasVictorias + 1
             WHERE id = ?
-          `, [piloto.id]);
+          `,
+            [piloto.id],
+          );
         }
 
         // Asignar puntos de temporada (solo los primeros 10)
         if (temporadaId && piloto.position <= 10) {
           const puntos = puntosPorPosicion[piloto.position - 1];
-          
+
           // Verificar si ya existe registro en TemporadaUsuarios
-          const existeResult = await conn.execute(`
+          const existeResult = await conn.execute(
+            `
             SELECT id FROM TemporadaUsuarios 
             WHERE id_temporada = ? AND id_piloto = ?
-          `, [temporadaId, piloto.id]);
+          `,
+            [temporadaId, piloto.id],
+          );
 
           if (existeResult.rows.length > 0) {
             // Actualizar puntos existentes
-            await conn.execute(`
+            await conn.execute(
+              `
               UPDATE TemporadaUsuarios 
               SET puntos = puntos + ?
               WHERE id_temporada = ? AND id_piloto = ?
-            `, [puntos, temporadaId, piloto.id]);
+            `,
+              [puntos, temporadaId, piloto.id],
+            );
           } else {
             // Crear nuevo registro
-            await conn.execute(`
+            await conn.execute(
+              `
               INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos)
               VALUES (?, ?, ?)
-            `, [temporadaId, piloto.id, puntos]);
+            `,
+              [temporadaId, piloto.id, puntos],
+            );
           }
         }
       }
 
       await conn.execute("COMMIT");
-      res.json({ success: true, message: "Resultados confirmados correctamente" });
-
+      res.json({
+        success: true,
+        message: "Resultados confirmados correctamente",
+      });
     } catch (error) {
       await conn.execute("ROLLBACK");
       throw error;
     }
-
   } catch (error) {
     console.error("Error al confirmar carrera:", error);
     res.status(500).json({ error: "Error del servidor" });
@@ -301,66 +334,85 @@ router.post("/confirmar-torneo", async (req, res) => {
       // Guardar resultados del torneo
       for (let i = 0; i < resultados.length; i++) {
         const piloto = resultados[i];
-        const nuevoElo = nuevosElos.find(p => p.id === piloto.id);
+        const nuevoElo = nuevosElos.find((p) => p.id === piloto.id);
         const puntosTorneo = puntosPorPosicion[piloto.position - 1] || 0;
-        
+
         // Insertar resultado de torneo
-        await conn.execute(`
+        await conn.execute(
+          `
           INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo)
           VALUES (?, ?, ?)
-        `, [torneoId, piloto.id, puntosTorneo]);
+        `,
+          [torneoId, piloto.id, puntosTorneo],
+        );
 
         // Actualizar ELO y estadísticas del usuario
-        await conn.execute(`
+        await conn.execute(
+          `
           UPDATE Usuarios 
           SET elo = ?, torneosParticipados = torneosParticipados + 1
           WHERE id = ?
-        `, [nuevoElo.nuevoElo, piloto.id]);
+        `,
+          [nuevoElo.nuevoElo, piloto.id],
+        );
 
         // Si es el ganador, incrementar victorias en torneos
         if (piloto.position === 1) {
-          await conn.execute(`
+          await conn.execute(
+            `
             UPDATE Usuarios 
             SET torneosVictorias = torneosVictorias + 1
             WHERE id = ?
-          `, [piloto.id]);
+          `,
+            [piloto.id],
+          );
         }
 
         // Asignar puntos de temporada (solo los primeros 10)
         if (temporadaId && piloto.position <= 10) {
           const puntos = puntosPorPosicion[piloto.position - 1];
-          
+
           // Verificar si ya existe registro en TemporadaUsuarios
-          const existeResult = await conn.execute(`
+          const existeResult = await conn.execute(
+            `
             SELECT id FROM TemporadaUsuarios 
             WHERE id_temporada = ? AND id_piloto = ?
-          `, [temporadaId, piloto.id]);
+          `,
+            [temporadaId, piloto.id],
+          );
 
           if (existeResult.rows.length > 0) {
             // Actualizar puntos existentes
-            await conn.execute(`
+            await conn.execute(
+              `
               UPDATE TemporadaUsuarios 
               SET puntos = puntos + ?
               WHERE id_temporada = ? AND id_piloto = ?
-            `, [puntos, temporadaId, piloto.id]);
+            `,
+              [puntos, temporadaId, piloto.id],
+            );
           } else {
             // Crear nuevo registro
-            await conn.execute(`
+            await conn.execute(
+              `
               INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos)
               VALUES (?, ?, ?)
-            `, [temporadaId, piloto.id, puntos]);
+            `,
+              [temporadaId, piloto.id, puntos],
+            );
           }
         }
       }
 
       await conn.execute("COMMIT");
-      res.json({ success: true, message: "Resultados del torneo confirmados correctamente" });
-
+      res.json({
+        success: true,
+        message: "Resultados del torneo confirmados correctamente",
+      });
     } catch (error) {
       await conn.execute("ROLLBACK");
       throw error;
     }
-
   } catch (error) {
     console.error("Error al confirmar torneo:", error);
     res.status(500).json({ error: "Error del servidor" });

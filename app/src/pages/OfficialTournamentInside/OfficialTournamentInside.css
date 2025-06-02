@@ -24,8 +24,8 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  float: left; 
-  clear: both; 
+  float: left;
+  clear: both;
 }
 
 .tournament-header {
@@ -36,7 +36,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--color-primary-light);
   margin-top: 0; /* Aseguramos que no haya margen superior */
-  clear: both; 
+  clear: both;
 }
 
 .tournament-header h1 {
@@ -320,8 +320,8 @@ html.light .clasificacion-table tr:hover {
 
 html.light .carrera-card,
 html.light .premio-card {
-   border-left-color: var(--color-primary);
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-left-color: var(--color-primary);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 html.light .carrera-card:hover,

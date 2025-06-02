@@ -1,32 +1,58 @@
 :root {
   --transition-speed: 0.3s;
   --hover-scale: 1.05;
-  --card-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  --card-hover-shadow: 0 12px 32px rgba(0,0,0,0.3);
-  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --card-hover-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-light) 100%
+  );
   --glow-effect: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .seasons-container {
@@ -50,13 +76,18 @@
 }
 
 .current-season::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform 0.6s;
 }
@@ -77,7 +108,7 @@
 }
 
 .current-season h2::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10px;
   left: 50%;
@@ -159,13 +190,18 @@
 }
 
 .reward-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform 0.6s;
 }
@@ -392,7 +428,12 @@ html.light .ranking-table {
 
 html.light .current-season::before,
 html.light .reward-card::before {
-  background: linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.05), transparent); /* Ajustar brillo para modo claro */
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(0, 0, 0, 0.05),
+    transparent
+  ); /* Ajustar brillo para modo claro */
 }
 
 html.light .current-season:hover::before,
@@ -410,8 +451,8 @@ html.light .reward-card h3 {
 }
 
 html.light .current-season h2::after {
-   background: var(--gradient-primary);
-   box-shadow: none; /* Eliminar sombra del subrayado */
+  background: var(--gradient-primary);
+  box-shadow: none; /* Eliminar sombra del subrayado */
 }
 
 html.light .season-info p,
@@ -424,9 +465,9 @@ html.light .season-info strong {
 }
 
 html.light .reward-card img {
-   border: 3px solid var(--color-primary); /* Borde con color primario */
-   box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.2); /* Sombra sutil */
-   background-color: rgba(var(--color-primary-rgb), 0.05); /* Fondo sutil */
+  border: 3px solid var(--color-primary); /* Borde con color primario */
+  box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.2); /* Sombra sutil */
+  background-color: rgba(var(--color-primary-rgb), 0.05); /* Fondo sutil */
 }
 
 html.light .reward-position {
@@ -456,6 +497,8 @@ html.light .ranking-table tr:nth-child(even) {
 }
 
 html.light .ranking-table tr:hover {
-  background-color: rgba(var(--color-primary-rgb), 0.1); /* Efecto hover sutil */
+  background-color: rgba(
+    var(--color-primary-rgb),
+    0.1
+  ); /* Efecto hover sutil */
 }
-
