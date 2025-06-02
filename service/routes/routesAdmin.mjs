@@ -155,7 +155,8 @@ router.post("/confirmar-carrera", async (req, res) => {
 
     // Sistema de puntos: 1º=25, 2º=18, 3º=15, 4º=12, 5º=10, 6º=8, 7º=6, 8º=4, 9º=2, 10º=1
     const puntosPorPosicion = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
-
+    const elo = [300, 200, 100, 50, 25, 10, 5, -25, -50, -100];
+      
     // Calcular nuevos ELOs
     const nuevosElos = calcularNuevosElos(resultados);
 
