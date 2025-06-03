@@ -116,17 +116,12 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res
       .status(400)
       .json({ success: false, error: "Faltan campos requeridos" });
-  }
-
-  if (comprobarLogin(email,password) !== null && esAdmin(email)) {
-    return res.status(200).json({ admin: true });
   }
 
   try {
@@ -138,6 +133,13 @@ router.post("/login", async (req, res) => {
         .json({ success: false, error: "Credenciales incorrectas" });
     }
 
+    // Check if user is admin
+    const isAdmin = await esAdmin(email);
+    if (isAdmin) {
+      return res.status(200).json({ admin: true });
+    }
+
+    // Regular user login
     if (await setSession(req, user.username)) {
       return res
         .status(200)
