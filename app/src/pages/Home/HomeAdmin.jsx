@@ -57,9 +57,9 @@ function SortableRacerItem({ id, racer }) {
 }
 
 // --- Componente para la Vista de Reordenación ---
-function ReorderView({ item, onGoBack, onConfirm }) {
-  const [racers, setRacers] = useState([]);
-  const [loading, setLoading] = useState(true);
+function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
+  const [racers, setRacers] = useState(mockParticipants);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const sensors = useSensors(
@@ -68,28 +68,6 @@ function ReorderView({ item, onGoBack, onConfirm }) {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        setLoading(true);
-        const endpoint =
-          item.type === "race"
-            ? `/api/admin/carrera/${item.id}/participantes`
-            : `/api/admin/torneo/${item.id}/participantes`;
-
-        const response = await axios.get(endpoint, { withCredentials: true });
-        setRacers(response.data);
-      } catch (error) {
-        console.error("Error al obtener participantes:", error);
-        setError("Error al cargar los participantes");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchParticipants();
-  }, [item]);
 
   function handleDragEnd({ active, over }) {
     if (!over || active.id === over.id) return;
@@ -239,8 +217,57 @@ function HomeAdmin() {
   const [view, setView] = useState("selection");
   const [selectedItem, setSelectedItem] = useState(null);
   const [history, setHistory] = useState(["selection"]);
-  const [races, setRaces] = useState([]);
-  const [tournaments, setTournaments] = useState([]);
+  
+  // Mock data para demostración
+  const mockRaces = [
+    {
+      id: 1,
+      name: "Carrera Nocturna de Madrid",
+      date: "2024-03-20",
+      type: "race"
+    },
+    {
+      id: 2,
+      name: "Gran Premio de Barcelona",
+      date: "2024-03-25",
+      type: "race"
+    },
+    {
+      id: 3,
+      name: "Carrera Urbana de Valencia",
+      date: "2024-03-28",
+      type: "race"
+    }
+  ];
+
+  const mockTournaments = [
+    {
+      id: 1,
+      name: "Campeonato de España 2024",
+      date: "2024-04-01",
+      type: "tournament"
+    },
+    {
+      id: 2,
+      name: "Copa Ibérica",
+      date: "2024-04-15",
+      type: "tournament"
+    }
+  ];
+
+  const mockParticipants = [
+    { id: 1, name: "Carlos Sainz", position: 1, elo: 1850 },
+    { id: 2, name: "Fernando Alonso", position: 2, elo: 1820 },
+    { id: 3, name: "Lando Norris", position: 3, elo: 1780 },
+    { id: 4, name: "Max Verstappen", position: 4, elo: 1900 },
+    { id: 5, name: "Lewis Hamilton", position: 5, elo: 1880 },
+    { id: 6, name: "Charles Leclerc", position: 6, elo: 1840 },
+    { id: 7, name: "George Russell", position: 7, elo: 1760 },
+    { id: 8, name: "Oscar Piastri", position: 8, elo: 1720 }
+  ];
+
+  const [races, setRaces] = useState(mockRaces);
+  const [tournaments, setTournaments] = useState(mockTournaments);
   const [loading, setLoading] = useState(false);
 
   const navigateTo = (newView) => {
@@ -257,34 +284,23 @@ function HomeAdmin() {
     setSelectedItem(null);
   };
 
+  // Modificamos las funciones fetch para usar los datos mock
   const fetchRaces = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/admin/carreras-pendientes", {
-        withCredentials: true,
-      });
-      setRaces(response.data);
-    } catch (error) {
-      console.error("Error al obtener carreras:", error);
-      setRaces([]);
-    } finally {
+    setLoading(true);
+    // Simulamos una llamada a la API
+    setTimeout(() => {
+      setRaces(mockRaces);
       setLoading(false);
-    }
+    }, 500);
   };
 
   const fetchTournaments = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/admin/torneos-pendientes", {
-        withCredentials: true,
-      });
-      setTournaments(response.data);
-    } catch (error) {
-      console.error("Error al obtener torneos:", error);
-      setTournaments([]);
-    } finally {
+    setLoading(true);
+    // Simulamos una llamada a la API
+    setTimeout(() => {
+      setTournaments(mockTournaments);
       setLoading(false);
-    }
+    }, 500);
   };
 
   const handleShowRaces = async () => {
@@ -305,17 +321,10 @@ function HomeAdmin() {
   const handleConfirmResults = (finalOrder) => {
     alert(`Resultados para ${selectedItem.name} confirmados correctamente!`);
     console.log("Orden final:", finalOrder);
-
-    // Refrescar la lista correspondiente
-    if (selectedItem.type === "race") {
-      fetchRaces();
-    } else {
-      fetchTournaments();
-    }
-
     handleGoBack();
   };
 
+  // Modificamos el ReorderView para usar los datos mock
   const renderView = () => {
     if (loading) {
       return (
@@ -350,6 +359,7 @@ function HomeAdmin() {
             item={selectedItem}
             onGoBack={handleGoBack}
             onConfirm={handleConfirmResults}
+            mockParticipants={mockParticipants}
           />
         );
       default:
