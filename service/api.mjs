@@ -1,5 +1,4 @@
 //rutas
-// import rutasInsertar from "./routers/rutasInsertar.mjs"
 import rutasEliminar from "./routes/routesDelete.mjs";
 import rutasRead from "./routes/routesRead.mjs";
 import rutasModificar from "./routes/routesUpdate.mjs";
@@ -26,9 +25,7 @@ app.use(
   }),
 );
 
-// app.use("/api",rutasInsertar)
 app.use("/api", rutasEliminar);
-// app.use("/api",rutasListar)
 app.use("/api", rutasModificar);
 app.use("/api", rutasRegister);
 app.use("/api", rutasRead);

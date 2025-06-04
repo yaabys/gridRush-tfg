@@ -158,7 +158,6 @@ const Register = () => {
           email: form.email,
           password: form.password,
         };
-        console.log("Datos de inicio de sesión:", loginData);
 
         const response = await axios.post("/api/login", loginData, {
           withCredentials: true,

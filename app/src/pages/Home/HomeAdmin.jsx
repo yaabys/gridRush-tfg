@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; // Importa useEffect
 import {
   DndContext,
   closestCenter,
@@ -18,7 +18,6 @@ import { CSS } from "@dnd-kit/utilities";
 import axios from "axios";
 import "./HomeAdmin.css";
 
-// --- Subcomponente para cada Piloto (DnD) ---
 function SortableRacerItem({ id, racer }) {
   const {
     attributes,
@@ -49,18 +48,15 @@ function SortableRacerItem({ id, racer }) {
       <span className="racer-position">{racer.position}º</span>
       <span className="racer-name">{racer.name}</span>
       <span className="racer-elo">ELO: {racer.elo || 0}</span>
-      <button className="view-photo-btn" title="Ver foto">
-        📸
-      </button>
     </div>
   );
 }
 
-// --- Componente para la Vista de Reordenación ---
-function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
-  const [racers, setRacers] = useState(mockParticipants);
-  const [loading, setLoading] = useState(false);
+function ReorderView({ item, onGoBack, onConfirm }) {
+  const [racers, setRacers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -68,6 +64,41 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
+  const fetchParticipants = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log("Intentando obtener participantes para:", item);
+      const endpoint = item.type === "race" 
+        ? `/carrera/${item.id}/participantes`
+        : `/torneo/${item.id}/participantes`;
+      
+      console.log("Llamando al endpoint:", endpoint);
+      const response = await axios.get(endpoint, { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      console.log("Respuesta del servidor:", response.data);
+      if (response.data && Array.isArray(response.data)) {
+        setRacers(response.data);
+      } else {
+        throw new Error("Formato de respuesta inválido");
+      }
+    } catch (error) {
+      console.error("Error detallado:", error);
+      setError(error.response?.data?.error || "Error al cargar participantes. Por favor, intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchParticipants();
+  }, [item]);
 
   function handleDragEnd({ active, over }) {
     if (!over || active.id === over.id) return;
@@ -81,32 +112,43 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
   }
 
   const handleConfirm = async () => {
+    setLoading(true);
+    setSuccessMessage(null);
+    setError(null);
     try {
-      const endpoint =
-        item.type === "race"
-          ? "/api/admin/confirmar-carrera"
-          : "/api/admin/confirmar-torneo";
+      console.log("Confirmando resultados para:", item);
+      const endpoint = item.type === "race"
+        ? "/confirmar-carrera"
+        : "/confirmar-torneo";
 
-      const payload =
-        item.type === "race"
-          ? { carreraId: item.id, resultados: racers }
-          : { torneoId: item.id, resultados: racers };
+      const payload = item.type === "race"
+        ? { carreraId: item.id, resultados: racers }
+        : { torneoId: item.id, resultados: racers };
 
-      await axios.post(endpoint, payload, { withCredentials: true });
-      onConfirm(racers);
+      console.log("Enviando payload:", payload);
+      const response = await axios.post(endpoint, payload, { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      console.log("Respuesta de confirmación:", response.data);
+      setSuccessMessage(response.data.message);
+      onConfirm();
     } catch (error) {
-      console.error("Error al confirmar resultados:", error);
-      alert("Error al confirmar resultados");
+      console.error("Error detallado al confirmar:", error);
+      setError(error.response?.data?.error || "Error al confirmar resultados. Por favor, revisa la consola para más detalles.");
+    } finally {
+      setLoading(false);
     }
   };
 
   if (loading) {
     return (
       <div className="admin-race-view">
-        <button className="back-button" onClick={onGoBack}>
-          ← Volver
-        </button>
-        <h2>Cargando participantes...</h2>
+        <button className="back-button" onClick={onGoBack}>← Volver</button>
+        <p className="loading-message">Cargando participantes...</p>
       </div>
     );
   }
@@ -114,20 +156,16 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
   if (error) {
     return (
       <div className="admin-race-view">
-        <button className="back-button" onClick={onGoBack}>
-          ← Volver
-        </button>
-        <h2>Error</h2>
-        <p>{error}</p>
+        <button className="back-button" onClick={onGoBack}>← Volver</button>
+        <p className="error-message">{error}</p>
+        <button className="confirm-button" onClick={() => fetchParticipants()}>Reintentar Carga</button> {/* Botón de reintentar */}
       </div>
     );
   }
 
   return (
     <div className="admin-race-view">
-      <button className="back-button" onClick={onGoBack}>
-        ← Volver
-      </button>
+      <button className="back-button" onClick={onGoBack}>← Volver</button>
       <h2>Validar Resultados - {item.name}</h2>
       <p>Arrastra y suelta los pilotos para establecer el orden final.</p>
       <p className="points-info">
@@ -135,6 +173,8 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
         4º=12pts, 5º=10pts, 6º=8pts, 7º=6pts, 8º=4pts, 9º=2pts, 10º=1pt
         {item.type === "tournament" && " (Torneos otorgan el doble de puntos)"}
       </p>
+
+      {successMessage && <div className="success-message">{successMessage}</div>} {/* Mostrar mensaje de éxito */}
 
       <DndContext
         sensors={sensors}
@@ -147,7 +187,7 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
         >
           <div className="racer-list-container">
             {racers.length === 0 ? (
-              <p>No hay participantes para validar</p>
+              <p className="no-items-message">No hay participantes para validar</p>
             ) : (
               racers.map((racer) => (
                 <SortableRacerItem key={racer.id} id={racer.id} racer={racer} />
@@ -158,26 +198,21 @@ function ReorderView({ item, onGoBack, onConfirm, mockParticipants }) {
       </DndContext>
 
       {racers.length > 0 && (
-        <button className="confirm-button" onClick={handleConfirm}>
-          Confirmar Resultados
+        <button className="confirm-button" onClick={handleConfirm} disabled={loading}> {/* Deshabilitar durante la carga */}
+          {loading ? "Confirmando..." : "Confirmar Resultados"}
         </button>
       )}
     </div>
   );
 }
 
-// --- Componente para la Vista de Lista ---
 function ListView({ title, items, onSelectItem, onGoBack }) {
   return (
     <div className="list-view">
-      <button className="back-button" onClick={onGoBack}>
-        ← Volver
-      </button>
+      <button className="back-button" onClick={onGoBack}>← Volver</button>
       <h2>{title} Pendientes de Validación</h2>
       {items.length === 0 ? (
-        <p className="no-items-message">
-          ¡No hay {title.toLowerCase()} pendientes!
-        </p>
+        <p className="no-items-message">¡No hay {title.toLowerCase()} pendientes!</p>
       ) : (
         <ul className="item-list">
           {items.map((item) => (
@@ -193,143 +228,78 @@ function ListView({ title, items, onSelectItem, onGoBack }) {
   );
 }
 
-// --- Componente para la Vista de Selección Inicial ---
-function SelectionView({ onShowRaces, onShowTournaments }) {
-  return (
-    <div className="selection-view">
-      <h2>¿Qué deseas gestionar?</h2>
-      <div className="selection-buttons">
-        <button onClick={onShowRaces}>
-          <span className="btn-icon">🏁</span>
-          Gestionar Carreras
-        </button>
-        <button onClick={onShowTournaments}>
-          <span className="btn-icon">🏆</span>
-          Gestionar Torneos
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// --- Componente Principal: HomeAdmin ---
 function HomeAdmin() {
   const [view, setView] = useState("selection");
   const [selectedItem, setSelectedItem] = useState(null);
-  const [history, setHistory] = useState(["selection"]);
-  
-  // Mock data para demostración
-  const mockRaces = [
-    {
-      id: 1,
-      name: "Carrera Nocturna de Madrid",
-      date: "2024-03-20",
-      type: "race"
-    },
-    {
-      id: 2,
-      name: "Gran Premio de Barcelona",
-      date: "2024-03-25",
-      type: "race"
-    },
-    {
-      id: 3,
-      name: "Carrera Urbana de Valencia",
-      date: "2024-03-28",
-      type: "race"
-    }
-  ];
-
-  const mockTournaments = [
-    {
-      id: 1,
-      name: "Campeonato de España 2024",
-      date: "2024-04-01",
-      type: "tournament"
-    },
-    {
-      id: 2,
-      name: "Copa Ibérica",
-      date: "2024-04-15",
-      type: "tournament"
-    }
-  ];
-
-  const mockParticipants = [
-    { id: 1, name: "Carlos Sainz", position: 1, elo: 1850 },
-    { id: 2, name: "Fernando Alonso", position: 2, elo: 1820 },
-    { id: 3, name: "Lando Norris", position: 3, elo: 1780 },
-    { id: 4, name: "Max Verstappen", position: 4, elo: 1900 },
-    { id: 5, name: "Lewis Hamilton", position: 5, elo: 1880 },
-    { id: 6, name: "Charles Leclerc", position: 6, elo: 1840 },
-    { id: 7, name: "George Russell", position: 7, elo: 1760 },
-    { id: 8, name: "Oscar Piastri", position: 8, elo: 1720 }
-  ];
-
-  const [races, setRaces] = useState(mockRaces);
-  const [tournaments, setTournaments] = useState(mockTournaments);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [globalSuccessMessage, setGlobalSuccessMessage] = useState(null); // Para el mensaje global de éxito
 
-  const navigateTo = (newView) => {
-    setHistory([...history, newView]);
-    setView(newView);
+  const fetchItems = async (type) => {
+    setLoading(true);
+    setError(null);
+    setGlobalSuccessMessage(null);
+    try {
+      console.log("Intentando obtener items de tipo:", type);
+      const endpoint = type === "race" 
+        ? "/carreras-pendientes"
+        : "/torneos-pendientes";
+      
+      console.log("Llamando al endpoint:", endpoint);
+      const response = await axios.get(endpoint, { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      console.log("Respuesta del servidor:", response.data);
+      if (response.data && Array.isArray(response.data)) {
+        setItems(response.data);
+        setView(type === "race" ? "raceList" : "tournamentList");
+      } else {
+        throw new Error("Formato de respuesta inválido");
+      }
+    } catch (error) {
+      console.error("Error detallado:", error);
+      setError(error.response?.data?.error || "Error al cargar los datos. Por favor, intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoBack = () => {
-    const newHistory = [...history];
-    newHistory.pop();
-    const prevView = newHistory[newHistory.length - 1];
-    setHistory(newHistory);
-    setView(prevView);
+    setView("selection");
     setSelectedItem(null);
-  };
-
-  // Modificamos las funciones fetch para usar los datos mock
-  const fetchRaces = async () => {
-    setLoading(true);
-    // Simulamos una llamada a la API
-    setTimeout(() => {
-      setRaces(mockRaces);
-      setLoading(false);
-    }, 500);
-  };
-
-  const fetchTournaments = async () => {
-    setLoading(true);
-    // Simulamos una llamada a la API
-    setTimeout(() => {
-      setTournaments(mockTournaments);
-      setLoading(false);
-    }, 500);
-  };
-
-  const handleShowRaces = async () => {
-    await fetchRaces();
-    navigateTo("raceList");
-  };
-
-  const handleShowTournaments = async () => {
-    await fetchTournaments();
-    navigateTo("tournamentList");
+    setItems([]);
+    setGlobalSuccessMessage(null); // Limpiar mensaje de éxito al volver
   };
 
   const handleSelectItem = (item) => {
     setSelectedItem(item);
-    navigateTo("reorder");
+    setView("reorder");
   };
 
-  const handleConfirmResults = (finalOrder) => {
-    alert(`Resultados para ${selectedItem.name} confirmados correctamente!`);
-    console.log("Orden final:", finalOrder);
-    handleGoBack();
+  const handleConfirmResults = () => {
+    setGlobalSuccessMessage("Resultados confirmados correctamente. ¡Excelente trabajo!");
+    handleGoBack(); // Volver a la selección después de confirmar
   };
 
-  // Modificamos el ReorderView para usar los datos mock
   const renderView = () => {
     if (loading) {
       return (
         <div className="selection-view">
-          <h2>Cargando...</h2>
+          <p className="loading-message">Cargando...</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="selection-view">
+          <p className="error-message">{error}</p>
+          <button className="confirm-button" onClick={() => setError(null)}>Volver a intentar</button>
         </div>
       );
     }
@@ -339,7 +309,7 @@ function HomeAdmin() {
         return (
           <ListView
             title="Carreras"
-            items={races}
+            items={items}
             onSelectItem={handleSelectItem}
             onGoBack={handleGoBack}
           />
@@ -348,7 +318,7 @@ function HomeAdmin() {
         return (
           <ListView
             title="Torneos"
-            items={tournaments}
+            items={items}
             onSelectItem={handleSelectItem}
             onGoBack={handleGoBack}
           />
@@ -359,15 +329,24 @@ function HomeAdmin() {
             item={selectedItem}
             onGoBack={handleGoBack}
             onConfirm={handleConfirmResults}
-            mockParticipants={mockParticipants}
           />
         );
       default:
         return (
-          <SelectionView
-            onShowRaces={handleShowRaces}
-            onShowTournaments={handleShowTournaments}
-          />
+          <div className="selection-view">
+            <h2>¿Qué deseas gestionar?</h2>
+            {globalSuccessMessage && <div className="success-message">{globalSuccessMessage}</div>} {/* Mostrar mensaje global de éxito */}
+            <div className="selection-buttons">
+              <button onClick={() => fetchItems("race")}>
+                <span className="btn-icon">🏁</span>
+                Gestionar Carreras
+              </button>
+              <button onClick={() => fetchItems("tournament")}>
+                <span className="btn-icon">🏆</span>
+                Gestionar Torneos
+              </button>
+            </div>
+          </div>
         );
     }
   };
