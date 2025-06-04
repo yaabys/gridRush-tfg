@@ -31,7 +31,7 @@ app.use("/api", rutasRegister);
 app.use("/api", rutasRead);
 app.use("/api", rutasUploadFoto);
 app.use("/api", rutasNews);
-app.use("/api/admin", rutasAdmin);
+app.use("/api", rutasAdmin);
 app.get("/", (req, res) => {
   res.sendStatus(200);
 });

@@ -109,101 +109,93 @@ const Register = () => {
     setErrorMsg("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// En Register.jsx - Actualizar la función handleSubmit para el login
 
-    try {
-      if (formType === "register") {
-        const response = await axios.post("/api/register", form, {
-          withCredentials: true,
-        });
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-        switch (response.status) {
-          case 400:
-            setErrorMsg("Faltan campos requeridos.");
-            break;
-          case 409:
-            setErrorMsg(
-              "El correo o el nombre de usuario ya están registrados.",
-            );
-            break;
-          case 500:
-            setErrorMsg("Error en el servidor. Intenta nuevamente.");
-            break;
-          case 201:
-            setShowSemaforo(true);
-            setTimeout(async () => {
-              try {
-                const sesion = await axios.get("/api/comprobarSesion", {
-                  withCredentials: true,
-                });
-                if (sesion.data.logueado) {
-                  navigate("/principal");
-                } else {
-                  setErrorMsg(
-                    "No se pudo iniciar sesión automáticamente. Por favor, inicia sesión.",
-                  );
-                }
-              } catch {
-                setErrorMsg("Error al comprobar la sesión tras el registro.");
+  try {
+    if (formType === "register") {
+      const response = await axios.post("/api/register", form, {
+        withCredentials: true,
+      });
+
+      switch (response.status) {
+        case 400:
+          setErrorMsg("Faltan campos requeridos.");
+          break;
+        case 409:
+          setErrorMsg(
+            "El correo o el nombre de usuario ya están registrados.",
+          );
+          break;
+        case 500:
+          setErrorMsg("Error en el servidor. Intenta nuevamente.");
+          break;
+        case 201:
+          setShowSemaforo(true);
+          setTimeout(async () => {
+            try {
+              const sesion = await axios.get("/api/comprobarSesion", {
+                withCredentials: true,
+              });
+              if (sesion.data.logueado) {
+                navigate("/principal");
+              } else {
+                setErrorMsg(
+                  "No se pudo iniciar sesión automáticamente. Por favor, inicia sesión.",
+                );
               }
-            }, 3000);
-            break;
-          default:
-            setErrorMsg("Algo salió mal. Intenta de nuevo.");
-            break;
-        }
-      } else {
-        const loginData = {
-          email: form.email,
-          password: form.password,
-        };
-
-        const response = await axios.post("/api/login", loginData, {
-          withCredentials: true,
-        });
-
-        if (response.data.admin) {
-          navigate("/admin");
-        } else {
-          switch (response.status) {
-          case 666:
-              navigate("/admin");
-            break;
-          case 200:
-            setShowSemaforo(true);
-            setTimeout(() => {
-              navigate("/principal");
-            }, 4000);
-            break;
-          case 422:
-            setErrorMsg("Faltan campos requeridos.");
-            break;
-          case 401:
-            setErrorMsg("Credenciales incorrectas.");
-            break;
-          case 500:
-            setErrorMsg("Error en el servidor. Intenta nuevamente.");
-            break;
-          default:
-            setErrorMsg("Algo salió mal. Intenta de nuevo.");
-            break;
-        }
-        }
+            } catch {
+              setErrorMsg("Error al comprobar la sesión tras el registro.");
+            }
+          }, 3000);
+          break;
+        default:
+          setErrorMsg("Algo salió mal. Intenta de nuevo.");
+          break;
       }
-    } catch (error) {
-      if (error.response) {
-        setErrorMsg(
-          error.response.data.error ||
-            "Error desconocido, contacte al administrador",
-        );
-      } else {
-        setErrorMsg(
-          "No se pudo conectar con el servidor. Verifica tu conexión.",
-        );
+    } else {
+      // LOGIN
+      const loginData = {
+        email: form.email,
+        password: form.password,
+      };
+
+      const response = await axios.post("/api/login", loginData, {
+        withCredentials: true,
+      });
+
+      console.log("Respuesta del login:", response.data);
+
+      if (response.data.admin) {
+        // Es administrador
+        setShowSemaforo(true);
+        setTimeout(() => {
+          navigate("/admin");
+        }, 2000);
+      } else if (response.data.success) {
+        // Usuario normal
+        setShowSemaforo(true);
+        setTimeout(() => {
+          navigate("/principal");
+        }, 4000);
       }
     }
-  };
+  } catch (error) {
+    console.error("Error en handleSubmit:", error);
+    if (error.response) {
+      setErrorMsg(
+        error.response.data.error ||
+          "Error desconocido, contacte al administrador",
+      );
+    } else {
+      setErrorMsg(
+        "No se pudo conectar con el servidor. Verifica tu conexión.",
+      );
+    }
+  }
+};
 
   if (showSemaforo) {
     return <SemaforoAnimacion />;
