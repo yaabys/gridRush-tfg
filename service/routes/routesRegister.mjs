@@ -115,12 +115,14 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// En routesRegister.mjs - Modifica la función de login
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res
-      .status(400)
+      .status(422)
       .json({ success: false, error: "Faltan campos requeridos" });
   }
 
@@ -133,19 +135,37 @@ router.post("/login", async (req, res) => {
         .json({ success: false, error: "Credenciales incorrectas" });
     }
 
-    // Check if user is admin
-    const isAdmin = await esAdmin(email);
-    if (isAdmin) {
-      return res.status(200).json({ admin: true });
+    const sessionSet = await setSession(req, user.username);
+    if (!sessionSet) {
+      return res
+        .status(500)
+        .json({ success: false, error: "Error al establecer la sesión" });
     }
 
-    // Regular user login
-    if (await setSession(req, user.username)) {
-      return res
-        .status(200)
-        .json({ success: true, message: "Inicio de sesión exitoso" });
+    // Luego verificar si es admin
+    const isAdmin = await esAdmin(email);
+    
+    if (isAdmin) {
+      // Si es admin, redirigir al panel de administración
+      return res.status(200).json({ 
+        success: true, 
+        admin: true,
+        message: "Login de administrador exitoso",
+        redirect: "/admin"
+      });
     }
+
+    // Usuario normal
+    return res
+      .status(200)
+      .json({ 
+        success: true, 
+        admin: false,
+        message: "Inicio de sesión exitoso" 
+      });
+
   } catch (error) {
+    console.error("Error en login:", error);
     return res
       .status(500)
       .json({ success: false, error: "Error interno del servidor" });

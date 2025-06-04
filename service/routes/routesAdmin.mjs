@@ -4,380 +4,361 @@ import { esAdmin } from "../controllers/adminAuth.mjs";
 
 const router = express.Router();
 
-function calcularNuevosElos(resultados) {
-  // ELO por posición: 1º=+100, 2º=+75, 3º=+50, 4º=+25, 5º=+10, 6º=+5, 7º=0, 8º=0, 9º=-25, 10º=-50
-  const eloPorPosicion = [100, 75, 50, 25, 10, 5, 0, 0, -25, -50];
+// Configuración de constantes
+const ELO_CHANGES = [100, 75, 50, 25, 10, 5, 0, 0, -25, -50];
+const POINTS_SYSTEM = {
+  RACE: [25, 18, 15, 12, 10, 8, 6, 4, 2, 1],
+  TOURNAMENT: [50, 36, 30, 24, 20, 16, 12, 8, 4, 2]
+};
 
-  return resultados.map((piloto, index) => {
-    const cambioElo = eloPorPosicion[index] || 0;
-    return {
-      id: piloto.id,
-      nuevoElo: piloto.elo + cambioElo,
-    };
-  });
-}
+// Utilidades de base de datos
+const dbUtils = {
+  async execute(query, params = []) {
+    return await conn.execute(
+      typeof query === 'string' ? { sql: query, args: params } : query
+    );
+  },
 
-router.use(esAdmin);
-
-router.get("/carreras-pendientes", async (req, res) => {
-  try {
-    const [result] = await conn.execute(`
-      SELECT 
-        c.id,
-        c.fecha,
-        k.nombre as karting,
-        strftime('%d/%m/%Y', c.fecha) as fechaFormateada
-      FROM Carreras c
-      LEFT JOIN Kartings k ON c.id_karting = k.id
-      ORDER BY c.fecha DESC
+  async getCurrentSeason() {
+    const result = await this.execute(`
+      SELECT id FROM Temporadas 
+      WHERE date('now') BETWEEN fecha_inicio AND fecha_fin
+      LIMIT 1
     `);
+    return result.rows?.[0]?.id || null;
+  },
 
-    const carreras = result.map((carrera) => ({
-      id: carrera.id,
-      name: `Carrera en ${carrera.karting} - ${carrera.fechaFormateada}`,
-      date: carrera.fecha,
-      status: "Pendiente",
-      type: "race",
-    }));
-
-    console.log("Carreras encontradas:", carreras);
-    res.json(carreras);
-  } catch (error) {
-    console.error("Error al obtener carreras:", error);
-    res.status(500).json({ error: "Error del servidor" });
+  async updateUserStats(userId, statsUpdate) {
+    const setParts = Object.keys(statsUpdate).map(key => `${key} = ${key} + ?`);
+    const values = Object.values(statsUpdate);
+    
+    await this.execute(
+      `UPDATE Usuarios SET ${setParts.join(', ')} WHERE id = ?`,
+      [...values, userId]
+    );
   }
-});
+};
 
-// Obtener torneos pendientes de validación
-router.get("/torneos-pendientes", async (req, res) => {
+// Middleware de verificación de admin
+const verifyAdmin = async (req, res, next) => {
   try {
-    const [result] = await conn.execute(`
-      SELECT 
-        t.id,
-        t.nombreTorneo,
-        t.fecha_inicio,
-        strftime('%d/%m/%Y', t.fecha_inicio) as fechaFormateada
-      FROM Torneos t
-      ORDER BY t.fecha_inicio DESC
-    `);
+    if (!req.session?.usuario?.username) {
+      return res.status(401).json({ error: "No autenticado" });
+    }
 
-    const torneos = result.map((torneo) => ({
-      id: torneo.id,
-      name: torneo.nombreTorneo,
-      date: torneo.fecha_inicio,
-      status: "Pendiente",
-      type: "tournament",
-    }));
-
-    console.log("Torneos encontrados:", torneos);
-    res.json(torneos);
-  } catch (error) {
-    console.error("Error al obtener torneos:", error);
-    res.status(500).json({ error: "Error del servidor" });
-  }
-});
-
-// Obtener participantes de una carrera
-router.get("/carrera/:id/participantes", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const [result] = await conn.execute(
-      `
-      SELECT 
-        u.id,
-        u.username as name,
-        u.elo,
-        ic.fecha_inscripcion
-      FROM InscripcionesCarrera ic
-      JOIN Usuarios u ON ic.id_piloto = u.id
-      WHERE ic.id_carrera = ?
-      ORDER BY ic.fecha_inscripcion ASC
-    `,
-      [id],
+    const userResult = await dbUtils.execute(
+      "SELECT email, role FROM Usuarios WHERE username = ?",
+      [req.session.usuario.username]
     );
 
-    const participantes = result.map((p, index) => ({
-      id: p.id.toString(),
-      name: p.name,
-      position: index + 1,
-      elo: p.elo,
-    }));
+    if (!userResult.rows?.length) {
+      return res.status(401).json({ error: "Usuario no encontrado" });
+    }
 
-    console.log("Participantes de carrera encontrados:", participantes); // Debug
-    res.json(participantes);
+    const user = userResult.rows[0];
+    
+    // Verificación directa del rol o usando la función esAdmin
+    const isAdmin = user.role === 'admin' || await esAdmin(user.email);
+    
+    if (!isAdmin) {
+      return res.status(403).json({ 
+        error: "Acceso denegado - Se requieren permisos de administrador" 
+      });
+    }
+
+    next();
   } catch (error) {
-    console.error("Error al obtener participantes:", error);
+    console.error("Error en verificación de admin:", error);
     res.status(500).json({ error: "Error del servidor" });
   }
-});
+};
 
-// Obtener participantes de un torneo
-router.get("/torneo/:id/participantes", async (req, res) => {
-  try {
-    const { id } = req.params;
+// Servicios de negocio
+const adminService = {
+  calculateNewElos(results) {
+    return results.map((pilot, index) => ({
+      id: pilot.id,
+      newElo: pilot.elo + (ELO_CHANGES[index] || 0)
+    }));
+  },
 
-    const [result] = await conn.execute(
-      `
-      SELECT 
-        u.id,
-        u.username as name,
-        u.elo,
-        it.fecha_inscripcion
-      FROM InscripcionesTorneo it
-      JOIN Usuarios u ON it.id_piloto = u.id
-      WHERE it.id_torneo = ?
-      ORDER BY it.fecha_inscripcion ASC
-    `,
-      [id],
+  async processSeasonPoints(seasonId, pilotId, position, pointsSystem) {
+    if (!seasonId || position > 10) return;
+
+    const points = pointsSystem[position - 1];
+    
+    const existingResult = await dbUtils.execute(
+      "SELECT id FROM TemporadaUsuarios WHERE id_temporada = ? AND id_piloto = ?",
+      [seasonId, pilotId]
     );
 
-    const participantes = result.map((p, index) => ({
-      id: p.id.toString(),
-      name: p.name,
-      position: index + 1,
-      elo: p.elo,
-    }));
+    if (existingResult.rows?.length) {
+      await dbUtils.execute(
+        "UPDATE TemporadaUsuarios SET puntos = puntos + ? WHERE id_temporada = ? AND id_piloto = ?",
+        [points, seasonId, pilotId]
+      );
+    } else {
+      await dbUtils.execute(
+        "INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos) VALUES (?, ?, ?)",
+        [seasonId, pilotId, points]
+      );
+    }
+  },
 
-    console.log("Participantes de torneo encontrados:", participantes); // Debug
-    res.json(participantes);
-  } catch (error) {
-    console.error("Error al obtener participantes del torneo:", error);
-    res.status(500).json({ error: "Error del servidor" });
+  async confirmRaceResults(raceId, results) {
+    const newElos = this.calculateNewElos(results);
+    const seasonId = await dbUtils.getCurrentSeason();
+
+    await dbUtils.execute("BEGIN TRANSACTION");
+
+    try {
+      for (const [index, pilot] of results.entries()) {
+        const newElo = newElos.find(e => e.id === pilot.id);
+
+        // Insertar resultado
+        await dbUtils.execute(
+          "INSERT INTO ResultadosCarreras (id_carrera, id_piloto, posicion, tiempoTotal) VALUES (?, ?, ?, ?)",
+          [raceId, pilot.id, pilot.position, "00:00:00"]
+        );
+
+        // Actualizar ELO
+        await dbUtils.execute(
+          "UPDATE Usuarios SET elo = ? WHERE id = ?",
+          [newElo.newElo, pilot.id]
+        );
+
+        // Actualizar estadísticas
+        const statsUpdate = { 
+          carrerasParticipadas: 1, 
+          carrerasCompletadas: 1 
+        };
+        if (pilot.position === 1) {
+          statsUpdate.carrerasVictorias = 1;
+        }
+        
+        await dbUtils.updateUserStats(pilot.id, statsUpdate);
+
+        // Procesar puntos de temporada
+        await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.RACE);
+      }
+
+      await dbUtils.execute("COMMIT");
+      return { success: true, message: "Resultados de carrera confirmados correctamente" };
+    } catch (error) {
+      await dbUtils.execute("ROLLBACK");
+      throw error;
+    }
+  },
+
+  async confirmTournamentResults(tournamentId, results) {
+    const newElos = this.calculateNewElos(results);
+    const seasonId = await dbUtils.getCurrentSeason();
+
+    await dbUtils.execute("BEGIN TRANSACTION");
+
+    try {
+      for (const pilot of results) {
+        const newElo = newElos.find(e => e.id === pilot.id);
+        const tournamentPoints = POINTS_SYSTEM.TOURNAMENT[pilot.position - 1] || 0;
+
+        // Insertar resultado
+        await dbUtils.execute(
+          "INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo) VALUES (?, ?, ?)",
+          [tournamentId, pilot.id, tournamentPoints]
+        );
+
+        // Actualizar ELO
+        await dbUtils.execute(
+          "UPDATE Usuarios SET elo = ? WHERE id = ?",
+          [newElo.newElo, pilot.id]
+        );
+
+        // Actualizar estadísticas
+        const statsUpdate = { 
+          torneosParticipados: 1, 
+          torneosCompletados: 1 
+        };
+        if (pilot.position === 1) {
+          statsUpdate.torneosVictorias = 1;
+        }
+        
+        await dbUtils.updateUserStats(pilot.id, statsUpdate);
+
+        // Procesar puntos de temporada
+        await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.TOURNAMENT);
+      }
+
+      await dbUtils.execute("COMMIT");
+      return { success: true, message: "Resultados del torneo confirmados correctamente" };
+    } catch (error) {
+      await dbUtils.execute("ROLLBACK");
+      throw error;
+    }
   }
-});
+};
 
-// Confirmar resultados de carrera
-router.post("/confirmar-carrera", async (req, res) => {
-  try {
-    const { carreraId, resultados } = req.body;
+// Aplicar middleware a todas las rutas
+router.use(verifyAdmin);
 
-    // Sistema de puntos: 1º=25, 2º=18, 3º=15, 4º=12, 5º=10, 6º=8, 7º=6, 8º=4, 9º=2, 10º=1
-    const puntosPorPosicion = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+// Controladores
+const adminController = {
+  async getPendingRaces(req, res) {
+    try {
+      const result = await dbUtils.execute(`
+        SELECT 
+          c.id,
+          c.fecha,
+          c.hora,
+          k.nombre as karting,
+          strftime('%d/%m/%Y', c.fecha) as fechaFormateada
+        FROM Carreras c
+        LEFT JOIN Kartings k ON c.id_karting = k.id
+        ORDER BY c.fecha DESC
+      `);
+
+      const races = result.rows.map(race => ({
+        id: race.id,
+        name: `Carrera en ${race.karting || 'Karting desconocido'} - ${race.fechaFormateada}`,
+        date: race.fecha,
+        status: "Pendiente",
+        type: "race"
+      }));
+
+      res.json(races);
+    } catch (error) {
+      console.error("Error al obtener carreras:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
+    }
+  },
+
+  async getPendingTournaments(req, res) {
+    try {
+      const result = await dbUtils.execute(`
+        SELECT 
+          t.id,
+          t.nombreTorneo,
+          t.fecha_inicio,
+          strftime('%d/%m/%Y', t.fecha_inicio) as fechaFormateada
+        FROM Torneos t
+        ORDER BY t.fecha_inicio DESC
+      `);
+
+      const tournaments = result.rows.map(tournament => ({
+        id: tournament.id,
+        name: tournament.nombreTorneo,
+        date: tournament.fecha_inicio,
+        status: "Pendiente",
+        type: "tournament"
+      }));
+
+      res.json(tournaments);
+    } catch (error) {
+      console.error("Error al obtener torneos:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
+    }
+  },
+
+  async getRaceParticipants(req, res) {
+    try {
+      const { id } = req.params;
       
-    // Calcular nuevos ELOs
-    const nuevosElos = calcularNuevosElos(resultados);
+      const result = await dbUtils.execute(
+        `SELECT 
+          u.id,
+          u.username as name,
+          u.elo,
+          ic.fecha_inscripcion
+        FROM InscripcionesCarrera ic
+        JOIN Usuarios u ON ic.id_piloto = u.id
+        WHERE ic.id_carrera = ?
+        ORDER BY ic.fecha_inscripcion ASC`,
+        [id]
+      );
 
-    // Obtener temporada actual
-    const [temporadaResult] = await conn.execute(`
-      SELECT id FROM Temporadas 
-      WHERE date('now') BETWEEN fecha_inicio AND fecha_fin
-      LIMIT 1
-    `);
+      const participants = result.rows.map((p, index) => ({
+        id: p.id.toString(),
+        name: p.name,
+        position: index + 1,
+        elo: p.elo || 0
+      }));
 
-    let temporadaId = null;
-    if (temporadaResult.length > 0) {
-      temporadaId = temporadaResult[0].id;
+      res.json(participants);
+    } catch (error) {
+      console.error("Error al obtener participantes:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
     }
+  },
 
-    // Iniciar transacción
-    await conn.execute("BEGIN TRANSACTION");
-
+  async getTournamentParticipants(req, res) {
     try {
-      // Guardar resultados de la carrera
-      for (let i = 0; i < resultados.length; i++) {
-        const piloto = resultados[i];
-        const nuevoElo = nuevosElos.find((p) => p.id === piloto.id);
+      const { id } = req.params;
+      
+      const result = await dbUtils.execute(
+        `SELECT 
+          u.id,
+          u.username as name,
+          u.elo,
+          it.fecha_inscripcion
+        FROM InscripcionesTorneo it
+        JOIN Usuarios u ON it.id_piloto = u.id
+        WHERE it.id_torneo = ?
+        ORDER BY it.fecha_inscripcion ASC`,
+        [id]
+      );
 
-        // Insertar resultado de carrera
-        await conn.execute(
-          `
-          INSERT INTO ResultadosCarreras (id_carrera, id_piloto, posicion, tiempoTotal)
-          VALUES (?, ?, ?, ?)
-        `,
-          [carreraId, piloto.id, piloto.position, "00:00:00"],
-        );
+      const participants = result.rows.map((p, index) => ({
+        id: p.id.toString(),
+        name: p.name,
+        position: index + 1,
+        elo: p.elo || 0
+      }));
 
-        // Actualizar ELO y estadísticas del usuario
-        await conn.execute(
-          `
-          UPDATE Usuarios 
-          SET elo = ?,
-              carrerasParticipadas = carrerasParticipadas + 1,
-              carrerasCompletadas = carrerasCompletadas + 1
-          WHERE id = ?
-        `,
-          [nuevoElo.nuevoElo, piloto.id],
-        );
+      res.json(participants);
+    } catch (error) {
+      console.error("Error al obtener participantes del torneo:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
+    }
+  },
 
-        // Si es el ganador, incrementar victorias
-        if (piloto.position === 1) {
-          await conn.execute(
-            `
-            UPDATE Usuarios 
-            SET carrerasVictorias = carrerasVictorias + 1
-            WHERE id = ?
-          `,
-            [piloto.id],
-          );
-        }
-
-        // Asignar puntos de temporada (solo los primeros 10)
-        if (temporadaId && piloto.position <= 10) {
-          const puntos = puntosPorPosicion[piloto.position - 1];
-
-          // Verificar si ya existe registro en TemporadaUsuarios
-          const [existeResult] = await conn.execute(
-            `
-            SELECT id FROM TemporadaUsuarios 
-            WHERE id_temporada = ? AND id_piloto = ?
-          `,
-            [temporadaId, piloto.id],
-          );
-
-          if (existeResult.length > 0) {
-            // Actualizar puntos existentes
-            await conn.execute(
-              `
-              UPDATE TemporadaUsuarios 
-              SET puntos = puntos + ?
-              WHERE id_temporada = ? AND id_piloto = ?
-            `,
-              [puntos, temporadaId, piloto.id],
-            );
-          } else {
-            // Crear nuevo registro
-            await conn.execute(
-              `
-              INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos)
-              VALUES (?, ?, ?)
-            `,
-              [temporadaId, piloto.id, puntos],
-            );
-          }
-        }
+  async confirmRace(req, res) {
+    try {
+      const { carreraId, resultados } = req.body;
+      
+      if (!carreraId || !resultados?.length) {
+        return res.status(400).json({ error: "Datos inválidos" });
       }
 
-      await conn.execute("COMMIT");
-      res.json({
-        success: true,
-        message: "Resultados confirmados correctamente",
-      });
+      const result = await adminService.confirmRaceResults(carreraId, resultados);
+      res.json(result);
     } catch (error) {
-      await conn.execute("ROLLBACK");
-      throw error;
+      console.error("Error al confirmar carrera:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
     }
-  } catch (error) {
-    console.error("Error al confirmar carrera:", error);
-    res.status(500).json({ error: "Error del servidor" });
-  }
-});
+  },
 
-// Confirmar resultados de torneo
-router.post("/confirmar-torneo", async (req, res) => {
-  try {
-    const { torneoId, resultados } = req.body;
-
-    // Sistema de puntos para torneos (más puntos que carreras individuales)
-    const puntosPorPosicion = [50, 36, 30, 24, 20, 16, 12, 8, 4, 2];
-
-    // Calcular nuevos ELOs
-    const nuevosElos = calcularNuevosElos(resultados);
-
-    // Obtener temporada actual
-    const [temporadaResult] = await conn.execute(`
-      SELECT id FROM Temporadas 
-      WHERE date('now') BETWEEN fecha_inicio AND fecha_fin
-      LIMIT 1
-    `);
-
-    let temporadaId = null;
-    if (temporadaResult.length > 0) {
-      temporadaId = temporadaResult[0].id;
-    }
-
-    // Iniciar transacción
-    await conn.execute("BEGIN TRANSACTION");
-
+  async confirmTournament(req, res) {
     try {
-      // Guardar resultados del torneo
-      for (let i = 0; i < resultados.length; i++) {
-        const piloto = resultados[i];
-        const nuevoElo = nuevosElos.find((p) => p.id === piloto.id);
-        const puntosTorneo = puntosPorPosicion[piloto.position - 1] || 0;
-
-        // Insertar resultado de torneo
-        await conn.execute(
-          `
-          INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo)
-          VALUES (?, ?, ?)
-        `,
-          [torneoId, piloto.id, puntosTorneo],
-        );
-
-        // Actualizar ELO y estadísticas del usuario
-        await conn.execute(
-          `
-          UPDATE Usuarios 
-          SET elo = ?,
-              torneosParticipados = torneosParticipados + 1,
-              torneosCompletados = torneosCompletados + 1
-          WHERE id = ?
-        `,
-          [nuevoElo.nuevoElo, piloto.id],
-        );
-
-        // Si es el ganador, incrementar victorias en torneos
-        if (piloto.position === 1) {
-          await conn.execute(
-            `
-            UPDATE Usuarios 
-            SET torneosVictorias = torneosVictorias + 1
-            WHERE id = ?
-          `,
-            [piloto.id],
-          );
-        }
-
-        // Asignar puntos de temporada (solo los primeros 10)
-        if (temporadaId && piloto.position <= 10) {
-          const puntos = puntosPorPosicion[piloto.position - 1];
-
-          // Verificar si ya existe registro en TemporadaUsuarios
-          const [existeResult] = await conn.execute(
-            `
-            SELECT id FROM TemporadaUsuarios 
-            WHERE id_temporada = ? AND id_piloto = ?
-          `,
-            [temporadaId, piloto.id],
-          );
-
-          if (existeResult.length > 0) {
-            // Actualizar puntos existentes
-            await conn.execute(
-              `
-              UPDATE TemporadaUsuarios 
-              SET puntos = puntos + ?
-              WHERE id_temporada = ? AND id_piloto = ?
-            `,
-              [puntos, temporadaId, piloto.id],
-            );
-          } else {
-            // Crear nuevo registro
-            await conn.execute(
-              `
-              INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos)
-              VALUES (?, ?, ?)
-            `,
-              [temporadaId, piloto.id, puntos],
-            );
-          }
-        }
+      const { torneoId, resultados } = req.body;
+      
+      if (!torneoId || !resultados?.length) {
+        return res.status(400).json({ error: "Datos inválidos" });
       }
 
-      await conn.execute("COMMIT");
-      res.json({
-        success: true,
-        message: "Resultados del torneo confirmados correctamente",
-      });
+      const result = await adminService.confirmTournamentResults(torneoId, resultados);
+      res.json(result);
     } catch (error) {
-      await conn.execute("ROLLBACK");
-      throw error;
+      console.error("Error al confirmar torneo:", error);
+      res.status(500).json({ error: "Error del servidor: " + error.message });
     }
-  } catch (error) {
-    console.error("Error al confirmar torneo:", error);
-    res.status(500).json({ error: "Error del servidor" });
   }
-});
+};
+
+// Definir rutas
+router.get("/carreras-pendientes", adminController.getPendingRaces);
+router.get("/torneos-pendientes", adminController.getPendingTournaments);
+router.get("/carrera/:id/participantes", adminController.getRaceParticipants);
+router.get("/torneo/:id/participantes", adminController.getTournamentParticipants);
+router.post("/confirmar-carrera", adminController.confirmRace);
+router.post("/confirmar-torneo", adminController.confirmTournament);
 
 export default router;
