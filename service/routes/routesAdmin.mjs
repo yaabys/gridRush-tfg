@@ -87,50 +87,55 @@ const adminService = {
 
     const points = pointsSystem[position - 1];
     
-    const existingResult = await dbUtils.execute(
-      "SELECT id FROM TemporadaUsuarios WHERE id_temporada = ? AND id_piloto = ?",
-      [seasonId, pilotId]
-    );
+    try {
+      const existingResult = await dbUtils.execute(
+        "SELECT id FROM TemporadaUsuarios WHERE id_temporada = ? AND id_piloto = ?",
+        [seasonId, pilotId]
+      );
 
-    if (existingResult.rows?.length) {
-      await dbUtils.execute(
-        "UPDATE TemporadaUsuarios SET puntos = puntos + ? WHERE id_temporada = ? AND id_piloto = ?",
-        [points, seasonId, pilotId]
-      );
-    } else {
-      await dbUtils.execute(
-        "INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos) VALUES (?, ?, ?)",
-        [seasonId, pilotId, points]
-      );
+      if (existingResult.rows?.length) {
+        await dbUtils.execute(
+          "UPDATE TemporadaUsuarios SET puntos = puntos + ? WHERE id_temporada = ? AND id_piloto = ?",
+          [points, seasonId, pilotId]
+        );
+      } else {
+        await dbUtils.execute(
+          "INSERT INTO TemporadaUsuarios (id_temporada, id_piloto, puntos) VALUES (?, ?, ?)",
+          [seasonId, pilotId, points]
+        );
+      }
+    } catch (error) {
+      console.error(`Error procesando puntos de temporada para piloto ${pilotId}:`, error);
+      // No lanzamos el error para permitir que continúe el procesamiento
     }
   },
 
   async confirmRaceResults(raceId, results) {
     const newElos = this.calculateNewElos(results);
     const seasonId = await dbUtils.getCurrentSeason();
+    const errors = [];
 
-    await dbUtils.execute("BEGIN TRANSACTION");
+    console.log(`Confirmando resultados de carrera ${raceId} para ${results.length} pilotos`);
 
-    try {
-      for (const [index, pilot] of results.entries()) {
+    for (const [index, pilot] of results.entries()) {
+      try {
         const newElo = newElos.find(e => e.id === pilot.id);
 
-        // Insertar resultado
+        // 1. Insertar resultado de carrera
         await dbUtils.execute(
           "INSERT INTO ResultadosCarreras (id_carrera, id_piloto, posicion, tiempoTotal) VALUES (?, ?, ?, ?)",
           [raceId, pilot.id, pilot.position, "00:00:00"]
         );
 
-        // Actualizar ELO
+        // 2. Actualizar ELO
         await dbUtils.execute(
           "UPDATE Usuarios SET elo = ? WHERE id = ?",
           [newElo.newElo, pilot.id]
         );
 
-        // Actualizar estadísticas
+        // 3. Actualizar estadísticas de carreras
         const statsUpdate = { 
-          carrerasParticipadas: 1, 
-          carrerasCompletadas: 1 
+          carrerasParticipadas: 1,
         };
         if (pilot.position === 1) {
           statsUpdate.carrerasVictorias = 1;
@@ -138,45 +143,58 @@ const adminService = {
         
         await dbUtils.updateUserStats(pilot.id, statsUpdate);
 
-        // Procesar puntos de temporada
+        // 4. Procesar puntos de temporada
         await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.RACE);
-      }
 
-      await dbUtils.execute("COMMIT");
-      return { success: true, message: "Resultados de carrera confirmados correctamente" };
-    } catch (error) {
-      await dbUtils.execute("ROLLBACK");
-      throw error;
+        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position}`);
+      } catch (error) {
+        console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
+        errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
+      }
     }
+
+    if (errors.length > 0) {
+      console.error("Errores durante el procesamiento:", errors);
+      return { 
+        success: false, 
+        message: "Se completó parcialmente con errores", 
+        errors 
+      };
+    }
+
+    return { 
+      success: true, 
+      message: "Resultados de carrera confirmados correctamente" 
+    };
   },
 
   async confirmTournamentResults(tournamentId, results) {
     const newElos = this.calculateNewElos(results);
     const seasonId = await dbUtils.getCurrentSeason();
+    const errors = [];
 
-    await dbUtils.execute("BEGIN TRANSACTION");
+    console.log(`Confirmando resultados de torneo ${tournamentId} para ${results.length} pilotos`);
 
-    try {
-      for (const pilot of results) {
+    for (const pilot of results) {
+      try {
         const newElo = newElos.find(e => e.id === pilot.id);
         const tournamentPoints = POINTS_SYSTEM.TOURNAMENT[pilot.position - 1] || 0;
 
-        // Insertar resultado
+        // 1. Insertar resultado de torneo
         await dbUtils.execute(
           "INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo) VALUES (?, ?, ?)",
           [tournamentId, pilot.id, tournamentPoints]
         );
 
-        // Actualizar ELO
+        // 2. Actualizar ELO
         await dbUtils.execute(
           "UPDATE Usuarios SET elo = ? WHERE id = ?",
           [newElo.newElo, pilot.id]
         );
 
-        // Actualizar estadísticas
+        // 3. Actualizar estadísticas de torneos
         const statsUpdate = { 
-          torneosParticipados: 1, 
-          torneosCompletados: 1 
+          torneosParticipados: 1
         };
         if (pilot.position === 1) {
           statsUpdate.torneosVictorias = 1;
@@ -184,16 +202,29 @@ const adminService = {
         
         await dbUtils.updateUserStats(pilot.id, statsUpdate);
 
-        // Procesar puntos de temporada
+        // 4. Procesar puntos de temporada
         await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.TOURNAMENT);
-      }
 
-      await dbUtils.execute("COMMIT");
-      return { success: true, message: "Resultados del torneo confirmados correctamente" };
-    } catch (error) {
-      await dbUtils.execute("ROLLBACK");
-      throw error;
+        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position}`);
+      } catch (error) {
+        console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
+        errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
+      }
     }
+
+    if (errors.length > 0) {
+      console.error("Errores durante el procesamiento:", errors);
+      return { 
+        success: false, 
+        message: "Se completó parcialmente con errores", 
+        errors 
+      };
+    }
+
+    return { 
+      success: true, 
+      message: "Resultados del torneo confirmados correctamente" 
+    };
   }
 };
 
@@ -213,6 +244,7 @@ const adminController = {
           strftime('%d/%m/%Y', c.fecha) as fechaFormateada
         FROM Carreras c
         LEFT JOIN Kartings k ON c.id_karting = k.id
+        WHERE c.fecha < date('now')
         ORDER BY c.fecha DESC
       `);
 
@@ -240,6 +272,7 @@ const adminController = {
           t.fecha_inicio,
           strftime('%d/%m/%Y', t.fecha_inicio) as fechaFormateada
         FROM Torneos t
+        WHERE t.fecha_fin < date('now')
         ORDER BY t.fecha_inicio DESC
       `);
 
@@ -328,6 +361,18 @@ const adminController = {
         return res.status(400).json({ error: "Datos inválidos" });
       }
 
+      // Verificar que la carrera existe y no tiene resultados ya
+      const existingResults = await dbUtils.execute(
+        "SELECT COUNT(*) as count FROM ResultadosCarreras WHERE id_carrera = ?",
+        [carreraId]
+      );
+
+      if (existingResults.rows[0].count > 0) {
+        return res.status(400).json({ 
+          error: "Esta carrera ya tiene resultados confirmados" 
+        });
+      }
+
       const result = await adminService.confirmRaceResults(carreraId, resultados);
       res.json(result);
     } catch (error) {
@@ -342,6 +387,18 @@ const adminController = {
       
       if (!torneoId || !resultados?.length) {
         return res.status(400).json({ error: "Datos inválidos" });
+      }
+
+      // Verificar que el torneo existe y no tiene resultados ya
+      const existingResults = await dbUtils.execute(
+        "SELECT COUNT(*) as count FROM ResultadosTorneo WHERE id_torneo = ?",
+        [torneoId]
+      );
+
+      if (existingResults.rows[0].count > 0) {
+        return res.status(400).json({ 
+          error: "Este torneo ya tiene resultados confirmados" 
+        });
       }
 
       const result = await adminService.confirmTournamentResults(torneoId, resultados);
