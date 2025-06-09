@@ -385,3 +385,12 @@
     padding: 0.8rem;
   }
 }
+
+.logout {
+  background-color: #d10000;
+  border: none;
+}
+
+.logout:hover {
+  background-color: #ff1f1f;
+}

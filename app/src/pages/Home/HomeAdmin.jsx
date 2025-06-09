@@ -419,6 +419,23 @@ function HomeAdmin() {
         <p>Gestiona las carreras y valida los resultados.</p>
       </div>
       {renderView()}
+
+      {/* Botón de cerrar sesión */}
+      <div className="profile-actions">
+        <button
+          className="logout"
+          onClick={async () => {
+            try {
+              await axios.post("/api/logout", {}, { withCredentials: true });
+              navigate("/");
+            } catch (err) {
+              alert("Error al cerrar sesión");
+            }
+          }}
+        >
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
   );
 }
