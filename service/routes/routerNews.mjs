@@ -41,18 +41,12 @@ router.get("/motorsport-news", async (req, res) => {
   }
 
   try {
-    console.log(
-      `[NEWS] Petición (Coches/Karting). URL: ${url.replace(apiKey, "OCULTO")}`,
-    );
     const response = await axios.get(url);
 
     const filteredArticles = response.data.articles.filter(
       (article) => article.urlToImage && article.description,
     );
 
-    console.log(
-      `[NEWS] Enviando ${filteredArticles.length} noticias (Coches/Karting).`,
-    );
     res.json(filteredArticles);
   } catch (error) {
     if (error.response) {
