@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 const Perfil = () => {
   const navigate = useNavigate();
 
-  const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState("");
   const [editandoCampo, setEditandoCampo] = useState(null);
@@ -57,7 +56,6 @@ const Perfil = () => {
 
         const imageUrl = URL.createObjectURL(response.data);
         setAvatarUrl(imageUrl);
-        console.log("Imagen cargada:", imageUrl);
       } catch (error) {
         console.error("Error al cargar avatar:", error);
       }
@@ -66,16 +64,28 @@ const Perfil = () => {
     obtenerAvatar();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/logout", {}, { withCredentials: true });
+      navigate("/"); 
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+      setMensaje("Hubo un error al intentar cerrar la sesión.");
+    }
+  };
+
   const handleEditarUsername = () => {
     setEditandoCampo("username");
     setNuevoValor(usuario.username);
     setMensaje("");
   };
+
   const handleEditarEmail = () => {
     setEditandoCampo("email");
     setNuevoValor(usuario.email);
     setMensaje("");
   };
+
   const handleEditarAvatar = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -107,14 +117,12 @@ const Perfil = () => {
       if (Object.keys(payload).length === 1) {
         setMensaje("No hay cambios para guardar");
         setEditandoCampo(null);
-        setMostrarOpciones(false);
         return;
       }
 
       const res = await axios.put("/api/cambiarperfil", payload, {
         withCredentials: true,
       });
-      console.log("Respuesta del backend:", res.data);
 
       if (res.data.success) {
         const response = await axios.get("/api/perfil", {
@@ -124,11 +132,9 @@ const Perfil = () => {
         setMensaje("¡Perfil actualizado correctamente!");
       }
     } catch (err) {
-      console.error("Error en guardar cambio:", err.response?.data?.error);
       setMensaje(err.response?.data?.error || "Error al actualizar el perfil");
     } finally {
       setEditandoCampo(null);
-      setMostrarOpciones(false);
     }
   };
 
@@ -139,21 +145,20 @@ const Perfil = () => {
 
   const calcularNivelElo = (elo) => {
     const niveles = [
-      { min: 0, max: 1000, nivel: 1 },
-      { min: 1000, max: 2000, nivel: 2 },
-      { min: 2000, max: 3000, nivel: 3 },
-      { min: 3000, max: 4000, nivel: 4 },
-      { min: 4000, max: 5000, nivel: 5 },
-      { min: 5000, max: 6000, nivel: 6 },
-      { min: 6000, max: 7000, nivel: 7 },
-      { min: 7000, max: 8000, nivel: 8 },
-      { min: 8000, max: 9000, nivel: 9 },
-      { min: 9000, max: 10000, nivel: 10 },
+        { min: 0, max: 1000, nivel: 1 },
+        { min: 1000, max: 2000, nivel: 2 },
+        { min: 2000, max: 3000, nivel: 3 },
+        { min: 3000, max: 4000, nivel: 4 },
+        { min: 4000, max: 5000, nivel: 5 },
+        { min: 5000, max: 6000, nivel: 6 },
+        { min: 6000, max: 7000, nivel: 7 },
+        { min: 7000, max: 8000, nivel: 8 },
+        { min: 8000, max: 9000, nivel: 9 },
+        { min: 9000, max: 10000, nivel: 10 },
     ];
 
-    const nivelActual = niveles.find((n) => elo >= n.min && elo < n.max);
-    const progreso =
-      ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
+    const nivelActual = niveles.find((n) => elo >= n.min && elo < n.max) || niveles[0];
+    const progreso = ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
 
     return {
       nivel: nivelActual.nivel,
@@ -192,17 +197,11 @@ const Perfil = () => {
         <div className="profile-content">
           <div className="profile-avatar">
             {imagenSeleccionada ? (
-              <img
-                src={imagenSeleccionada.url}
-                alt="Previsualización del avatar"
-              />
+              <img src={imagenSeleccionada.url} alt="Previsualización del avatar" />
             ) : avatarUrl ? (
               <img src={avatarUrl} alt="Avatar cargado" />
             ) : (
-              <img
-                src="/img/defaultIconProfile.webp"
-                alt="Avatar por defecto"
-              />
+              <img src="/img/defaultIconProfile.webp" alt="Avatar por defecto" />
             )}
             <button className="edit-btn" onClick={handleEditarAvatar}>
               Cambiar Avatar
@@ -217,15 +216,11 @@ const Perfil = () => {
 
                     try {
                       await axios.post("/api/upload", formData, {
-                        headers: {
-                          "Content-Type": "multipart/form-data",
-                        },
+                        headers: { "Content-Type": "multipart/form-data" },
                       });
                       setMensaje("Imagen actualizada correctamente");
                       setImagenSeleccionada(null);
                       setEditandoCampo(null);
-
-                      // Recargar avatar
                       const response = await axios.get("/api/avatar", {
                         responseType: "blob",
                       });
@@ -264,20 +259,14 @@ const Perfil = () => {
                       onChange={(e) => setNuevoValor(e.target.value)}
                       className="edit-input"
                     />
-                    <button className="edit-btn" onClick={handleGuardarCambio}>
-                      Guardar
-                    </button>
-                    <button className="edit-btn" onClick={handleCancelar}>
-                      Cancelar
-                    </button>
+                    <button className="edit-btn" onClick={handleGuardarCambio}>Guardar</button>
+                    <button className="edit-btn" onClick={handleCancelar}>Cancelar</button>
                   </div>
                 ) : (
                   <span>{usuario.username}</span>
                 )}
                 {editandoCampo !== "username" && (
-                  <button className="edit-btn" onClick={handleEditarUsername}>
-                    Editar
-                  </button>
+                  <button className="edit-btn" onClick={handleEditarUsername}>Editar</button>
                 )}
               </p>
               <p>
@@ -290,20 +279,14 @@ const Perfil = () => {
                       onChange={(e) => setNuevoValor(e.target.value)}
                       className="edit-input"
                     />
-                    <button className="edit-btn" onClick={handleGuardarCambio}>
-                      Guardar
-                    </button>
-                    <button className="edit-btn" onClick={handleCancelar}>
-                      Cancelar
-                    </button>
+                    <button className="edit-btn" onClick={handleGuardarCambio}>Guardar</button>
+                    <button className="edit-btn" onClick={handleCancelar}>Cancelar</button>
                   </div>
                 ) : (
                   <span>{usuario.email}</span>
                 )}
                 {editandoCampo !== "email" && (
-                  <button className="edit-btn" onClick={handleEditarEmail}>
-                    Editar
-                  </button>
+                  <button className="edit-btn" onClick={handleEditarEmail}>Editar</button>
                 )}
               </p>
             </div>
@@ -321,9 +304,7 @@ const Perfil = () => {
               </div>
               <div className="elo-stats">
                 <span>{eloInfo.eloActual} Elo</span>
-                <span>
-                  {eloInfo.siguienteNivel} Elo para el siguiente nivel
-                </span>
+                <span>{eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
               </div>
             </div>
           </div>
@@ -348,6 +329,12 @@ const Perfil = () => {
         </div>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}
+        
+        <div className="profile-actions">
+          <button className="logout" onClick={handleLogout}>
+              Cerrar Sesión
+          </button>
+        </div>
       </div>
     </>
   );

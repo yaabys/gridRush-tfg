@@ -1,12 +1,13 @@
 /* Contenedor principal */
 .home-admin-container {
-  padding: 6rem 2rem 4rem; /* Ajusta el padding superior si tienes Header */
+  padding: 6rem 2rem 4rem; 
   background-color: var(--color-bg);
   color: var(--color-text);
   min-height: 100vh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Header */
 .admin-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -24,6 +25,7 @@
   font-size: 1.1rem;
 }
 
+/* Vista de carrera */
 .admin-race-view {
   max-width: 800px;
   margin: 0 auto;
@@ -39,12 +41,14 @@
   margin-bottom: 0.5rem;
   font-size: 1.6rem;
 }
+
 .admin-race-view p {
   text-align: center;
   margin-bottom: 2.5rem;
   color: var(--color-muted);
 }
 
+/* Lista de corredores */
 .racer-list-container {
   background-color: var(--color-bg-light);
   padding: 1.5rem;
@@ -64,6 +68,7 @@
   border: 1px solid #444;
   transition: all var(--transition-speed) ease;
   cursor: grab;
+  gap: 1rem;
 }
 
 .racer-item:last-child {
@@ -72,6 +77,13 @@
 
 .racer-item:active {
   cursor: grabbing;
+}
+
+.racer-item:hover {
+  background-color: #3a3a3a;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .drag-handle {
@@ -99,6 +111,17 @@
   font-size: 1.1rem;
 }
 
+.racer-elo {
+  margin-right: 1rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  min-width: 70px;
+  text-align: center;
+}
+
 .view-photo-btn {
   background: none;
   border: none;
@@ -108,11 +131,13 @@
   padding: 0 0.5rem;
   color: #888;
 }
+
 .view-photo-btn:hover {
   transform: scale(1.2);
   color: var(--color-primary-light);
 }
 
+/* Botones y acciones */
 .confirm-button {
   display: block;
   width: 80%;
@@ -140,6 +165,11 @@
   box-shadow: 0 8px 25px rgba(255, 69, 0, 0.5);
 }
 
+.confirm-button:active {
+  animation: confirmSuccess 0.3s ease;
+}
+
+/* Vista de selección */
 .selection-view {
   text-align: center;
   padding: 3rem 1rem;
@@ -188,6 +218,7 @@
   margin-bottom: 1rem;
 }
 
+/* Vista de lista */
 .list-view {
   padding: 2rem;
   background-color: var(--color-bg-dark);
@@ -201,6 +232,7 @@
   border-bottom: 2px solid #333;
   padding-bottom: 0.8rem;
   font-size: 1.6rem;
+  clear: both;
 }
 
 .item-list {
@@ -249,6 +281,7 @@
   opacity: 1;
 }
 
+/* Mensajes y estados */
 .no-items-message {
   color: var(--color-muted);
   font-size: 1.1rem;
@@ -256,6 +289,53 @@
   padding: 3rem 0;
 }
 
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-muted);
+  font-size: 1.1rem;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: var(--border-radius);
+  border: 1px solid #ff6b6b;
+  margin: 2rem auto;
+  max-width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-message {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid #28a745;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Información de puntos */
+.points-info {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  border-left: 3px solid var(--color-primary);
+}
+
+.points-info strong {
+  color: var(--color-primary-light);
+}
+
+/* Botón de retroceso */
 .back-button {
   background: none;
   border: 1px solid #555;
@@ -275,89 +355,14 @@
   border-color: #777;
 }
 
-.list-view h2,
-.admin-race-view h2 {
-  clear: both;
+/* Animaciones */
+@keyframes confirmSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-/* Agregar estas reglas al final de HomeAdmin.css */
-
-.racer-elo {
-  margin-right: 1rem;
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  min-width: 70px;
-  text-align: center;
-}
-
-.points-info {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  border-left: 3px solid var(--color-primary);
-}
-
-.points-info strong {
-  color: var(--color-primary-light);
-}
-
-/* Loading states */
-.loading-message {
-  text-align: center;
-  padding: 2rem;
-  color: var(--color-muted);
-  font-size: 1.1rem;
-}
-
-.error-message {
-  text-align: center;
-  padding: 2rem;
-  color: #ff6b6b;
-  background-color: rgba(255, 107, 107, 0.1);
-  border-radius: var(--border-radius);
-  border: 1px solid #ff6b6b;
-}
-
-/* Success message */
-.success-message {
-  background-color: rgba(40, 167, 69, 0.1);
-  color: #28a745;
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  border: 1px solid #28a745;
-  margin: 1rem 0;
-  text-align: center;
-}
-
-/* Improved racer item layout */
-.racer-item {
-  background-color: #333;
-  color: var(--color-text);
-  padding: 1rem 1.5rem;
-  margin-bottom: 0.8rem;
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  border: 1px solid #444;
-  transition: all var(--transition-speed) ease;
-  cursor: grab;
-  gap: 1rem;
-}
-
-.racer-item:hover {
-  background-color: #3a3a3a;
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive improvements */
+/* Responsive */
 @media (max-width: 768px) {
   .racer-item {
     padding: 0.8rem 1rem;
@@ -379,141 +384,4 @@
     font-size: 0.8rem;
     padding: 0.8rem;
   }
-}
-
-/* Animation for confirmation */
-@keyframes confirmSuccess {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.confirm-button:active {
-  animation: confirmSuccess 0.3s ease;
-}
-
-/* ... (todo tu CSS actual) ... */
-
-/* Agregar estas reglas al final de HomeAdmin.css */
-
-.racer-elo {
-  margin-right: 1rem;
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  min-width: 70px;
-  text-align: center;
-}
-
-.points-info {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  border-left: 3px solid var(--color-primary);
-}
-
-.points-info strong {
-  color: var(--color-primary-light);
-}
-
-/* Loading states */
-.loading-message {
-  text-align: center;
-  padding: 2rem;
-  color: var(--color-muted);
-  font-size: 1.1rem;
-}
-
-.error-message {
-  text-align: center;
-  padding: 2rem;
-  color: #ff6b6b;
-  background-color: rgba(255, 107, 107, 0.1);
-  border-radius: var(--border-radius);
-  border: 1px solid #ff6b6b;
-}
-
-/* Success message */
-.success-message {
-  background-color: rgba(40, 167, 69, 0.1);
-  color: #28a745;
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  border: 1px solid #28a745;
-  margin: 1rem 0;
-  text-align: center;
-}
-
-/* Improved racer item layout */
-.racer-item {
-  background-color: #333;
-  color: var(--color-text);
-  padding: 1rem 1.5rem;
-  margin-bottom: 0.8rem;
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  border: 1px solid #444;
-  transition: all var(--transition-speed) ease;
-  cursor: grab;
-  gap: 1rem; /* Añadido para espacio entre elementos */
-}
-
-.racer-item:hover {
-  background-color: #3a3a3a;
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .racer-item {
-    padding: 0.8rem 1rem;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-  }
-
-  .racer-elo {
-    order: 3; /* Reorganiza el orden en pantallas pequeñas */
-    margin-right: 0;
-    margin-top: 0.5rem;
-  }
-
-  .view-photo-btn {
-    order: 4;
-    margin-top: 0.5rem;
-  }
-
-  .points-info {
-    font-size: 0.8rem;
-    padding: 0.8rem;
-  }
-}
-
-/* Animation for confirmation */
-@keyframes confirmSuccess {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.confirm-button:active {
-  animation: confirmSuccess 0.3s ease;
 }
