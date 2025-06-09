@@ -172,4 +172,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).json({ success: false, error: 'No se pudo cerrar la sesión.' });
+    }
+
+    res.clearCookie('connect.sid'); 
+    return res.status(200).json({ success: true, message: 'Sesión cerrada correctamente.' });
+  });
+});
+
 export default router;
