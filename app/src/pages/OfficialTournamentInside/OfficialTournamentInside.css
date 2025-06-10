@@ -142,6 +142,16 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.carrera-card.clickable {
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.carrera-card.clickable:hover {
+  box-shadow: 0 0 0 3px #e53935, 0 2px 16px #000a;
+  transform: translateY(-2px) scale(1.03);
+}
+
 .carrera-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);

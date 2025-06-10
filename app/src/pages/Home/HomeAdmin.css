@@ -536,3 +536,18 @@
 .modal-close:hover {
   background: #b71c1c;
 }
+
+.ver-foto-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.ver-foto-btn:hover {
+  background: #b71c1c;
+}

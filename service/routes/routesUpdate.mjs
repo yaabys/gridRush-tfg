@@ -254,16 +254,43 @@ router.put("/reservar-torneo", async (req, res) => {
       });
     }
 
-    // Realizar la inscripción
+    // Realizar la inscripción al torneo
     await conn.execute({
       sql: "INSERT INTO InscripcionesTorneo (id_torneo, id_piloto) VALUES (?, ?)",
       args: [idTorneo, idUsuario],
     });
 
+    // Obtener todas las carreras asociadas al torneo
+    const carrerasResult = await conn.execute({
+      sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
+      args: [idTorneo],
+    });
+
+    let carrerasInscritas = 0;
+
+    // Inscribir al usuario en todas las carreras del torneo
+    for (const carrera of carrerasResult.rows) {
+      // Verificar si ya está inscrito en esta carrera (por si acaso)
+      const inscritoCarrera = await conn.execute({
+        sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
+        args: [carrera.id, idUsuario],
+      });
+
+      if (inscritoCarrera.rows.length === 0) {
+        await conn.execute({
+          sql: "INSERT INTO InscripcionesCarrera (id_carrera, id_piloto) VALUES (?, ?)",
+          args: [carrera.id, idUsuario],
+        });
+        carrerasInscritas++;
+      }
+    }
+
     return res.status(200).json({
       success: true,
-      message: "Inscripción realizada correctamente",
+      message: "Inscripción realizada correctamente en el torneo y todas sus carreras",
+      carrerasInscritas: carrerasInscritas
     });
+
   } catch (error) {
     console.error("Error al inscribirse en el torneo:", error);
     return res.status(500).json({ error: "Error del servidor" });
