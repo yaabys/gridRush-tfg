@@ -295,8 +295,9 @@ const useAdminState = () => {
   return { state, updateState, resetState };
 };
 
-// Componente Principal
 function HomeAdmin() {
+  const navigate = useNavigate();
+
   const { checkSession } = useAuth();
   const api = useAPI();
   const { state, updateState, resetState } = useAdminState();
@@ -420,7 +421,6 @@ function HomeAdmin() {
       </div>
       {renderView()}
 
-      {/* Botón de cerrar sesión */}
       <div className="profile-actions">
         <button
           className="logout"
