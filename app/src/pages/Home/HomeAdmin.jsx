@@ -87,6 +87,24 @@ const useAuth = () => {
 function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
+  const [avatarUrl, setAvatarUrl] = useState("/img/defaultIconProfile.webp");
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const response = await axios.get(`/api/avatar/${racer.id}`, {
+          responseType: "blob",
+          withCredentials: true,
+        });
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+      } catch (err) {
+        setAvatarUrl("/img/defaultIconProfile.webp");
+      }
+    };
+    fetchAvatar();
+  }, [racer.id]);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -96,28 +114,61 @@ function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
     position: "relative",
   };
 
-  // Ruta para la imagen del resultado de carrera
   const fotoUrl = `/api/foto-resultado-carrera/${carreraId}/${racer.id}`;
-  console.log("Renderizando SortableRacerItem:", { carreraId, idPiloto: racer.id, fotoUrl });
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="racer-item">
       <span className="drag-handle">☰</span>
       <img
-        src={fotoUrl}
-        alt={`Foto resultado de ${racer.name}`}
+        src={avatarUrl}
+        alt={`Avatar de ${racer.name}`}
         className="racer-resultado"
-        onClick={() => {
-          console.log("Click en imagen resultado carrera:", { carreraId, idPiloto: racer.id, fotoUrl });
-          onImgClick(fotoUrl);
-        }}
         style={{ cursor: "pointer" }}
         onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
       />
       <span className="racer-position">{racer.position}º</span>
       <span className="racer-name">{racer.name}</span>
       <span className="racer-elo">ELO: {racer.elo || 0}</span>
+      <button
+        className="ver-foto-btn"
+        onClick={() => {
+          console.log("Ver foto de verificación:", { carreraId, idPiloto: racer.id, fotoUrl });
+          onImgClick(fotoUrl);
+        }}
+        style={{ marginLeft: "1rem" }}
+      >
+        Ver foto
+      </button>
     </div>
+  );
+}
+
+function AvatarById({ id, name, className = "confirmacion-img" }) {
+  const [avatarUrl, setAvatarUrl] = useState("/img/defaultIconProfile.webp");
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      try {
+        const response = await axios.get(`/api/avatar/${id}`, {
+          responseType: "blob",
+          withCredentials: true,
+        });
+        const imageUrl = URL.createObjectURL(response.data);
+        setAvatarUrl(imageUrl);
+      } catch (err) {
+        setAvatarUrl("/img/defaultIconProfile.webp");
+      }
+    };
+    fetchAvatar();
+  }, [id]);
+
+  return (
+    <img
+      src={avatarUrl}
+      alt={`Avatar de ${name}`}
+      className={className}
+      onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
+    />
   );
 }
 
@@ -271,12 +322,7 @@ function ReorderView({ item, onGoBack, onConfirm }) {
               onClick={() => setModalImg(`/api/foto-resultado-carrera/${item.id}/${racer.id}`)}
               title="Ver imagen de confirmación"
             >
-              <img
-                src={`/api/foto-resultado-carrera/${item.id}/${racer.id}`}
-                alt={`Confirmación de ${racer.name}`}
-                className="confirmacion-img"
-                onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
-              />
+              <AvatarById id={racer.id} name={racer.name} />
               <div>
                 <span className="confirmacion-nombre">{racer.name}</span>
                 {racer.fotoConfirmacion

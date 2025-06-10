@@ -418,15 +418,15 @@ router.get("/foto-resultado-carrera/:id_carrera/:id_piloto", async (req, res) =>
   const { id_carrera, id_piloto } = req.params;
   try {
     const result = await conn.execute(
-      "SELECT fotoConfirmacion, fotoConfirmacionTipo FROM ResultadosCarreras WHERE id_carrera = ? AND id_piloto = ?",
+      "SELECT fotoVerificacion, tipoFotoVerificacion FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
       [id_carrera, id_piloto]
     );
     const rows = result.rows || result[0];
-    if (!rows.length || !rows[0].fotoConfirmacion) {
+    if (!rows.length || !rows[0].fotoVerificacion) {
       return res.status(404).send();
     }
-    const buffer = Buffer.from(rows[0].fotoConfirmacion);
-    res.set("Content-Type", rows[0].fotoConfirmacionTipo || "image/jpeg");
+    const buffer = Buffer.from(rows[0].fotoVerificacion);
+    res.set("Content-Type", rows[0].tipoFotoVerificacion || "image/jpeg");
     res.end(buffer);
   } catch (err) {
     res.status(500).send();

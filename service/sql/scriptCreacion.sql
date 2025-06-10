@@ -171,3 +171,13 @@ CREATE TABLE TorneoRecompensas (
     FOREIGN KEY (id_torneo) REFERENCES Torneos(id),
     FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id)
 );
+
+CREATE TABLE VerificacionesCarreraFoto (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_carrera INTEGER NOT NULL,
+    id_piloto INTEGER NOT NULL,
+    fotoVerificacion BLOB,
+    tipoFotoVerificacion TEXT,
+    FOREIGN KEY (id_carrera) REFERENCES Carreras(id),
+    FOREIGN KEY (id_piloto) REFERENCES Usuarios(id)
+);

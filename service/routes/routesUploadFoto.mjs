@@ -62,57 +62,66 @@ router.get("/avatar", async (req, res) => {
   }
 });
 
-router.post("/uploadFotoCarrera", upload.single("file"), async (req, res) => {
-  console.log("Petición recibida en /uploadFotoCarrera");
-  console.log("Body:", req.body); // <-- LOG
-  console.log("File:", req.file); // <-- LOG
+router.get("/avatar/:id", async (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    return res.status(400).json({ message: "Falta id de usuario" });
+  }
 
-  const { id_carrera, id_piloto } = req.body;
-  console.log("id_carrera recibido:", id_carrera); // <-- LOG
-  console.log("id_piloto recibido:", id_piloto);   // <-- LOG
-
-  // Obtener el id_resultado (id de la fila en ResultadosCarreras)
   try {
     const result = await conn.execute(
-      "SELECT id FROM ResultadosCarreras WHERE id_carrera = ? AND id_piloto = ?",
-      [id_carrera, id_piloto]
+      "SELECT fotoPerfil, avatar_tipo FROM usuarios WHERE id = ?",
+      [id]
     );
     const rows = result.rows || result[0];
-    if (rows.length > 0) {
-      console.log("id_resultado encontrado:", rows[0].id); // <-- LOG
-    } else {
-      console.log("No se encontró resultado para esos ids");
+    if (!rows.length || !rows[0].fotoPerfil) {
+      return res.status(404).json({ message: "Imagen no encontrada" });
     }
+    const buffer = Buffer.from(rows[0].fotoPerfil);
+    res.set("Content-Type", rows[0].avatar_tipo);
+    res.end(buffer);
   } catch (err) {
-    console.error("Error buscando id_resultado:", err); // <-- LOG
+    console.error(err);
+    res.status(500).json({ message: "Error al obtener la imagen" });
   }
+});
 
-  if (!req.file) {
-    console.log("No se ha subido ninguna imagen");
-    return res.status(400).json({ message: "No se ha subido ninguna imagen" });
-  }
-  if (!id_carrera || !id_piloto) {
-    console.log("Faltan datos de carrera o piloto");
-    return res.status(400).json({ message: "Faltan datos de carrera o piloto" });
+router.post("/uploadFotoCarrera", upload.single("file"), async (req, res) => {
+  const { id_carrera, id_piloto } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ message: "No se recibió archivo" });
   }
 
   try {
-    const imagenBuffer = req.file.buffer;
-    const mimeType = req.file.mimetype;
-
-    const result = await conn.execute(
-      "UPDATE ResultadosCarreras SET fotoConfirmacion = ?, fotoConfirmacionTipo = ? WHERE id_carrera = ? AND id_piloto = ?",
-      [imagenBuffer, mimeType, id_carrera, id_piloto]
+    // Comprobar si ya existe una verificación para este piloto y carrera
+    const check = await conn.execute(
+      "SELECT id FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
+      [id_carrera, id_piloto]
     );
+    const rows = check.rows || check[0];
 
-    if (!result.changes) {
-      return res.status(404).json({ message: "No existe resultado para ese piloto en esa carrera" });
+    if (rows.length > 0) {
+      // Si ya existe, actualiza la foto
+      await conn.execute(
+        "UPDATE VerificacionesCarreraFoto SET fotoVerificacion = ?, tipoFotoVerificacion = ? WHERE id_carrera = ? AND id_piloto = ?",
+        [file.buffer, file.mimetype, id_carrera, id_piloto]
+      );
+      console.log("Foto de verificación ACTUALIZADA en VerificacionesCarreraFoto", { id_carrera, id_piloto });
+    } else {
+      // Si no existe, inserta nueva
+      await conn.execute(
+        "INSERT INTO VerificacionesCarreraFoto (id_carrera, id_piloto, fotoVerificacion, tipoFotoVerificacion) VALUES (?, ?, ?, ?)",
+        [id_carrera, id_piloto, file.buffer, file.mimetype]
+      );
+      console.log("Foto de verificación INSERTADA en VerificacionesCarreraFoto", { id_carrera, id_piloto });
     }
 
-    res.json({ message: "Imagen de carrera subida correctamente" });
-  } catch (error) {
-    console.error("Error al guardar imagen de carrera:", error);
-    res.status(500).json({ message: "Error al guardar imagen de carrera" });
+    res.json({ message: "Foto de verificación subida correctamente" });
+  } catch (err) {
+    console.error("Error al guardar foto de verificación:", err);
+    res.status(500).json({ message: "Error al guardar la foto de verificación" });
   }
 });
 

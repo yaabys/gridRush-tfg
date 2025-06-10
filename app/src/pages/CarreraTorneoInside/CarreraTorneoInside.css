@@ -1,4 +1,4 @@
-.independentRaceInside {
+.carreraTorneoInside {
   background-color: var(--color-bg);
   color: var(--color-text);
   min-height: 100vh;
@@ -83,6 +83,49 @@
   font-weight: 500;
 }
 
+/* Drag & Drop Zone */
+.drag-drop-zone {
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem auto;
+  background-color: var(--color-bg-dark);
+  transition: all 0.3s ease;
+}
+
+.drag-drop-zone.drag-over {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  border-color: var(--color-primary-light);
+}
+
+.drag-drop-zone p {
+  color: var(--color-muted);
+  margin-bottom: 1rem;
+}
+
+.preview-img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-btn {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.edit-btn:hover {
+  background-color: var(--color-primary-light);
+}
+
 .participantes-section {
   background-color: var(--color-bg-dark);
   border-radius: var(--border-radius);
@@ -148,31 +191,6 @@ tr:hover {
   color: #dc3545;
 }
 
-.drag-drop-zone {
-  border: 2px dashed #e53935;
-  border-radius: 10px;
-  padding: 2rem;
-  text-align: center;
-  background: #181818;
-  color: #fff;
-  min-height: 220px;
-  margin: 2rem 0;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.drag-drop-zone.drag-over {
-  background: #222;
-  border-color: #fff;
-}
-
-.drag-drop-zone .preview-img {
-  max-width: 180px;
-  max-height: 180px;
-  margin: 1rem auto;
-  display: block;
-  border-radius: 8px;
-}
-
 @keyframes zoomFadeIn {
   from {
     opacity: 0;
@@ -181,5 +199,33 @@ tr:hover {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 4rem 1rem;
+    min-width: auto;
+    width: 100%;
+  }
+
+  .carrera-details {
+    padding: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .drag-drop-zone {
+    padding: 1.5rem;
+  }
+
+  .preview-img {
+    max-width: 150px;
+    max-height: 150px;
   }
 }

@@ -84,7 +84,28 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
         .json({ error: "No estás inscrito en este torneo" });
     }
 
-    // Eliminar la inscripción
+    // Obtener todas las carreras asociadas al torneo
+    const carrerasResult = await conn.execute({
+      sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
+      args: [idTorneo],
+    });
+
+    let carrerasEliminadas = 0;
+
+    // Eliminar inscripciones de todas las carreras del torneo
+    for (const carrera of carrerasResult.rows) {
+      const deleteResult = await conn.execute({
+        sql: "DELETE FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
+        args: [carrera.id, idUsuario],
+      });
+      
+      // Solo contar si realmente se eliminó algo
+      if (deleteResult.rowsAffected > 0) {
+        carrerasEliminadas++;
+      }
+    }
+
+    // Eliminar la inscripción del torneo
     await conn.execute({
       sql: "DELETE FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -92,8 +113,10 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Inscripción cancelada correctamente",
+      message: "Inscripción cancelada correctamente del torneo y todas sus carreras",
+      carrerasEliminadas: carrerasEliminadas
     });
+
   } catch (error) {
     console.error("Error al cancelar inscripción al torneo:", error);
     return res.status(500).json({ error: "Error del servidor" });
