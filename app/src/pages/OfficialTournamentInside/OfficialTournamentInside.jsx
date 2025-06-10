@@ -146,14 +146,25 @@ const OfficialTournamentInside = () => {
             ) : (
               <div className="carreras-grid">
                 {proximasCarreras.map((carrera) => (
-                  <div key={carrera.id} className="carrera-card">
+                  <div
+                    key={carrera.id}
+                    className="carrera-card clickable"
+                    onClick={() => {
+                      console.log("Navegando a carrera-torneo:", {
+                        idTorneo: id,
+                        idCarrera: carrera.id,
+                      });
+                      navigate(`/carrera-torneo/${id}/${carrera.id}`);
+                    }}
+                    title="Ver detalles de la carrera"
+                    style={{ cursor: "pointer" }}
+                  >
                     <h3>{carrera.circuito}</h3>
                     <p>
                       <strong>🗓 Fecha:</strong> {carrera.fecha}
                     </p>
                     <p>
-                      <strong>⏰ Hora:</strong>{" "}
-                      {String(carrera.hora).replace(".", ":")}
+                      <strong>⏰ Hora:</strong> {String(carrera.hora).replace(".", ":")}
                     </p>
                   </div>
                 ))}

@@ -11,6 +11,7 @@ import OfficialTournaments from "./pages/OfficialTournaments/OfficialTournaments
 import OfficialTournamentInside from "./pages/OfficialTournamentInside/OfficialTournamentInside";
 import Tracks from "./pages/KartingTracks/Tracks";
 import Profile from "./pages/Profile/Profile";
+import CarreraTorneoInside from "./pages/CarreraTorneoInside/CarreraTorneoInside";
 
 function App() {
   return (
@@ -31,6 +32,10 @@ function App() {
           <Route path="/torneo/:id" element={<OfficialTournamentInside />} />
           <Route path="/pistasKarting" element={<Tracks />} />
           <Route path="/perfil" element={<Profile />} />
+          <Route
+            path="/carrera-torneo/:idTorneo/:idCarrera"
+            element={<CarreraTorneoInside />}
+          />
         </Routes>
       </Router>
     </>
