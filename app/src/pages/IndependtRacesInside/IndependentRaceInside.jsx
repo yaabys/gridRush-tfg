@@ -1,8 +1,113 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Header from "../../components/Header/Header";
 import "./IndependentRaceInside.css";
 import { useParams, useNavigate } from "react-router-dom";
+
+// Drag & Drop uploader para la foto de confirmación
+function ImagenUploader({ idCarrera, idPiloto }) {
+  const [imagen, setImagen] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [mensaje, setMensaje] = useState("");
+  const dropRef = useRef();
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    dropRef.current.classList.add("drag-over");
+  };
+
+  const handleDragLeave = () => {
+    dropRef.current.classList.remove("drag-over");
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    dropRef.current.classList.remove("drag-over");
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setImagen(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log("Archivo seleccionado:", file);
+    if (file && file.type.startsWith("image/")) {
+      setImagen(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!imagen) return;
+    console.log("Preparando subida:", { idCarrera, idPiloto }); // <-- LOG
+    const formData = new FormData();
+    formData.append("file", imagen);
+    formData.append("id_carrera", idCarrera);
+    formData.append("id_piloto", idPiloto);
+    console.log("Enviando FormData:", {
+      file: imagen,
+      id_carrera: idCarrera,
+      id_piloto: idPiloto,
+    }); // <-- LOG
+    try {
+      const response = await axios.post("/api/uploadFotoCarrera", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      console.log("Respuesta del backend:", response.data); // <-- LOG
+      setMensaje("Imagen subida correctamente");
+      setImagen(null);
+      setPreview(null);
+    } catch (err) {
+      console.error("Error al subir la imagen:", err); // <-- LOG
+      setMensaje("Error al subir la imagen");
+    }
+  };
+
+  return (
+    <div
+      ref={dropRef}
+      className="drag-drop-zone"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        id="fileInput"
+        onChange={handleFileChange}
+      />
+      <label htmlFor="fileInput" style={{ cursor: "pointer", color: "#e53935" }}>
+        {preview ? (
+          <img
+            src={preview}
+            alt="Previsualización"
+            className="preview-img"
+          />
+        ) : (
+          <span style={{ fontSize: "2rem" }}>📁</span>
+        )}
+      </label>
+      {imagen && (
+        <button
+          className="edit-btn"
+          style={{ marginTop: "1rem" }}
+          onClick={handleUpload}
+        >
+          Subir Imagen
+        </button>
+      )}
+      {mensaje && (
+        <p style={{ marginTop: "1rem", color: "#e53935" }}>{mensaje}</p>
+      )}
+    </div>
+  );
+}
 
 const IndependentRaceInside = () => {
   const { id } = useParams();
@@ -11,6 +116,7 @@ const IndependentRaceInside = () => {
   const [participantes, setParticipantes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [idPiloto, setIdPiloto] = useState(null);
 
   useEffect(() => {
     const fetchCarreraDetails = async () => {
@@ -30,6 +136,20 @@ const IndependentRaceInside = () => {
 
     fetchCarreraDetails();
   }, [id]);
+
+  // Obtener el id_piloto del usuario autenticado
+  useEffect(() => {
+    const fetchIdPiloto = async () => {
+      try {
+        const res = await axios.post("/api/get-id-piloto", {}, { withCredentials: true });
+        setIdPiloto(res.data.id_piloto);
+        console.log("ID piloto obtenido:", res.data.id_piloto);
+      } catch (err) {
+        console.error("Error al obtener id_piloto:", err);
+      }
+    };
+    fetchIdPiloto();
+  }, []);
 
   if (loading)
     return <div className="loading">Cargando detalles de la carrera...</div>;
@@ -77,6 +197,13 @@ const IndependentRaceInside = () => {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Drag & Drop para subir foto de confirmación */}
+        <div style={{ maxWidth: 400, margin: "0 auto" }}>
+          {idPiloto && (
+            <ImagenUploader idCarrera={carrera.id} idPiloto={idPiloto} />
+          )}
         </div>
 
         <div className="participantes-section">
