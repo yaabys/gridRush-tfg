@@ -391,4 +391,46 @@ router.get("/torneo/:id", async (req, res) => {
   }
 });
 
+router.post("/get-id-piloto", async (req, res) => {
+  if (!req.session.usuario || !req.session.usuario.username) {
+    return res.status(401).json({ error: "No autenticado" });
+  }
+
+  const username = req.session.usuario.username;
+
+  try {
+    const result = await conn.execute(
+      "SELECT id FROM Usuarios WHERE username = ?",
+      [username]
+    );
+    if (!result.rows || result.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    res.json({ id_piloto: result.rows[0].id });
+  } catch (error) {
+    console.error("Error al obtener id_piloto:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+// GET /api/foto-resultado-carrera/:id_carrera/:id_piloto
+router.get("/foto-resultado-carrera/:id_carrera/:id_piloto", async (req, res) => {
+  const { id_carrera, id_piloto } = req.params;
+  try {
+    const result = await conn.execute(
+      "SELECT fotoConfirmacion, fotoConfirmacionTipo FROM ResultadosCarreras WHERE id_carrera = ? AND id_piloto = ?",
+      [id_carrera, id_piloto]
+    );
+    const rows = result.rows || result[0];
+    if (!rows.length || !rows[0].fotoConfirmacion) {
+      return res.status(404).send();
+    }
+    const buffer = Buffer.from(rows[0].fotoConfirmacion);
+    res.set("Content-Type", rows[0].fotoConfirmacionTipo || "image/jpeg");
+    res.end(buffer);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
 export default router;

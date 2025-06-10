@@ -111,6 +111,8 @@ CREATE TABLE ResultadosCarreras (
     id_piloto INTEGER,
     posicion INTEGER NOT NULL,
     tiempoTotal TEXT NOT NULL,
+    fotoConfirmacion BLOB, -- imagen JPG/PNG para confirmar el resultado
+    fotoConfirmacionTipo TEXT, -- tipo MIME de la imagen
     FOREIGN KEY (id_carrera) REFERENCES Carreras(id),
     FOREIGN KEY (id_piloto) REFERENCES Usuarios(id)
 );

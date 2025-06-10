@@ -84,7 +84,7 @@ const useAuth = () => {
 };
 
 // Componente Piloto Arrastrable
-function SortableRacerItem({ id, racer }) {
+function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
@@ -96,9 +96,24 @@ function SortableRacerItem({ id, racer }) {
     position: "relative",
   };
 
+  // Ruta para la imagen del resultado de carrera
+  const fotoUrl = `/api/foto-resultado-carrera/${carreraId}/${racer.id}`;
+  console.log("Renderizando SortableRacerItem:", { carreraId, idPiloto: racer.id, fotoUrl });
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="racer-item">
       <span className="drag-handle">☰</span>
+      <img
+        src={fotoUrl}
+        alt={`Foto resultado de ${racer.name}`}
+        className="racer-resultado"
+        onClick={() => {
+          console.log("Click en imagen resultado carrera:", { carreraId, idPiloto: racer.id, fotoUrl });
+          onImgClick(fotoUrl);
+        }}
+        style={{ cursor: "pointer" }}
+        onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
+      />
       <span className="racer-position">{racer.position}º</span>
       <span className="racer-name">{racer.name}</span>
       <span className="racer-elo">ELO: {racer.elo || 0}</span>
@@ -112,6 +127,7 @@ function ReorderView({ item, onGoBack, onConfirm }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [modalImg, setModalImg] = useState(null);
   
   const { checkSession } = useAuth();
   const api = useAPI();
@@ -231,12 +247,63 @@ function ReorderView({ item, onGoBack, onConfirm }) {
               <p className="no-items-message">No hay participantes para validar</p>
             ) : (
               racers.map(racer => (
-                <SortableRacerItem key={racer.id} id={racer.id} racer={racer} />
+                <SortableRacerItem
+                  key={racer.id}
+                  id={racer.id}
+                  racer={racer}
+                  carreraId={item.id}
+                  onImgClick={setModalImg}
+                />
               ))
             )}
           </div>
         </SortableContext>
       </DndContext>
+
+      <div className="confirmaciones-section">
+        <h3>Confirmación de cada piloto</h3>
+        <div className="confirmaciones-list">
+          {racers.map(racer => (
+            <div
+              key={racer.id}
+              className="confirmacion-item"
+              style={{ cursor: "pointer" }}
+              onClick={() => setModalImg(`/api/foto-resultado-carrera/${item.id}/${racer.id}`)}
+              title="Ver imagen de confirmación"
+            >
+              <img
+                src={`/api/foto-resultado-carrera/${item.id}/${racer.id}`}
+                alt={`Confirmación de ${racer.name}`}
+                className="confirmacion-img"
+                onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
+              />
+              <div>
+                <span className="confirmacion-nombre">{racer.name}</span>
+                {racer.fotoConfirmacion
+                  ? <span className="confirmacion-ok">✔ Confirmado</span>
+                  : <span className="confirmacion-pendiente">⏳ Pendiente</span>
+                }
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal para la imagen */}
+      {modalImg && (
+        <div className="modal-overlay" onClick={() => setModalImg(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            {console.log("Modal abierto para imagen:", modalImg)}
+            <img
+              src={modalImg}
+              alt="Imagen de confirmación"
+              className="modal-img"
+              onError={e => { e.target.src = "/img/defaultIconProfile.webp"; }}
+            />
+            <button className="modal-close" onClick={() => setModalImg(null)}>Cerrar</button>
+          </div>
+        </div>
+      )}
 
       {racers.length > 0 && (
         <button className="confirm-button" onClick={handleConfirm} disabled={loading}>
