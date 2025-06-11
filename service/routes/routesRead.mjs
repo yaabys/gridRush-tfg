@@ -47,7 +47,7 @@ router.get("/perfil", async (req, res) => {
 // Ruta para obtener la temporada actual
 router.get("/temporada-actual", async (req, res) => {
   try {
-    const result = await conn.execute("SELECT * FROM Temporadas");
+    const result = await conn.execute("SELECT * FROM Temporadas WHERE fecha_inicio <= DATE('now') AND fecha_fin >= DATE('now') ORDER BY fecha_inicio DESC LIMIT 1");
 
     const temporadas = result.rows;
 
@@ -243,7 +243,6 @@ router.get("/carrera-libre/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Obtener detalles de la carrera
     const carreraResult = await conn.execute(
       `
       SELECT 
@@ -272,7 +271,6 @@ router.get("/carrera-libre/:id", async (req, res) => {
       return res.status(404).json({ error: "Carrera no encontrada" });
     }
 
-    // Obtener participantes de la carrera
     const participantesResult = await conn.execute(
       `
       SELECT 
@@ -333,7 +331,6 @@ router.get("/torneo/:id", async (req, res) => {
       return res.status(404).json({ error: "Torneo no encontrado" });
     }
 
-    // Obtener clasificación del torneo
     const clasificacionResult = await conn.execute(
       `
       SELECT 
@@ -351,7 +348,6 @@ router.get("/torneo/:id", async (req, res) => {
       [id, id],
     );
 
-    // Obtener próximas carreras del torneo
     const carrerasResult = await conn.execute(
       `
       SELECT 
@@ -367,7 +363,6 @@ router.get("/torneo/:id", async (req, res) => {
       [id],
     );
 
-    // Obtener premios del torneo (usando TemporadaRecompensas)
     const premiosResult = await conn.execute(`
       SELECT 
         tr.posicion_min as posicion,
@@ -413,7 +408,6 @@ router.post("/get-id-piloto", async (req, res) => {
   }
 });
 
-// GET /api/foto-resultado-carrera/:id_carrera/:id_piloto
 router.get("/foto-resultado-carrera/:id_carrera/:id_piloto", async (req, res) => {
   const { id_carrera, id_piloto } = req.params;
   try {

@@ -270,9 +270,11 @@ const adminController = {
           t.id,
           t.nombreTorneo,
           t.fecha_inicio,
+          t.fecha_fin,
           strftime('%d/%m/%Y', t.fecha_inicio) as fechaFormateada
         FROM Torneos t
         WHERE t.fecha_fin < date('now')
+          AND t.id NOT IN (SELECT id_torneo FROM ResultadosTorneo)
         ORDER BY t.fecha_inicio DESC
       `);
 
@@ -410,12 +412,185 @@ const adminController = {
   }
 };
 
-// Definir rutas
-router.get("/carreras-pendientes", adminController.getPendingRaces);
-router.get("/torneos-pendientes", adminController.getPendingTournaments);
-router.get("/carrera/:id/participantes", adminController.getRaceParticipants);
-router.get("/torneo/:id/participantes", adminController.getTournamentParticipants);
-router.post("/confirmar-carrera", adminController.confirmRace);
-router.post("/confirmar-torneo", adminController.confirmTournament);
+// GET /carreras-pendientes
+router.get("/carreras-pendientes", async (req, res) => {
+  try {
+    const result = await dbUtils.execute(`
+      SELECT 
+        c.id,
+        c.fecha,
+        c.hora,
+        k.nombre as karting,
+        strftime('%d/%m/%Y', c.fecha) as fechaFormateada
+      FROM Carreras c
+      LEFT JOIN Kartings k ON c.id_karting = k.id
+      WHERE c.fecha < date('now')
+        AND c.id NOT IN (SELECT id_carrera FROM ResultadosCarreras)
+      ORDER BY c.fecha DESC
+    `);
+
+    const races = result.rows.map(race => ({
+      id: race.id,
+      name: `Carrera en ${race.karting || 'Karting desconocido'} - ${race.fechaFormateada}`,
+      date: race.fecha,
+      status: "Pendiente",
+      type: "race"
+    }));
+
+    res.json(races);
+  } catch (error) {
+    console.error("Error al obtener carreras:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
+
+// GET /torneos-pendientes
+router.get("/torneos-pendientes", async (req, res) => {
+  try {
+    const result = await dbUtils.execute(`
+      SELECT 
+        t.id,
+        t.nombreTorneo,
+        t.fecha_inicio,
+        t.fecha_fin,
+        strftime('%d/%m/%Y', t.fecha_inicio) as fechaFormateada
+      FROM Torneos t
+      WHERE t.fecha_fin < date('now')
+        AND t.id NOT IN (SELECT id_torneo FROM ResultadosTorneo)
+      ORDER BY t.fecha_inicio DESC
+    `);
+
+    const tournaments = result.rows.map(tournament => ({
+      id: tournament.id,
+      name: tournament.nombreTorneo,
+      date: tournament.fecha_inicio,
+      status: "Pendiente",
+      type: "tournament"
+    }));
+
+    res.json(tournaments);
+  } catch (error) {
+    console.error("Error al obtener torneos:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
+
+// GET /carrera/:id/participantes
+router.get("/carrera/:id/participantes", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await dbUtils.execute(
+      `SELECT 
+        u.id,
+        u.username as name,
+        u.elo,
+        ic.fecha_inscripcion
+      FROM InscripcionesCarrera ic
+      JOIN Usuarios u ON ic.id_piloto = u.id
+      WHERE ic.id_carrera = ?
+      ORDER BY ic.fecha_inscripcion ASC`,
+      [id]
+    );
+
+    const participants = result.rows.map((p, index) => ({
+      id: p.id.toString(),
+      name: p.name,
+      position: index + 1,
+      elo: p.elo || 0
+    }));
+
+    res.json(participants);
+  } catch (error) {
+    console.error("Error al obtener participantes:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
+
+// GET /torneo/:id/participantes
+router.get("/torneo/:id/participantes", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await dbUtils.execute(
+      `SELECT 
+        u.id,
+        u.username as name,
+        u.elo,
+        it.fecha_inscripcion
+      FROM InscripcionesTorneo it
+      JOIN Usuarios u ON it.id_piloto = u.id
+      WHERE it.id_torneo = ?
+      ORDER BY it.fecha_inscripcion ASC`,
+      [id]
+    );
+
+    const participants = result.rows.map((p, index) => ({
+      id: p.id.toString(),
+      name: p.name,
+      position: index + 1,
+      elo: p.elo || 0
+    }));
+
+    res.json(participants);
+  } catch (error) {
+    console.error("Error al obtener participantes del torneo:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
+
+// POST /confirmar-carrera
+router.post("/confirmar-carrera", async (req, res) => {
+  try {
+    const { carreraId, resultados } = req.body;
+    if (!carreraId || !resultados?.length) {
+      return res.status(400).json({ error: "Datos inválidos" });
+    }
+
+    // Verificar que la carrera existe y no tiene resultados ya
+    const existingResults = await dbUtils.execute(
+      "SELECT COUNT(*) as count FROM ResultadosCarreras WHERE id_carrera = ?",
+      [carreraId]
+    );
+
+    if (existingResults.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: "Esta carrera ya tiene resultados confirmados" 
+      });
+    }
+
+    const result = await adminService.confirmRaceResults(carreraId, resultados);
+    res.json(result);
+  } catch (error) {
+    console.error("Error al confirmar carrera:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
+
+// POST /confirmar-torneo
+router.post("/confirmar-torneo", async (req, res) => {
+  try {
+    const { torneoId, resultados } = req.body;
+    if (!torneoId || !resultados?.length) {
+      return res.status(400).json({ error: "Datos inválidos" });
+    }
+
+    // Verificar que el torneo existe y no tiene resultados ya
+    const existingResults = await dbUtils.execute(
+      "SELECT COUNT(*) as count FROM ResultadosTorneo WHERE id_torneo = ?",
+      [torneoId]
+    );
+
+    if (existingResults.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: "Este torneo ya tiene resultados confirmados" 
+      });
+    }
+
+    const result = await adminService.confirmTournamentResults(torneoId, resultados);
+    res.json(result);
+  } catch (error) {
+    console.error("Error al confirmar torneo:", error);
+    res.status(500).json({ error: "Error del servidor: " + error.message });
+  }
+});
 
 export default router;

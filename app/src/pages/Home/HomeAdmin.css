@@ -514,12 +514,14 @@
 }
 
 .modal-img {
-  max-width: 60vw;
-  max-height: 60vh;
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
   border-radius: 8px;
   border: 2px solid #e53935;
   background: #222;
   margin-bottom: 1rem;
+  display: block;
 }
 
 .modal-close {
