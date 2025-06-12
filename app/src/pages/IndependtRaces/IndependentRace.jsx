@@ -85,11 +85,11 @@ const IndependentRace = () => {
   }, [username]); // Se ejecuta cuando tenemos el username
 
   const comunidades = [...new Set(carrerasLibres.map((c) => c.comunidad))];
-  const niveles = [...new Set(carrerasLibres.map((c) => c.nivel))];
+  const niveles = [...new Set(carrerasLibres.map((c) => c.nivelRequerido))];
 
   const carrerasFiltradas = carrerasLibres.filter((c) => {
     const coincideNivel = nivelSeleccionado
-      ? c.nivel === nivelSeleccionado
+      ? c.nivelRequerido === nivelSeleccionado
       : true;
     const coincideComunidad = comunidadSeleccionada
       ? c.comunidad === comunidadSeleccionada
@@ -283,7 +283,7 @@ const IndependentRace = () => {
                   <strong>⏰ Horario:</strong> {String(carrera.hora)}
                 </p>
                 <p>
-                  <strong>🎯 Nivel:</strong> {carrera.nivel}
+                  <strong>🎯 Nivel:</strong> {carrera.nivelRequerido}
                 </p>
                 <p>
                   <strong>👥 Plazas:</strong> {carrera.plazasOcupadas}/

@@ -247,7 +247,16 @@ function ReorderView({ item, onGoBack, onConfirm }) {
         : { torneoId: item.id, resultados: racers };
 
       const { data } = await api.post(endpoint, payload);
-      setSuccessMessage(data.message);
+      
+      // Verificar si la carrera está asociada a un torneo
+      const isRaceInTournament = item.type === ITEM_TYPES.RACE && item.torneoId;
+      
+      setSuccessMessage(
+        isRaceInTournament 
+          ? "¡Resultados confirmados! Los puntos han sido sumados tanto a la carrera como al torneo."
+          : data.message
+      );
+      
       onConfirm();
     } catch (error) {
       setError(error.response?.data?.error || "Error al confirmar resultados");

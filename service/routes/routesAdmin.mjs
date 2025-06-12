@@ -57,7 +57,6 @@ const verifyAdmin = async (req, res, next) => {
 
     const user = userResult.rows[0];
     
-    // Verificación directa del rol o usando la función esAdmin
     const isAdmin = user.rol === 'admin' || await esAdmin(user.email);
     
     if (!isAdmin) {
@@ -106,34 +105,36 @@ const adminService = {
       }
     } catch (error) {
       console.error(`Error procesando puntos de temporada para piloto ${pilotId}:`, error);
-      // No lanzamos el error para permitir que continúe el procesamiento
     }
   },
 
   async confirmRaceResults(raceId, results) {
-    const newElos = this.calculateNewElos(results);
     const seasonId = await dbUtils.getCurrentSeason();
     const errors = [];
 
     console.log(`Confirmando resultados de carrera ${raceId} para ${results.length} pilotos`);
 
+    const tournamentResult = await dbUtils.execute(
+      "SELECT id_torneo FROM Carreras WHERE id = ?",
+      [raceId]
+    );
+    const tournamentId = tournamentResult.rows[0]?.id_torneo;
+
     for (const [index, pilot] of results.entries()) {
       try {
-        const newElo = newElos.find(e => e.id === pilot.id);
-
-        // 1. Insertar resultado de carrera
         await dbUtils.execute(
           "INSERT INTO ResultadosCarreras (id_carrera, id_piloto, posicion, tiempoTotal) VALUES (?, ?, ?, ?)",
           [raceId, pilot.id, pilot.position, "00:00:00"]
         );
 
-        // 2. Actualizar ELO
+        const racePoints = POINTS_SYSTEM.RACE[pilot.position - 1] || 0;
+        const eloPoints = racePoints * 5;
+
         await dbUtils.execute(
-          "UPDATE Usuarios SET elo = ? WHERE id = ?",
-          [newElo.newElo, pilot.id]
+          "UPDATE Usuarios SET elo = elo + ? WHERE id = ?",
+          [eloPoints, pilot.id]
         );
 
-        // 3. Actualizar estadísticas de carreras
         const statsUpdate = { 
           carrerasParticipadas: 1,
         };
@@ -142,11 +143,28 @@ const adminService = {
         }
         
         await dbUtils.updateUserStats(pilot.id, statsUpdate);
-
-        // 4. Procesar puntos de temporada
         await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.RACE);
 
-        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position}`);
+        if (tournamentId) {
+          const existingResult = await dbUtils.execute(
+            "SELECT id FROM ResultadosTorneo WHERE id_torneo = ? AND id_piloto = ?",
+            [tournamentId, pilot.id]
+          );
+
+          if (existingResult.rows?.length) {
+            await dbUtils.execute(
+              "UPDATE ResultadosTorneo SET puntosTorneo = puntosTorneo + ? WHERE id_torneo = ? AND id_piloto = ?",
+              [racePoints, tournamentId, pilot.id]
+            );
+          } else {
+            await dbUtils.execute(
+              "INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo) VALUES (?, ?, ?)",
+              [tournamentId, pilot.id, racePoints]
+            );
+          }
+        }
+
+        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position} - Puntos: ${racePoints} - ELO ganado: ${eloPoints}`);
       } catch (error) {
         console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
         errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
@@ -169,7 +187,6 @@ const adminService = {
   },
 
   async confirmTournamentResults(tournamentId, results) {
-    const newElos = this.calculateNewElos(results);
     const seasonId = await dbUtils.getCurrentSeason();
     const errors = [];
 
@@ -177,22 +194,19 @@ const adminService = {
 
     for (const pilot of results) {
       try {
-        const newElo = newElos.find(e => e.id === pilot.id);
         const tournamentPoints = POINTS_SYSTEM.TOURNAMENT[pilot.position - 1] || 0;
+        const eloPoints = tournamentPoints * 5;
 
-        // 1. Insertar resultado de torneo
         await dbUtils.execute(
           "INSERT INTO ResultadosTorneo (id_torneo, id_piloto, puntosTorneo) VALUES (?, ?, ?)",
           [tournamentId, pilot.id, tournamentPoints]
         );
 
-        // 2. Actualizar ELO
         await dbUtils.execute(
-          "UPDATE Usuarios SET elo = ? WHERE id = ?",
-          [newElo.newElo, pilot.id]
+          "UPDATE Usuarios SET elo = elo + ? WHERE id = ?",
+          [eloPoints, pilot.id]
         );
 
-        // 3. Actualizar estadísticas de torneos
         const statsUpdate = { 
           torneosParticipados: 1
         };
@@ -201,11 +215,9 @@ const adminService = {
         }
         
         await dbUtils.updateUserStats(pilot.id, statsUpdate);
-
-        // 4. Procesar puntos de temporada
         await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.TOURNAMENT);
 
-        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position}`);
+        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position} - Puntos: ${tournamentPoints} - ELO ganado: ${eloPoints}`);
       } catch (error) {
         console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
         errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
@@ -363,7 +375,6 @@ const adminController = {
         return res.status(400).json({ error: "Datos inválidos" });
       }
 
-      // Verificar que la carrera existe y no tiene resultados ya
       const existingResults = await dbUtils.execute(
         "SELECT COUNT(*) as count FROM ResultadosCarreras WHERE id_carrera = ?",
         [carreraId]
@@ -391,7 +402,6 @@ const adminController = {
         return res.status(400).json({ error: "Datos inválidos" });
       }
 
-      // Verificar que el torneo existe y no tiene resultados ya
       const existingResults = await dbUtils.execute(
         "SELECT COUNT(*) as count FROM ResultadosTorneo WHERE id_torneo = ?",
         [torneoId]
@@ -545,7 +555,6 @@ router.post("/confirmar-carrera", async (req, res) => {
       return res.status(400).json({ error: "Datos inválidos" });
     }
 
-    // Verificar que la carrera existe y no tiene resultados ya
     const existingResults = await dbUtils.execute(
       "SELECT COUNT(*) as count FROM ResultadosCarreras WHERE id_carrera = ?",
       [carreraId]
@@ -573,7 +582,6 @@ router.post("/confirmar-torneo", async (req, res) => {
       return res.status(400).json({ error: "Datos inválidos" });
     }
 
-    // Verificar que el torneo existe y no tiene resultados ya
     const existingResults = await dbUtils.execute(
       "SELECT COUNT(*) as count FROM ResultadosTorneo WHERE id_torneo = ?",
       [torneoId]
