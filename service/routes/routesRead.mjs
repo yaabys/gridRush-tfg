@@ -484,4 +484,46 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
   }
 });
 
+// Nueva ruta para comprobar si el usuario está inscrito en una carrera
+router.get("/inscrito-carrera/:id", async (req, res) => {
+  // Devuelve true/false si el usuario autenticado está inscrito en la carrera con id = :id
+  if (!req.session.usuario || !req.session.usuario.username) {
+    console.log("[/inscrito-carrera] No autenticado");
+    return res.status(401).json({ error: "No autenticado" });
+  }
+
+  const username = req.session.usuario.username;
+  const idCarrera = req.params.id;
+
+  try {
+    console.log(`[/inscrito-carrera] Comprobando inscripción para usuario: ${username} en carrera: ${idCarrera}`);
+
+    // Obtener el id del usuario autenticado
+    const userResult = await conn.execute(
+      "SELECT id FROM Usuarios WHERE username = ?",
+      [username]
+    );
+    if (!userResult.rows || userResult.rows.length === 0) {
+      console.log("[/inscrito-carrera] Usuario no encontrado");
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    const idPiloto = userResult.rows[0].id;
+    console.log(`[/inscrito-carrera] idPiloto encontrado: ${idPiloto}`);
+
+    // Comprobar si está inscrito en la carrera
+    const inscripcionResult = await conn.execute(
+      "SELECT 1 FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ? LIMIT 1",
+      [idCarrera, idPiloto]
+    );
+
+    const inscrito = inscripcionResult.rows && inscripcionResult.rows.length > 0;
+    console.log(`[/inscrito-carrera] ¿Inscrito?: ${inscrito}`);
+
+    res.json({ inscrito });
+  } catch (error) {
+    console.error("Error comprobando inscripción en carrera:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
 export default router;
