@@ -117,6 +117,7 @@ const CarreraTorneoInside = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [idPiloto, setIdPiloto] = useState(null);
+  const [inscrito, setInscrito] = useState(false);
 
   useEffect(() => {
     const fetchCarreraDetails = async () => {
@@ -150,6 +151,22 @@ const CarreraTorneoInside = () => {
     };
     fetchIdPiloto();
   }, []);
+
+  // Comprobar si el piloto está inscrito en la carrera
+  useEffect(() => {
+    const checkInscripcion = async () => {
+      if (!idCarrera) return;
+      try {
+        const res = await axios.get(`/api/inscrito-carrera/${idCarrera}`, { withCredentials: true });
+        setInscrito(res.data.inscrito);
+        console.log("¿Inscrito en carrera torneo?:", res.data.inscrito);
+      } catch (err) {
+        console.error("Error comprobando inscripción:", err);
+        setInscrito(false);
+      }
+    };
+    if (idPiloto) checkInscripcion();
+  }, [idCarrera, idPiloto]);
 
   if (loading)
     return <div className="loading">Cargando detalles de la carrera...</div>;
@@ -201,8 +218,13 @@ const CarreraTorneoInside = () => {
 
         {/* Drag & Drop para subir foto de confirmación */}
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
-          {idPiloto && (
+          {idPiloto && inscrito && (
             <ImagenUploader idCarrera={idCarrera} idPiloto={idPiloto} />
+          )}
+          {idPiloto && !inscrito && (
+            <p style={{ color: "#e53935", marginTop: "1rem",marginBottom: "1rem" }}>
+              Debes estar inscrito para subir tu foto de confirmación.
+            </p>
           )}
         </div>
 

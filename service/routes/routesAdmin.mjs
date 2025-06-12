@@ -47,7 +47,7 @@ const verifyAdmin = async (req, res, next) => {
     }
 
     const userResult = await dbUtils.execute(
-      "SELECT email, role FROM Usuarios WHERE username = ?",
+      "SELECT email, rol FROM Usuarios WHERE username = ?",
       [req.session.usuario.username]
     );
 
@@ -58,7 +58,7 @@ const verifyAdmin = async (req, res, next) => {
     const user = userResult.rows[0];
     
     // Verificación directa del rol o usando la función esAdmin
-    const isAdmin = user.role === 'admin' || await esAdmin(user.email);
+    const isAdmin = user.rol === 'admin' || await esAdmin(user.email);
     
     if (!isAdmin) {
       return res.status(403).json({ 
