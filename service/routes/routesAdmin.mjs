@@ -5,7 +5,6 @@ import { esAdmin } from "../controllers/adminAuth.mjs";
 const router = express.Router();
 
 // Configuración de constantes
-const ELO_CHANGES = [100, 75, 50, 25, 10, 5, 0, 0, -25, -50];
 const POINTS_SYSTEM = {
   RACE: [25, 18, 15, 12, 10, 8, 6, 4, 2, 1],
   TOURNAMENT: [50, 36, 30, 24, 20, 16, 12, 8, 4, 2]
@@ -74,13 +73,6 @@ const verifyAdmin = async (req, res, next) => {
 
 // Servicios de negocio
 const adminService = {
-  calculateNewElos(results) {
-    return results.map((pilot, index) => ({
-      id: pilot.id,
-      newElo: pilot.elo + (ELO_CHANGES[index] || 0)
-    }));
-  },
-
   async processSeasonPoints(seasonId, pilotId, position, pointsSystem) {
     if (!seasonId || position > 10) return;
 
