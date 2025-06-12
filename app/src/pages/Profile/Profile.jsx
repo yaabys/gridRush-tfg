@@ -159,12 +159,13 @@ const Perfil = () => {
 
     const nivelActual = niveles.find((n) => elo >= n.min && elo < n.max) || niveles[0];
     const progreso = ((elo - nivelActual.min) / (nivelActual.max - nivelActual.min)) * 100;
+    const eloRestante = nivelActual.max - elo;
 
     return {
-      nivel: nivelActual.nivel,
-      progreso: Math.min(100, Math.max(0, progreso)),
-      eloActual: elo,
-      siguienteNivel: nivelActual.max,
+        nivel: nivelActual.nivel,
+        progreso: Math.min(100, Math.max(0, progreso)),
+        eloActual: elo,
+        siguienteNivel: eloRestante,
     };
   };
 
@@ -304,7 +305,7 @@ const Perfil = () => {
               </div>
               <div className="elo-stats">
                 <span>{eloInfo.eloActual} Elo</span>
-                <span>{eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
+                <span>Faltan {eloInfo.siguienteNivel} Elo para el siguiente nivel</span>
               </div>
             </div>
           </div>

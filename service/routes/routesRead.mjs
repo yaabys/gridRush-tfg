@@ -14,6 +14,28 @@ import session from "express-session";
 
 const router = express.Router();
 
+const calcularNivel = (elo) => {
+  const niveles = [
+    { min: 0, max: 1000, nivel: 1 },
+    { min: 1000, max: 2000, nivel: 2 },
+    { min: 2000, max: 3000, nivel: 3 },
+    { min: 3000, max: 4000, nivel: 4 },
+    { min: 4000, max: 5000, nivel: 5 },
+    { min: 5000, max: 6000, nivel: 6 },
+    { min: 6000, max: 7000, nivel: 7 },
+    { min: 7000, max: 8000, nivel: 8 },
+    { min: 8000, max: 9000, nivel: 9 },
+    { min: 9000, max: 10000, nivel: 10 },
+  ];
+
+  for (const rango of niveles) {
+    if (elo >= rango.min && elo < rango.max) {
+      return rango.nivel;
+    }
+  }
+  return 1;
+};
+
 router.get("/perfil", async (req, res) => {
   if (!req.session.usuario || !req.session.usuario.username) {
     return res.status(401).json({ error: "No autenticado" });
@@ -23,7 +45,7 @@ router.get("/perfil", async (req, res) => {
 
   try {
     const result = await conn.execute({
-      sql: "SELECT id, username, email ,nombre, carrerasVictorias, carrerasParticipadas, torneosVictorias, torneosParticipados FROM Usuarios WHERE username = ?",
+      sql: "SELECT id, username, email, nombre, elo, carrerasVictorias, carrerasParticipadas, torneosVictorias, torneosParticipados FROM Usuarios WHERE username = ?",
       args: [username],
     });
 
@@ -160,26 +182,34 @@ router.get("/torneos", async (req, res) => {
     }
 
     const torneos = await conn.execute(`
-          SELECT 
-            t.id,
-            t.nombreTorneo as nombre,
-            k.nombre as ubicacion,
-            k.ciudad as comunidad,
-            strftime('%d/%m/%Y', t.fecha_inicio) as fecha,
-            CASE 
-              WHEN t.nivelMin = 1 THEN 'Principiante'
-              WHEN t.nivelMin = 2 THEN 'Intermedio'
-              WHEN t.nivelMin = 3 THEN 'Avanzado'
-              ELSE 'Desconocido'
-            END as nivelMinimo,
-            (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as plazasOcupadas,
-            t.maxInscripciones as maximo
-          FROM Torneos t
-          JOIN TorneoKartings tk ON t.id = tk.id_torneo
-          JOIN Kartings k ON tk.id_karting = k.id
-          WHERE t.fecha_fin >= date('now')
-          ORDER BY t.fecha_inicio ASC
-        `);
+      SELECT 
+        t.id,
+        t.nombreTorneo as nombre,
+        k.nombre as ubicacion,
+        k.ciudad as comunidad,
+        strftime('%d/%m/%Y', t.fecha_inicio) as fecha,
+        t.nivelMin as eloRequerido,
+        CASE 
+          WHEN t.nivelMin BETWEEN 0 AND 1000 THEN '1'
+          WHEN t.nivelMin BETWEEN 1000 AND 2000 THEN '2'
+          WHEN t.nivelMin BETWEEN 2000 AND 3000 THEN '3'
+          WHEN t.nivelMin BETWEEN 3000 AND 4000 THEN '4'
+          WHEN t.nivelMin BETWEEN 4000 AND 5000 THEN '5'
+          WHEN t.nivelMin BETWEEN 5000 AND 6000 THEN '6'
+          WHEN t.nivelMin BETWEEN 6000 AND 7000 THEN '7'
+          WHEN t.nivelMin BETWEEN 7000 AND 8000 THEN '8'
+          WHEN t.nivelMin BETWEEN 8000 AND 9000 THEN '9'
+          WHEN t.nivelMin >= 9000 THEN '10'
+          ELSE '?'
+        END as nivelRequerido,
+        (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as plazasOcupadas,
+        t.maxInscripciones as maximo
+      FROM Torneos t
+      JOIN TorneoKartings tk ON t.id = tk.id_torneo
+      JOIN Kartings k ON tk.id_karting = k.id
+      WHERE t.fecha_fin >= date('now')
+      ORDER BY t.fecha_inicio ASC
+    `);
 
     const torneosRows = torneos.rows;
 
@@ -209,12 +239,20 @@ router.get("/carreras-libres", async (req, res) => {
         k.ciudad AS comunidad,
         strftime('%d/%m/%Y', c.fecha) AS fechaFormateada,
         strftime('%H:%M', c.hora) as hora,
+        c.nivelMin as eloRequerido,
         CASE 
-          WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
-          WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
-          WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
-          ELSE 'Desconocido'
-        END AS nivel,
+          WHEN c.nivelMin BETWEEN 0 AND 1000 THEN '1'
+          WHEN c.nivelMin BETWEEN 1000 AND 2000 THEN '2'
+          WHEN c.nivelMin BETWEEN 2000 AND 3000 THEN '3'
+          WHEN c.nivelMin BETWEEN 3000 AND 4000 THEN '4'
+          WHEN c.nivelMin BETWEEN 4000 AND 5000 THEN '5'
+          WHEN c.nivelMin BETWEEN 5000 AND 6000 THEN '6'
+          WHEN c.nivelMin BETWEEN 6000 AND 7000 THEN '7'
+          WHEN c.nivelMin BETWEEN 7000 AND 8000 THEN '8'
+          WHEN c.nivelMin BETWEEN 8000 AND 9000 THEN '9'
+          WHEN c.nivelMin >= 9000 THEN '10'
+          ELSE '?'
+        END AS nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
         c.maxInscripciones AS plazasTotales
       FROM Carreras c
@@ -223,6 +261,8 @@ router.get("/carreras-libres", async (req, res) => {
         AND date(c.fecha) >= date('now')
       ORDER BY c.fecha ASC
     `);
+
+    console.log("Datos de carreras libres:", result.rows);
 
     const carreras = result.rows;
 
@@ -252,19 +292,21 @@ router.get("/carrera-libre/:id", async (req, res) => {
         k.ciudad AS comunidad,
         strftime('%d/%m/%Y', c.fecha) AS fecha,
         strftime('%H:%M', c.hora) as hora,
+        c.nivelMin as nivelMinimo,
+        (c.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
           WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
           WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
           WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
           ELSE 'Desconocido'
-        END AS nivel,
+        END AS nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
         c.maxInscripciones AS plazasTotales
       FROM Carreras c
       JOIN Kartings k ON c.id_karting = k.id
       WHERE c.id = ? AND c.id_torneo IS NULL
     `,
-      [id],
+      [id]
     );
 
     if (!carreraResult.rows || carreraResult.rows.length === 0) {
@@ -300,6 +342,7 @@ router.get("/carrera-libre/:id", async (req, res) => {
 router.get("/torneo/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const username = req.session?.usuario?.username;
 
     // Obtener detalles del torneo
     const torneoResult = await conn.execute(
@@ -311,12 +354,14 @@ router.get("/torneo/:id", async (req, res) => {
         k.ciudad as comunidad,
         strftime('%d/%m/%Y', t.fecha_inicio) as fechaInicio,
         strftime('%d/%m/%Y', t.fecha_fin) as fechaFin,
+        t.nivelMin as nivelMinimo,
+        (t.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
-          WHEN t.nivelMin = 1 THEN 'Principiante'
-          WHEN t.nivelMin = 2 THEN 'Intermedio'
-          WHEN t.nivelMin = 3 THEN 'Avanzado'
+          WHEN t.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
+          WHEN t.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
+          WHEN t.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
           ELSE 'Desconocido'
-        END as nivelMinimo,
+        END as nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as inscritos,
         t.maxInscripciones as maximo
       FROM Torneos t
@@ -324,11 +369,25 @@ router.get("/torneo/:id", async (req, res) => {
       JOIN Kartings k ON tk.id_karting = k.id
       WHERE t.id = ?
     `,
-      [id],
+      [id]
     );
 
     if (!torneoResult.rows || torneoResult.rows.length === 0) {
       return res.status(404).json({ error: "Torneo no encontrado" });
+    }
+
+    // Si el usuario está autenticado, obtener su ELO
+    let userElo = null;
+    let userNivel = null;
+    if (username) {
+      const userResult = await conn.execute(
+        "SELECT elo FROM Usuarios WHERE username = ?",
+        [username]
+      );
+      if (userResult.rows && userResult.rows.length > 0) {
+        userElo = userResult.rows[0].elo;
+        userNivel = calcularNivel(userElo);
+      }
     }
 
     const clasificacionResult = await conn.execute(
@@ -345,7 +404,7 @@ router.get("/torneo/:id", async (req, res) => {
       WHERE rt.id_torneo = ?
       ORDER BY rt.puntosTorneo DESC
     `,
-      [id, id],
+      [id, id]
     );
 
     const carrerasResult = await conn.execute(
@@ -360,7 +419,7 @@ router.get("/torneo/:id", async (req, res) => {
       WHERE c.id_torneo = ? AND date(c.fecha) >= date('now')
       ORDER BY c.fecha ASC
     `,
-      [id],
+      [id]
     );
 
     const premiosResult = await conn.execute(`
@@ -375,7 +434,11 @@ router.get("/torneo/:id", async (req, res) => {
     `);
 
     res.json({
-      torneo: torneoResult.rows[0],
+      torneo: {
+        ...torneoResult.rows[0],
+        userElo,
+        userNivel
+      },
       clasificacion: clasificacionResult.rows || [],
       proximasCarreras: carrerasResult.rows || [],
       premios: premiosResult.rows || [],
@@ -430,7 +493,6 @@ router.get("/foto-resultado-carrera/:id_carrera/:id_piloto", async (req, res) =>
 router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
   const { idTorneo, idCarrera } = req.params;
   try {
-    // Obtener detalles de la carrera y participantes igual que en /carrera-libre/:id
     const carreraResult = await conn.execute(
       `SELECT 
         c.id,
@@ -439,12 +501,14 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
         k.ciudad AS comunidad,
         strftime('%d/%m/%Y', c.fecha) AS fecha,
         strftime('%H:%M', c.hora) as hora,
+        c.nivelMin as nivelMinimo,
+        (c.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
           WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
           WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
           WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
           ELSE 'Desconocido'
-        END AS nivel,
+        END AS nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
         c.maxInscripciones AS plazasTotales
       FROM Carreras c
