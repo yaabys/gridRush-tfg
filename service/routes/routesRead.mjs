@@ -293,10 +293,17 @@ router.get("/carrera-libre/:id", async (req, res) => {
         c.nivelMin as nivelMinimo,
         (c.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
-          WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
-          WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
-          WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
-          ELSE 'Desconocido'
+          WHEN c.nivelMin BETWEEN 0 AND 1000 THEN '1'
+          WHEN c.nivelMin BETWEEN 1000 AND 2000 THEN '2'
+          WHEN c.nivelMin BETWEEN 2000 AND 3000 THEN '3'
+          WHEN c.nivelMin BETWEEN 3000 AND 4000 THEN '4'
+          WHEN c.nivelMin BETWEEN 4000 AND 5000 THEN '5'
+          WHEN c.nivelMin BETWEEN 5000 AND 6000 THEN '6'
+          WHEN c.nivelMin BETWEEN 6000 AND 7000 THEN '7'
+          WHEN c.nivelMin BETWEEN 7000 AND 8000 THEN '8'
+          WHEN c.nivelMin BETWEEN 8000 AND 9000 THEN '9'
+          WHEN c.nivelMin >= 9000 THEN '10'
+          ELSE '?'
         END AS nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
         c.maxInscripciones AS plazasTotales
@@ -354,10 +361,17 @@ router.get("/torneo/:id", async (req, res) => {
         t.nivelMin as nivelMinimo,
         (t.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
-          WHEN t.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
-          WHEN t.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
-          WHEN t.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
-          ELSE 'Desconocido'
+          WHEN t.nivelMin BETWEEN 0 AND 1000 THEN '1'
+          WHEN t.nivelMin BETWEEN 1000 AND 2000 THEN '2'
+          WHEN t.nivelMin BETWEEN 2000 AND 3000 THEN '3'
+          WHEN t.nivelMin BETWEEN 3000 AND 4000 THEN '4'
+          WHEN t.nivelMin BETWEEN 4000 AND 5000 THEN '5'
+          WHEN t.nivelMin BETWEEN 5000 AND 6000 THEN '6'
+          WHEN t.nivelMin BETWEEN 6000 AND 7000 THEN '7'
+          WHEN t.nivelMin BETWEEN 7000 AND 8000 THEN '8'
+          WHEN t.nivelMin BETWEEN 8000 AND 9000 THEN '9'
+          WHEN t.nivelMin >= 9000 THEN '10'
+          ELSE '?'
         END as nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesTorneo WHERE id_torneo = t.id) as inscritos,
         t.maxInscripciones as maximo
@@ -504,10 +518,17 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
         c.nivelMin as nivelMinimo,
         (c.nivelMin - 1) * 1000 as eloRequerido,
         CASE 
-          WHEN c.nivelMin BETWEEN 1 AND 3 THEN 'Principiante'
-          WHEN c.nivelMin BETWEEN 4 AND 7 THEN 'Intermedio'
-          WHEN c.nivelMin BETWEEN 8 AND 10 THEN 'Avanzado'
-          ELSE 'Desconocido'
+          WHEN c.nivelMin BETWEEN 0 AND 1000 THEN '1'
+          WHEN c.nivelMin BETWEEN 1000 AND 2000 THEN '2'
+          WHEN c.nivelMin BETWEEN 2000 AND 3000 THEN '3'
+          WHEN c.nivelMin BETWEEN 3000 AND 4000 THEN '4'
+          WHEN c.nivelMin BETWEEN 4000 AND 5000 THEN '5'
+          WHEN c.nivelMin BETWEEN 5000 AND 6000 THEN '6'
+          WHEN c.nivelMin BETWEEN 6000 AND 7000 THEN '7'
+          WHEN c.nivelMin BETWEEN 7000 AND 8000 THEN '8'
+          WHEN c.nivelMin BETWEEN 8000 AND 9000 THEN '9'
+          WHEN c.nivelMin >= 9000 THEN '10'
+          ELSE '?'
         END AS nivelRequerido,
         (SELECT COUNT(*) FROM InscripcionesCarrera WHERE id_carrera = c.id) AS plazasOcupadas,
         c.maxInscripciones AS plazasTotales

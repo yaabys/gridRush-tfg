@@ -194,7 +194,7 @@ const CarreraTorneoInside = () => {
             </div>
             <div className="info-item">
               <h3>🎯 Nivel</h3>
-              <p>{carrera.nivel}</p>
+              <p>{carrera.nivelRequerido}</p>
             </div>
             <div className="info-item">
               <h3>👥 Plazas</h3>

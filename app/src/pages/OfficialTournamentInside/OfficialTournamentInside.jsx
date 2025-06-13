@@ -73,7 +73,7 @@ const OfficialTournamentInside = () => {
               {torneo.fechaFin}
             </p>
             <p>
-              <strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}
+              <strong>🎯 Nivel mínimo:</strong> {torneo.nivelRequerido}
             </p>
             <p>
               <strong>👥 Inscritos:</strong> {torneo.inscritos}/{torneo.maximo}
