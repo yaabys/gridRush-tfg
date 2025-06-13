@@ -50,7 +50,6 @@ export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
       `,
     });
 
-    console.log("Correo enviado: %s", info.messageId);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }

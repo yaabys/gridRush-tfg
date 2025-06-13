@@ -11,8 +11,6 @@ const OfficialTournamentInside = () => {
   const [clasificacion, setClasificacion] = useState([]);
   const [proximasCarreras, setProximasCarreras] = useState([]);
   const [premios, setPremios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const comprobarSesion = async () => {
@@ -42,40 +40,15 @@ const OfficialTournamentInside = () => {
         setPremios(response.data.premios);
       } catch (err) {
         console.error("Error al cargar datos del torneo:", err);
-        setError("Error al cargar los datos del torneo");
-      } finally {
-        setLoading(false);
+        navigate("/torneosOficiales");
       }
     };
 
     fetchTorneoData();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="tournament-inside">
-        <Header />
-        <div className="loading">Cargando información del torneo...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="tournament-inside">
-        <Header />
-        <div className="error-message">{error}</div>
-      </div>
-    );
-  }
+  }, [id, navigate]);
 
   if (!torneo) {
-    return (
-      <div className="tournament-inside">
-        <Header />
-        <div className="no-data">No se encontró el torneo</div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -150,10 +123,6 @@ const OfficialTournamentInside = () => {
                     key={carrera.id}
                     className="carrera-card clickable"
                     onClick={() => {
-                      console.log("Navegando a carrera-torneo:", {
-                        idTorneo: id,
-                        idCarrera: carrera.id,
-                      });
                       navigate(`/carrera-torneo/${id}/${carrera.id}`);
                     }}
                     title="Ver detalles de la carrera"

@@ -32,7 +32,6 @@ function ImagenUploader({ idCarrera, idPiloto }) {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("Archivo seleccionado:", file);
     if (file && file.type.startsWith("image/")) {
       setImagen(file);
       setPreview(URL.createObjectURL(file));
@@ -41,27 +40,20 @@ function ImagenUploader({ idCarrera, idPiloto }) {
 
   const handleUpload = async () => {
     if (!imagen) return;
-    console.log("Preparando subida:", { idCarrera, idPiloto }); // <-- LOG
     const formData = new FormData();
     formData.append("file", imagen);
     formData.append("id_carrera", idCarrera);
     formData.append("id_piloto", idPiloto);
-    console.log("Enviando FormData:", {
-      file: imagen,
-      id_carrera: idCarrera,
-      id_piloto: idPiloto,
-    }); // <-- LOG
     try {
       const response = await axios.post("/api/uploadFotoCarrera", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-      console.log("Respuesta del backend:", response.data); // <-- LOG
       setMensaje("Imagen subida correctamente");
       setImagen(null);
       setPreview(null);
     } catch (err) {
-      console.error("Error al subir la imagen:", err); // <-- LOG
+      console.error("Error al subir la imagen:", err); 
       setMensaje("Error al subir la imagen");
     }
   };
@@ -114,8 +106,6 @@ const IndependentRaceInside = () => {
   const navigate = useNavigate();
   const [carrera, setCarrera] = useState(null);
   const [participantes, setParticipantes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [idPiloto, setIdPiloto] = useState(null);
   const [inscrito, setInscrito] = useState(false);
 
@@ -129,22 +119,18 @@ const IndependentRaceInside = () => {
         setParticipantes(response.data.participantes);
       } catch (err) {
         console.error("Error al cargar detalles de la carrera:", err);
-        setError("Error al cargar los detalles de la carrera");
-      } finally {
-        setLoading(false);
+        navigate("/carrerasLibres");
       }
     };
 
     fetchCarreraDetails();
-  }, [id]);
+  }, [id, navigate]);
 
-  // Obtener el id_piloto del usuario autenticado
   useEffect(() => {
     const fetchIdPiloto = async () => {
       try {
         const res = await axios.post("/api/get-id-piloto", {}, { withCredentials: true });
         setIdPiloto(res.data.id_piloto);
-        // Ahora que tenemos el idPiloto, comprobamos si está inscrito
         const insRes = await axios.get(`/api/inscrito-carrera/${id}`, { withCredentials: true });
         setInscrito(insRes.data.inscrito);
       } catch (err) {
@@ -154,10 +140,9 @@ const IndependentRaceInside = () => {
     fetchIdPiloto();
   }, [id]);
 
-  if (loading)
-    return <div className="loading">Cargando detalles de la carrera...</div>;
-  if (error) return <div className="error-message">{error}</div>;
-  if (!carrera) return <div className="no-data">No se encontró la carrera</div>;
+  if (!carrera) {
+    return null;
+  }
 
   return (
     <div className="independentRaceInside">
@@ -202,7 +187,6 @@ const IndependentRaceInside = () => {
           </div>
         </div>
 
-        {/* Drag & Drop para subir foto de confirmación */}
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
           {idPiloto && inscrito && (
             <ImagenUploader idCarrera={carrera.id} idPiloto={idPiloto} />

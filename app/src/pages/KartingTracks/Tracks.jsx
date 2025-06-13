@@ -49,7 +49,7 @@ const Tracks = () => {
     fetchData();
   }, []);
 
-  // Función para formatear fechas
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString("es-ES", options);

@@ -57,18 +57,18 @@ const OfficialTournaments = () => {
         setLoading(true);
         setError(null);
 
-        // Primero comprobamos la sesión para obtener el username
+
         const sessionResponse = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
 
-        // Obtenemos los torneos
+
         const response = await axios.get("/api/torneos", {
           withCredentials: true,
         });
         setTorneos(response.data);
 
-        // Si el usuario está logueado, comprobamos sus inscripciones
+
         if (sessionResponse.data.logueado) {
           const username = sessionResponse.data.username;
           const inscripcionesPromises = response.data.map((torneo) =>

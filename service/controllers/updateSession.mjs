@@ -21,10 +21,7 @@ export const updateSession = async (req, nuevoUsername) => {
           return resolve(false);
         }
 
-        console.log(
-          "Sesión regenerada con nuevo username:",
-          req.session.usuario,
-        );
+        
         resolve(true);
       });
     });

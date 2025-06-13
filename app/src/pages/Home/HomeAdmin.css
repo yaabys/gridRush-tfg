@@ -1,4 +1,4 @@
-/* Contenedor principal */
+
 .home-admin-container {
   padding: 6rem 2rem 4rem; 
   background-color: var(--color-bg);
@@ -7,7 +7,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Header */
+
 .admin-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -25,7 +25,7 @@
   font-size: 1.1rem;
 }
 
-/* Vista de carrera */
+
 .admin-race-view {
   max-width: 800px;
   margin: 0 auto;
@@ -48,7 +48,7 @@
   color: var(--color-muted);
 }
 
-/* Lista de corredores */
+
 .racer-list-container {
   background-color: var(--color-bg-light);
   padding: 1.5rem;
@@ -137,7 +137,7 @@
   color: var(--color-primary-light);
 }
 
-/* Botones y acciones */
+
 .confirm-button {
   display: block;
   width: 80%;
@@ -169,7 +169,7 @@
   animation: confirmSuccess 0.3s ease;
 }
 
-/* Vista de selección */
+
 .selection-view {
   text-align: center;
   padding: 3rem 1rem;
@@ -218,7 +218,7 @@
   margin-bottom: 1rem;
 }
 
-/* Vista de lista */
+
 .list-view {
   padding: 2rem;
   background-color: var(--color-bg-dark);
@@ -281,7 +281,6 @@
   opacity: 1;
 }
 
-/* Mensajes y estados */
 .no-items-message {
   color: var(--color-muted);
   font-size: 1.1rem;
@@ -320,7 +319,7 @@
   text-align: center;
 }
 
-/* Información de puntos */
+
 .points-info {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 1rem;
@@ -335,7 +334,7 @@
   color: var(--color-primary-light);
 }
 
-/* Botón de retroceso */
+
 .back-button {
   background: none;
   border: 1px solid #555;
@@ -355,14 +354,14 @@
   border-color: #777;
 }
 
-/* Animaciones */
+
 @keyframes confirmSuccess {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .racer-item {
     padding: 0.8rem 1rem;
@@ -431,7 +430,7 @@
   cursor: pointer;
 }
 
-/* Sección de confirmaciones */
+
 .confirmaciones-section {
   margin: 2rem 0 1rem 0;
   padding: 1rem;
@@ -489,7 +488,7 @@
   margin-left: 0.5rem;
 }
 
-/* Estilos de modal */
+
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

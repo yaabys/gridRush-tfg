@@ -7,7 +7,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // Efecto para detectar el scroll
+  // Efecto para detectar el scroll y cambiar el estado de scrolled
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20;
@@ -23,7 +23,7 @@ const Header = () => {
     };
   }, [scrolled]);
 
-  // Verificar si el link está activo
+  // Verificar si la ruta actual esta activa para aplicar estilos
   const isActive = (path) => {
     return location.pathname === path;
   };

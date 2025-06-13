@@ -30,24 +30,25 @@
 
 .main-container {
   padding: 6rem 2rem;
-  background-color: e;
+  background-color: var(--color-bg);
   min-height: 50vh;
-  min-width: 100vh;
-  color: var(--color-text);
-  width: 80%;
-  margin: 0 auto;
+  width: 90%;
+  max-width: 1200px;
+
 }
 
 .main-container h1 {
   text-align: center;
   margin-bottom: 1rem;
   color: var(--color-primary);
+  width: 100%;
 }
 
-.officialTournaments__container p {
+.main-container > p {
   text-align: center;
   margin-bottom: 2rem;
   color: var(--color-muted);
+  width: 100%;
 }
 
 .loading,
@@ -60,6 +61,7 @@
   font-size: 1.2rem;
   text-align: center;
   padding: 2rem;
+  width: 100%;
 }
 
 .error-message {
@@ -74,6 +76,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  width: 100%;
+  justify-items: center;
 }
 
 .card-torneo {
@@ -83,6 +87,8 @@
   border-left: 4px solid var(--color-primary);
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
+  width: 100%;
+  max-width: 350px;
 }
 
 .card-torneo:hover {
@@ -459,7 +465,7 @@
   background: #0056b3;
 }
 
-/* Animaciones */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -525,4 +531,51 @@
   .inscription-button {
     width: 100%;
   }
+}
+
+.officialTournaments .main-container {
+  padding: 6rem 2rem;
+  background-color: var(--color-bg);
+  min-height: 50vh;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.officialTournaments .main-container h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+  width: 100%;
+}
+
+.officialTournaments .main-container > p {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--color-muted);
+  width: 100%;
+}
+
+.officialTournaments .loading,
+.officialTournaments .error-message,
+.officialTournaments .no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.officialTournaments .cards-torneos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  justify-items: center;
 }

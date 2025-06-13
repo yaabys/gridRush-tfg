@@ -18,7 +18,7 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 
   try {
-    // Verificar si el nuevo nombre de usuario ya está registrado
+
     if (username && username !== usernameActual) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
@@ -31,7 +31,6 @@ router.put("/cambiarperfil", async (req, res) => {
       }
     }
 
-    // Verificar si el nuevo correo ya está registrado
     if (email) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE email = ? AND username != ?",
@@ -90,7 +89,7 @@ router.put("/reservar-carreraLibre", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario por username
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -102,7 +101,7 @@ router.put("/reservar-carreraLibre", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar si ya está inscrito
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
       args: [idCarrera, idUsuario],
@@ -116,7 +115,7 @@ router.put("/reservar-carreraLibre", async (req, res) => {
       });
     }
 
-    // Hacer la inscripción
+
     await conn.execute({
       sql: "INSERT INTO InscripcionesCarrera (id_carrera, id_piloto) VALUES (?, ?)",
       args: [idCarrera, idUsuario],
@@ -141,7 +140,7 @@ router.post("/check-inscripcion", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -153,7 +152,7 @@ router.post("/check-inscripcion", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar inscripción
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
       args: [idCarrera, idUsuario],
@@ -185,7 +184,7 @@ const calcularNivel = (elo) => {
       return rango.nivel;
     }
   }
-  return 1; // Nivel por defecto si no se encuentra en ningún rango
+  return 1;
 };
 
 router.put("/reservar-torneo", async (req, res) => {
@@ -196,7 +195,7 @@ router.put("/reservar-torneo", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id, elo FROM Usuarios WHERE username = ?",
       args: [username],
@@ -210,7 +209,7 @@ router.put("/reservar-torneo", async (req, res) => {
     const eloUsuario = userResult.rows[0].elo;
     const nivelUsuario = calcularNivel(eloUsuario);
 
-    // Verificar si ya está inscrito
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -223,7 +222,7 @@ router.put("/reservar-torneo", async (req, res) => {
       });
     }
 
-    // Obtener información del torneo
+
     const torneoResult = await conn.execute({
       sql: "SELECT nivelMin, maxInscripciones FROM Torneos WHERE id = ?",
       args: [idTorneo],
@@ -235,14 +234,14 @@ router.put("/reservar-torneo", async (req, res) => {
 
     const torneo = torneoResult.rows[0];
 
-    // Verificar nivel mínimo
+
     if (nivelUsuario < torneo.nivelMin) {
       return res.status(400).json({
         error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`,
       });
     }
 
-    // Verificar plazas disponibles
+
     const inscritosResult = await conn.execute({
       sql: "SELECT COUNT(*) as inscritos FROM InscripcionesTorneo WHERE id_torneo = ?",
       args: [idTorneo],
@@ -254,13 +253,13 @@ router.put("/reservar-torneo", async (req, res) => {
       });
     }
 
-    // Realizar la inscripción al torneo
+ 
     await conn.execute({
       sql: "INSERT INTO InscripcionesTorneo (id_torneo, id_piloto) VALUES (?, ?)",
       args: [idTorneo, idUsuario],
     });
 
-    // Obtener todas las carreras asociadas al torneo
+
     const carrerasResult = await conn.execute({
       sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
       args: [idTorneo],
@@ -268,9 +267,8 @@ router.put("/reservar-torneo", async (req, res) => {
 
     let carrerasInscritas = 0;
 
-    // Inscribir al usuario en todas las carreras del torneo
     for (const carrera of carrerasResult.rows) {
-      // Verificar si ya está inscrito en esta carrera (por si acaso)
+
       const inscritoCarrera = await conn.execute({
         sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
         args: [carrera.id, idUsuario],
@@ -305,7 +303,7 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -317,7 +315,6 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar inscripción
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -338,7 +335,7 @@ router.put("/cancelar-torneo", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -350,7 +347,7 @@ router.put("/cancelar-torneo", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar si está inscrito en el torneo
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -362,7 +359,7 @@ router.put("/cancelar-torneo", async (req, res) => {
       });
     }
 
-    // Obtener todas las carreras asociadas al torneo
+
     const carrerasResult = await conn.execute({
       sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
       args: [idTorneo],
@@ -370,7 +367,7 @@ router.put("/cancelar-torneo", async (req, res) => {
 
     let carrerasCanceladas = 0;
 
-    // Cancelar inscripción en todas las carreras del torneo
+
     for (const carrera of carrerasResult.rows) {
       const result = await conn.execute({
         sql: "DELETE FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
@@ -382,7 +379,7 @@ router.put("/cancelar-torneo", async (req, res) => {
       }
     }
 
-    // Cancelar inscripción en el torneo
+
     await conn.execute({
       sql: "DELETE FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],

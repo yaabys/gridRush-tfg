@@ -12,7 +12,7 @@ router.delete("/cancelar-inscripcion", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -24,7 +24,7 @@ router.delete("/cancelar-inscripcion", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar si está inscrito
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
       args: [idCarrera, idUsuario],
@@ -36,7 +36,6 @@ router.delete("/cancelar-inscripcion", async (req, res) => {
         .json({ error: "No estás inscrito en esta carrera" });
     }
 
-    // Eliminar la inscripción
     await conn.execute({
       sql: "DELETE FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
       args: [idCarrera, idUsuario],
@@ -60,7 +59,7 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
   }
 
   try {
-    // Obtener ID del usuario
+
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -72,7 +71,7 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
 
     const idUsuario = userResult.rows[0].id;
 
-    // Verificar si está inscrito
+
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -84,7 +83,7 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
         .json({ error: "No estás inscrito en este torneo" });
     }
 
-    // Obtener todas las carreras asociadas al torneo
+
     const carrerasResult = await conn.execute({
       sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
       args: [idTorneo],
@@ -92,20 +91,20 @@ router.delete("/cancelar-inscripcion-torneo", async (req, res) => {
 
     let carrerasEliminadas = 0;
 
-    // Eliminar inscripciones de todas las carreras del torneo
+
     for (const carrera of carrerasResult.rows) {
       const deleteResult = await conn.execute({
         sql: "DELETE FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
         args: [carrera.id, idUsuario],
       });
       
-      // Solo contar si realmente se eliminó algo
+
       if (deleteResult.rowsAffected > 0) {
         carrerasEliminadas++;
       }
     }
 
-    // Eliminar la inscripción del torneo
+
     await conn.execute({
       sql: "DELETE FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],

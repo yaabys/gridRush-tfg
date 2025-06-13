@@ -35,7 +35,7 @@
   margin-bottom: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--color-primary-light);
-  margin-top: 0; /* Aseguramos que no haya margen superior */
+  margin-top: 0; 
   clear: both;
 }
 

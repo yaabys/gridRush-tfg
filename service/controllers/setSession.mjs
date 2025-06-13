@@ -24,7 +24,6 @@ export const setSession = async (req, username) => {
           return resolve(false);
         }
 
-        console.log("Sesión establecida:", req.session.usuario);
         resolve(true);
       });
     });
