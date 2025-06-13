@@ -311,7 +311,7 @@ const OfficialTournaments = () => {
                     <strong>🗓 Fecha:</strong> {torneo.fecha}
                   </p>
                   <p>
-                    <strong>🎯 Nivel mínimo:</strong> {torneo.nivelMinimo}
+                    <strong>🎯 Nivel:</strong> {torneo.nivelRequerido}
                   </p>
                   <p>
                     <strong>👥 Inscritos:</strong> {torneo.plazasOcupadas}/
