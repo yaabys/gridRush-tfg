@@ -10,11 +10,11 @@ const Index = () => {
   const [error, setError] = useState(null);
   const [animateStats, setAnimateStats] = useState(false);
 
-  // --- ¡NUEVO! Estados para las noticias ---
+
   const [news, setNews] = useState([]);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState(null);
-  // -----------------------------------------
+
 
   const [userData, setUserData] = useState({});
 
@@ -23,13 +23,13 @@ const Index = () => {
       try {
         const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
-        }); //
+        }); 
         if (!res.data.logueado) {
-          navigate("/registro"); //
+          navigate("/registro"); 
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
-        setError("Error al comprobar la sesión"); //
+        setError("Error al comprobar la sesión"); 
       }
     };
     comprobarSesion();
@@ -38,10 +38,10 @@ const Index = () => {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        setLoading(true); //
+        setLoading(true); 
         const response = await axios.get("/api/perfil", {
           withCredentials: true,
-        }); //
+        }); 
 
         setUserData({
           username: response.data.username || "Username",
@@ -50,29 +50,28 @@ const Index = () => {
           carrerasVictorias: response.data.carrerasVictorias,
           carrerasParticipadas: response.data.carrerasParticipadas,
           torneosParticipados: response.data.torneosParticipados,
-        }); //
+        }); 
 
-        setLoading(false); //
+        setLoading(false); 
 
         setTimeout(() => {
-          setAnimateStats(true); //
+          setAnimateStats(true); 
         }, 500);
       } catch (err) {
         console.error("Error al obtener perfil:", err);
-        setError("No se pudo cargar el perfil. ¿Estás logueado?"); //
-        setLoading(false); //
+        setError("No se pudo cargar el perfil. ¿Estás logueado?"); 
+        setLoading(false); 
       }
     };
 
     obtenerPerfil();
   }, []);
 
-  // --- ¡NUEVO! useEffect para obtener las noticias ---
+
   useEffect(() => {
     const obtenerNoticias = async () => {
       setNewsLoading(true);
       try {
-        // Hacemos la llamada a nuestro backend (usando el proxy)
         const response = await axios.get("/api/motorsport-news");
         setNews(response.data);
         setNewsError(null);
@@ -86,17 +85,17 @@ const Index = () => {
     };
 
     obtenerNoticias();
-  }, []); // Se ejecuta solo una vez
-  // -----------------------------------------------
+  }, []);  
+
 
   const getTournamentEmoji = (nombreTorneo) => {
-    if (nombreTorneo.toLowerCase().includes("campeonato")) return "🏆"; //
-    if (nombreTorneo.toLowerCase().includes("copa")) return "🏁"; //
-    if (nombreTorneo.toLowerCase().includes("gran premio")) return "🏎️"; //
-    return "🏆"; //
+    if (nombreTorneo.toLowerCase().includes("campeonato")) return "🏆"; 
+    if (nombreTorneo.toLowerCase().includes("copa")) return "🏁"; 
+    if (nombreTorneo.toLowerCase().includes("gran premio")) return "🏎️"; 
+    return "🏆"; 
   };
 
-  // --- ¡NUEVO! Componente para la tarjeta de noticia ---
+
   const NewsCard = ({ article }) => (
     <a
       href={article.url}
@@ -122,7 +121,7 @@ const Index = () => {
       </div>
     </a>
   );
-  // ----------------------------------------------------
+
 
   if (loading) {
     return (
@@ -135,7 +134,7 @@ const Index = () => {
           </div>
         </div>
       </>
-    ); //
+    ); 
   }
 
   if (error) {
@@ -150,7 +149,7 @@ const Index = () => {
           </div>
         </div>
       </>
-    ); //
+    ); 
   }
 
   return (
@@ -243,11 +242,6 @@ const Index = () => {
                     <NewsCard key={article.url || index} article={article} />
                   ))}
             </div>
-            {!newsLoading && news.length > 4 && (
-              <Link to="/noticias" className="see-more-link">
-                Ver todas las noticias →
-              </Link>
-            )}
           </section>
         </div>
       </div>

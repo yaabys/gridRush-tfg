@@ -109,7 +109,7 @@ const Register = () => {
     setErrorMsg("");
   };
 
-// En Register.jsx - Actualizar la función handleSubmit para el login
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -156,7 +156,7 @@ const handleSubmit = async (e) => {
           break;
       }
     } else {
-      // LOGIN
+
       const loginData = {
         email: form.email,
         password: form.password,
@@ -166,16 +166,13 @@ const handleSubmit = async (e) => {
         withCredentials: true,
       });
 
-      console.log("Respuesta del login:", response.data);
 
       if (response.data.admin) {
-        // Es administrador
-        setShowSemaforo(true);
-        setTimeout(() => {
+
           navigate("/admin");
-        }, 2000);
+
       } else if (response.data.success) {
-        // Usuario normal
+
         setShowSemaforo(true);
         setTimeout(() => {
           navigate("/principal");
@@ -308,7 +305,7 @@ const handleSubmit = async (e) => {
                 </div>
               </>
             ) : (
-              //login
+   
               <>
                 <div className="form-group">
                   <input

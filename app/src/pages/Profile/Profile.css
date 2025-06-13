@@ -1,4 +1,4 @@
-/* Variables globales */
+
 :root {
   --transition-speed: 0.3s;
   --hover-scale: 1.05;
@@ -11,7 +11,7 @@
   );
 }
 
-/* Animaciones */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -424,7 +424,7 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .profile-content {
     grid-template-columns: 1fr;
@@ -545,7 +545,7 @@
   color: #fff;
 }
 
-/* Modal de edición de perfil */
+
 .modal-editar {
   position: fixed;
   top: 0;
@@ -629,7 +629,7 @@
 .edit-inline {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espaciado entre elementos */
+  gap: 10px; 
 }
 
 .edit-input {
@@ -658,7 +658,7 @@
 .avatar-save {
   margin-top: 10px;
   display: flex;
-  gap: 10px; /* Espaciado entre los botones */
+  gap: 10px; 
 }
 
 .edit-btn {

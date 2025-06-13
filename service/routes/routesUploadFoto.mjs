@@ -53,7 +53,7 @@ router.get("/avatar", async (req, res) => {
       return res.status(404).json({ message: "Imagen no encontrada" });
     }
 
-    const buffer = Buffer.from(rows[0].fotoPerfil); // esto sirve para ArrayBuffer o TypedArray
+    const buffer = Buffer.from(rows[0].fotoPerfil); 
     res.set("Content-Type", rows[0].avatar_tipo);
     res.end(buffer);
   } catch (err) {
@@ -95,7 +95,6 @@ router.post("/uploadFotoCarrera", upload.single("file"), async (req, res) => {
   }
 
   try {
-    // Comprobar si ya existe una verificación para este piloto y carrera
     const check = await conn.execute(
       "SELECT id FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
       [id_carrera, id_piloto]
@@ -103,19 +102,15 @@ router.post("/uploadFotoCarrera", upload.single("file"), async (req, res) => {
     const rows = check.rows || check[0];
 
     if (rows.length > 0) {
-      // Si ya existe, actualiza la foto
       await conn.execute(
         "UPDATE VerificacionesCarreraFoto SET fotoVerificacion = ?, tipoFotoVerificacion = ? WHERE id_carrera = ? AND id_piloto = ?",
         [file.buffer, file.mimetype, id_carrera, id_piloto]
       );
-      console.log("Foto de verificación ACTUALIZADA en VerificacionesCarreraFoto", { id_carrera, id_piloto });
     } else {
-      // Si no existe, inserta nueva
       await conn.execute(
         "INSERT INTO VerificacionesCarreraFoto (id_carrera, id_piloto, fotoVerificacion, tipoFotoVerificacion) VALUES (?, ?, ?, ?)",
         [id_carrera, id_piloto, file.buffer, file.mimetype]
       );
-      console.log("Foto de verificación INSERTADA en VerificacionesCarreraFoto", { id_carrera, id_piloto });
     }
 
     res.json({ message: "Foto de verificación subida correctamente" });

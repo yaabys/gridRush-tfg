@@ -7,7 +7,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Header Flotante y Animado */
 .header {
   position: fixed;
   top: 1.5rem;
@@ -22,8 +21,8 @@ body {
   align-items: center;
 
   background-color: rgba(22, 22, 26, 0.7);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   padding: 0.6rem 2rem;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -32,7 +31,7 @@ body {
   transition: all 0.3s ease;
 }
 
-/* Header cuando se hace scroll */
+
 .header.scrolled {
   top: 0.5rem;
   width: 98%;
@@ -41,16 +40,16 @@ body {
   padding: 0.8rem 2rem;
 }
 
-/* Modo claro para el header */
+
 html.light .header {
   background-color: rgba(
     249,
     249,
     249,
     0.85
-  ); /* Fondo claro semitransparente */
-  backdrop-filter: blur(8px);
+  );
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -81,7 +80,7 @@ html.light .perfil-link.active {
   border: 1px solid rgba(var(--color-primary-rgb), 0.2);
 }
 
-/* Logo GRIDRUSH con efecto */
+
 .app-name {
   font-size: 1.8rem;
   font-weight: 800;
@@ -114,7 +113,7 @@ html.light .perfil-link.active {
   transform: translateY(-2px);
 }
 
-/* Links de navegación */
+
 .nav-links {
   display: flex;
   gap: 2.5rem;
@@ -166,7 +165,7 @@ html.light .perfil-link.active {
   transform: translateX(-50%) scaleX(1);
 }
 
-/* Perfil link */
+
 .header-right {
   display: flex;
   align-items: center;
@@ -213,7 +212,7 @@ html.light .perfil-link.active {
   opacity: 1;
 }
 
-/* Adaptación para pantallas pequeñas */
+
 @media (max-width: 768px) {
   .header {
     padding: 0.5rem 1rem;
@@ -237,8 +236,8 @@ html.light .perfil-link.active {
   }
 }
 
-/* CSS para crear espacio para el header */
+
 main,
 .main-content {
-  padding-top: 6rem; /* Ajusta esto según la altura de tu header */
+  padding-top: 6rem; 
 }

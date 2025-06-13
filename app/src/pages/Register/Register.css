@@ -221,7 +221,7 @@
   font-size: 1.2rem;
 }
 
-/* Responsive Design */
+
 @media (max-width: 1200px) {
   .register-content {
     grid-template-columns: 1fr;

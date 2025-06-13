@@ -1,4 +1,3 @@
-// routes/routesNews.mjs
 import express from "express";
 import axios from "axios";
 
@@ -8,7 +7,7 @@ router.get("/motorsport-news", async (req, res) => {
   const apiKey = process.env.NEWS_API_KEY;
 
   const keywords = [
-    "Karting", // ¡Prioridad!
+    "Karting", 
     '"Formula 1"',
     "F1",
     "WRC",
@@ -27,10 +26,10 @@ router.get("/motorsport-news", async (req, res) => {
     "automovilismo",
     '"GT Racing"',
   ];
-  // -----------------------------
+
 
   const query = keywords.join(" OR ");
-  // Mantenemos sortBy=relevancy que nos funcionó bien
+
   const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=es&sortBy=relevancy&apiKey=${apiKey}`;
 
   if (!apiKey) {

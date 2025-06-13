@@ -55,7 +55,6 @@ router.get("/perfil", async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    // eliminar contraseña antes de enviar los datos por si hay algun tipo de ataque
     const usuario = filas[0];
     delete usuario.password;
 
@@ -66,16 +65,17 @@ router.get("/perfil", async (req, res) => {
   }
 });
 
-// Ruta para obtener la temporada actual
 router.get("/temporada-actual", async (req, res) => {
   try {
-    const result = await conn.execute("SELECT * FROM Temporadas WHERE fecha_inicio <= DATE('now') AND fecha_fin >= DATE('now') ORDER BY fecha_inicio DESC LIMIT 1");
+    const result = await conn.execute(
+      "SELECT * FROM Temporadas WHERE fecha_inicio <= DATE('now') AND fecha_fin >= DATE('now') ORDER BY fecha_inicio DESC LIMIT 1"
+    );
 
     const temporadas = result.rows;
 
     if (!Array.isArray(temporadas) || temporadas.length === 0) {
       const resultProximas = await conn.execute(
-        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1",
+        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1"
       );
 
       const proximasTemporadas = resultProximas.rows;
@@ -96,7 +96,6 @@ router.get("/temporada-actual", async (req, res) => {
   }
 });
 
-// Ruta para obtener las recompensas de una temporada
 router.get("/recompensas/:temporadaId", async (req, res) => {
   try {
     const { temporadaId } = req.params;
@@ -107,7 +106,7 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
        JOIN Recompensas r ON tr.id_recompensa = r.id 
        WHERE tr.id_temporada = ? 
        ORDER BY tr.posicion_min ASC`,
-      [temporadaId],
+      [temporadaId]
     );
 
     let recompensas = result.rows;
@@ -130,7 +129,7 @@ router.get("/ranking/:temporadaId", async (req, res) => {
        WHERE tu.id_temporada = ? 
        ORDER BY tu.puntos DESC 
        LIMIT 100`,
-      [temporadaId],
+      [temporadaId]
     );
 
     let ranking = result.rows;
@@ -152,7 +151,7 @@ router.get("/kartings", async (req, res) => {
     }
 
     const kartings = await conn.execute(
-      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`,
+      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
     );
 
     const kartingRows = kartings.rows;
@@ -262,7 +261,6 @@ router.get("/carreras-libres", async (req, res) => {
       ORDER BY c.fecha ASC
     `);
 
-    console.log("Datos de carreras libres:", result.rows);
 
     const carreras = result.rows;
 
@@ -324,7 +322,7 @@ router.get("/carrera-libre/:id", async (req, res) => {
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
     `,
-      [id],
+      [id]
     );
 
     res.json({
@@ -344,7 +342,6 @@ router.get("/torneo/:id", async (req, res) => {
     const { id } = req.params;
     const username = req.session?.usuario?.username;
 
-    // Obtener detalles del torneo
     const torneoResult = await conn.execute(
       `
       SELECT 
@@ -376,7 +373,6 @@ router.get("/torneo/:id", async (req, res) => {
       return res.status(404).json({ error: "Torneo no encontrado" });
     }
 
-    // Si el usuario está autenticado, obtener su ELO
     let userElo = null;
     let userNivel = null;
     if (username) {
@@ -424,20 +420,21 @@ router.get("/torneo/:id", async (req, res) => {
 
     const premiosResult = await conn.execute(`
       SELECT 
-        tr.posicion_min as posicion,
-        tr.nombre_recompensa as premio,
-        tr.descripcion
-      FROM TemporadaRecompensas tr
-      JOIN Temporadas t ON tr.id_temporada = t.id
-      WHERE t.fecha_inicio <= date('now') AND t.fecha_fin >= date('now')
-      ORDER BY tr.posicion_min ASC
-    `);
+        posicion_min as posicion,
+        nombre_recompensa as premio,
+        descripcion
+      FROM TorneoRecompensas
+      WHERE id_torneo = ?
+      ORDER BY posicion_min ASC
+    `,
+      [id]
+    );
 
     res.json({
       torneo: {
         ...torneoResult.rows[0],
         userElo,
-        userNivel
+        userNivel,
       },
       clasificacion: clasificacionResult.rows || [],
       proximasCarreras: carrerasResult.rows || [],
@@ -471,24 +468,27 @@ router.post("/get-id-piloto", async (req, res) => {
   }
 });
 
-router.get("/foto-resultado-carrera/:id_carrera/:id_piloto", async (req, res) => {
-  const { id_carrera, id_piloto } = req.params;
-  try {
-    const result = await conn.execute(
-      "SELECT fotoVerificacion, tipoFotoVerificacion FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
-      [id_carrera, id_piloto]
-    );
-    const rows = result.rows || result[0];
-    if (!rows.length || !rows[0].fotoVerificacion) {
-      return res.status(404).send();
+router.get(
+  "/foto-resultado-carrera/:id_carrera/:id_piloto",
+  async (req, res) => {
+    const { id_carrera, id_piloto } = req.params;
+    try {
+      const result = await conn.execute(
+        "SELECT fotoVerificacion, tipoFotoVerificacion FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
+        [id_carrera, id_piloto]
+      );
+      const rows = result.rows || result[0];
+      if (!rows.length || !rows[0].fotoVerificacion) {
+        return res.status(404).send();
+      }
+      const buffer = Buffer.from(rows[0].fotoVerificacion);
+      res.set("Content-Type", rows[0].tipoFotoVerificacion || "image/jpeg");
+      res.end(buffer);
+    } catch (err) {
+      res.status(500).send();
     }
-    const buffer = Buffer.from(rows[0].fotoVerificacion);
-    res.set("Content-Type", rows[0].tipoFotoVerificacion || "image/jpeg");
-    res.end(buffer);
-  } catch (err) {
-    res.status(500).send();
   }
-});
+);
 
 router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
   const { idTorneo, idCarrera } = req.params;
@@ -521,7 +521,6 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
       return res.status(404).json({ error: "Carrera no encontrada" });
     }
 
-    // Obtener participantes de la carrera
     const participantesResult = await conn.execute(
       `
       SELECT 
@@ -533,7 +532,7 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
     `,
-      [idCarrera],
+      [idCarrera]
     );
 
     res.json({
@@ -548,11 +547,8 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
   }
 });
 
-// Nueva ruta para comprobar si el usuario está inscrito en una carrera
 router.get("/inscrito-carrera/:id", async (req, res) => {
-  // Devuelve true/false si el usuario autenticado está inscrito en la carrera con id = :id
   if (!req.session.usuario || !req.session.usuario.username) {
-    console.log("[/inscrito-carrera] No autenticado");
     return res.status(401).json({ error: "No autenticado" });
   }
 
@@ -560,29 +556,28 @@ router.get("/inscrito-carrera/:id", async (req, res) => {
   const idCarrera = req.params.id;
 
   try {
-    console.log(`[/inscrito-carrera] Comprobando inscripción para usuario: ${username} en carrera: ${idCarrera}`);
+    console.log(
+      `[/inscrito-carrera] Comprobando inscripción para usuario: ${username} en carrera: ${idCarrera}`
+    );
 
-    // Obtener el id del usuario autenticado
+
     const userResult = await conn.execute(
       "SELECT id FROM Usuarios WHERE username = ?",
       [username]
     );
     if (!userResult.rows || userResult.rows.length === 0) {
-      console.log("[/inscrito-carrera] Usuario no encontrado");
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
     const idPiloto = userResult.rows[0].id;
-    console.log(`[/inscrito-carrera] idPiloto encontrado: ${idPiloto}`);
 
-    // Comprobar si está inscrito en la carrera
+
     const inscripcionResult = await conn.execute(
       "SELECT 1 FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ? LIMIT 1",
       [idCarrera, idPiloto]
     );
 
-    const inscrito = inscripcionResult.rows && inscripcionResult.rows.length > 0;
-    console.log(`[/inscrito-carrera] ¿Inscrito?: ${inscrito}`);
-
+    const inscrito =
+      inscripcionResult.rows && inscripcionResult.rows.length > 0;
     res.json({ inscrito });
   } catch (error) {
     console.error("Error comprobando inscripción en carrera:", error);

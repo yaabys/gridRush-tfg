@@ -1,4 +1,4 @@
-/* Estados de carga y error */
+
 .loading-message,
 .error-message {
   display: flex;
@@ -51,7 +51,7 @@
   overflow-x: hidden;
 }
 
-/* Dashboard Header */
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -167,7 +167,7 @@
   transform: scale(1.2);
 }
 
-/* Dashboard Grid */
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -200,7 +200,7 @@
   }
 }
 
-/* Stats Section */
+
 .stats-section {
   grid-column: span 12;
 }
@@ -224,7 +224,7 @@
   background: var(--color-primary);
 }
 
-/* En Index.css */
+
 
 .stats-grid {
   display: grid;
@@ -326,7 +326,7 @@
   text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
 }
 
-/* Challenge Section */
+
 .challenge-section {
   grid-column: span 12;
   background: rgba(var(--color-bg-dark-rgb), 0.7);
@@ -489,7 +489,7 @@
   text-shadow: 0 0 5px rgba(var(--color-primary-rgb), 0.5);
 }
 
-/* Tournaments Section */
+
 .tournaments-section {
   grid-column: span 8;
 }
@@ -644,7 +644,7 @@
   width: 100%;
 }
 
-/* Suggestions Section */
+
 .suggestions-section {
   grid-column: span 4;
 }
@@ -802,7 +802,7 @@
   width: 100%;
 }
 
-/* Animaciones para los iconos de carga */
+
 .loading-icon,
 .error-icon {
   font-size: 3.5rem;
@@ -827,7 +827,7 @@
   }
 }
 
-/* Animación para las tarjetas de estadísticas */
+
 .stat-card.animate {
   animation: cardAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -843,14 +843,14 @@
   }
 }
 
-/* Pequeño subtítulo para las estadísticas */
+
 .stat-subtitle {
   font-size: 1rem;
   opacity: 0.7;
   font-weight: normal;
 }
 
-/* Responsive */
+
 @media (max-width: 1200px) {
   .tournaments-section,
   .suggestions-section {
@@ -957,13 +957,13 @@
   grid-template-columns: repeat(
     auto-fit,
     minmax(280px, 1fr)
-  ); /* Rejilla responsive */
-  gap: 1.5rem; /* Espaciado como en stats */
+  ); 
+  gap: 1.5rem; 
   margin-bottom: 1.5rem;
 }
 
 .news-card {
-  background: rgba(var(--color-bg-dark-rgb), 0.8); /* Ligeramente más oscuro */
+  background: rgba(var(--color-bg-dark-rgb), 0.8); 
   border-radius: 16px;
   overflow: hidden;
   display: flex;
@@ -1020,7 +1020,7 @@
   margin-bottom: 1rem;
   color: var(--color-text);
   line-height: 1.4;
-  min-height: 60px; /* Asegura algo de altura */
+  min-height: 60px; 
 }
 
 .news-source {
@@ -1042,13 +1042,13 @@
 }
 
 .news-error {
-  color: #ff6b6b; /* Un rojo para errores */
+  color: #ff6b6b; 
   font-weight: bold;
 }
 
 .see-more-link {
   display: inline-block;
-  float: right; /* Lo ponemos a la derecha */
+  float: right; 
   margin-top: 1rem;
   color: var(--color-primary);
   text-decoration: none;

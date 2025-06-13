@@ -49,10 +49,10 @@ export const hashearPassword = async (password) => {
   }
 };
 
-//metodo comprobar sesion
+
 export const comprobarSesion = (req) => {
   if (!comprobarUser(req.session.usuario)) {
-    //comprobar si el usuario existe en la base de datos
+
     return false;
   }
 
@@ -64,7 +64,7 @@ export const comprobarSesion = (req) => {
   return false;
 };
 
-// Actualizar datos del usuario (nombre de usuario y email)
+
 export const actualizarPerfil = async (id, nuevoUsername, nuevoEmail) => {
   try {
     const usernameCheck = await conn.execute({

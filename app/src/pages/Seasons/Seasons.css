@@ -148,7 +148,7 @@
   min-width: 140px;
 }
 
-/* Sección de Recompensas */
+
 .rewards-section {
   margin-top: 2rem;
 }
@@ -255,7 +255,7 @@
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
 }
 
-/* Sección de Ranking */
+
 .ranking-section {
   margin-top: 2rem;
 }
@@ -316,7 +316,7 @@
   background-color: rgba(255, 0, 0, 0.05);
 }
 
-/* Estados de carga y error */
+
 .loading,
 .error-message,
 .no-data {
@@ -339,7 +339,7 @@
   border-color: #ff6b6b;
 }
 
-/* Media Queries */
+
 @media (max-width: 1200px) {
   .seasons-container {
     padding: 1rem;
@@ -410,20 +410,20 @@
   }
 }
 
-/* Modo claro para Temporadas */
+
 html.light .seasons-container {
-  background-color: var(--color-bg); /* Fondo claro global */
-  color: var(--color-text); /* Color de texto global */
+  background-color: var(--color-bg); 
+  color: var(--color-text); 
 }
 
 html.light .current-season,
 html.light .reward-card,
 html.light .ranking-table {
-  background: var(--color-bg-dark); /* Fondo oscuro más claro */
-  backdrop-filter: blur(10px);
+  background: var(--color-bg-dark); 
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); 
 }
 
 html.light .current-season::before,
@@ -433,7 +433,7 @@ html.light .reward-card::before {
     transparent,
     rgba(0, 0, 0, 0.05),
     transparent
-  ); /* Ajustar brillo para modo claro */
+  ); 
 }
 
 html.light .current-season:hover::before,
@@ -446,35 +446,35 @@ html.light .rewards-section h2,
 html.light .ranking-section h2,
 html.light .season-info h3,
 html.light .reward-card h3 {
-  color: var(--color-primary); /* Color primario para títulos */
-  text-shadow: none; /* Eliminar sombras de texto */
+  color: var(--color-primary); 
+  text-shadow: none; 
 }
 
 html.light .current-season h2::after {
   background: var(--gradient-primary);
-  box-shadow: none; /* Eliminar sombra del subrayado */
+  box-shadow: none; 
 }
 
 html.light .season-info p,
 html.light .reward-description {
-  color: var(--color-text); /* Color de texto principal */
+  color: var(--color-text); 
 }
 
 html.light .season-info strong {
-  color: var(--color-primary); /* Color primario para texto destacado */
+  color: var(--color-primary); 
 }
 
 html.light .reward-card img {
-  border: 3px solid var(--color-primary); /* Borde con color primario */
-  box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.2); /* Sombra sutil */
-  background-color: rgba(var(--color-primary-rgb), 0.05); /* Fondo sutil */
+  border: 3px solid var(--color-primary); 
+  box-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.2); 
+  background-color: rgba(var(--color-primary-rgb), 0.05); 
 }
 
 html.light .reward-position {
   color: var(--color-primary);
-  background-color: rgba(var(--color-primary-rgb), 0.1); /* Fondo sutil */
+  background-color: rgba(var(--color-primary-rgb), 0.1); 
   border: 1px solid var(--color-primary-light);
-  box-shadow: none; /* Eliminar sombra */
+  box-shadow: none; 
 }
 
 html.light .ranking-table table {
@@ -483,22 +483,22 @@ html.light .ranking-table table {
 
 html.light .ranking-table th,
 html.light .ranking-table td {
-  border-bottom: 1px solid var(--color-muted); /* Borde inferior sutil */
-  color: var(--color-text); /* Color de texto principal */
+  border-bottom: 1px solid var(--color-muted); 
+  color: var(--color-text); 
 }
 
 html.light .ranking-table th {
-  background-color: var(--color-bg); /* Fondo claro para encabezados de tabla */
-  color: var(--color-primary); /* Color primario para encabezados */
+  background-color: var(--color-bg); 
+  color: var(--color-primary); 
 }
 
 html.light .ranking-table tr:nth-child(even) {
-  background-color: var(--color-bg-dark); /* Fondo alternado para filas */
+  background-color: var(--color-bg-dark); 
 }
 
 html.light .ranking-table tr:hover {
   background-color: rgba(
     var(--color-primary-rgb),
     0.1
-  ); /* Efecto hover sutil */
+  ); 
 }

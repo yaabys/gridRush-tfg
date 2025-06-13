@@ -4,13 +4,13 @@ import { esAdmin } from "../controllers/adminAuth.mjs";
 
 const router = express.Router();
 
-// Configuración de constantes
+
 const POINTS_SYSTEM = {
   RACE: [25, 18, 15, 12, 10, 8, 6, 4, 2, 1],
   TOURNAMENT: [50, 36, 30, 24, 20, 16, 12, 8, 4, 2]
 };
 
-// Utilidades de base de datos
+
 const dbUtils = {
   async execute(query, params = []) {
     return await conn.execute(
@@ -38,7 +38,6 @@ const dbUtils = {
   }
 };
 
-// Middleware de verificación de admin
 const verifyAdmin = async (req, res, next) => {
   try {
     if (!req.session?.usuario?.username) {
@@ -71,7 +70,7 @@ const verifyAdmin = async (req, res, next) => {
   }
 };
 
-// Servicios de negocio
+
 const adminService = {
   async processSeasonPoints(seasonId, pilotId, position, pointsSystem) {
     if (!seasonId || position > 10) return;
@@ -104,7 +103,6 @@ const adminService = {
     const seasonId = await dbUtils.getCurrentSeason();
     const errors = [];
 
-    console.log(`Confirmando resultados de carrera ${raceId} para ${results.length} pilotos`);
 
     const tournamentResult = await dbUtils.execute(
       "SELECT id_torneo FROM Carreras WHERE id = ?",
@@ -156,7 +154,6 @@ const adminService = {
           }
         }
 
-        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position} - Puntos: ${racePoints} - ELO ganado: ${eloPoints}`);
       } catch (error) {
         console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
         errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
@@ -182,7 +179,6 @@ const adminService = {
     const seasonId = await dbUtils.getCurrentSeason();
     const errors = [];
 
-    console.log(`Confirmando resultados de torneo ${tournamentId} para ${results.length} pilotos`);
 
     for (const pilot of results) {
       try {
@@ -209,7 +205,6 @@ const adminService = {
         await dbUtils.updateUserStats(pilot.id, statsUpdate);
         await this.processSeasonPoints(seasonId, pilot.id, pilot.position, POINTS_SYSTEM.TOURNAMENT);
 
-        console.log(`✓ Procesado piloto ${pilot.name} (ID: ${pilot.id}) - Posición: ${pilot.position} - Puntos: ${tournamentPoints} - ELO ganado: ${eloPoints}`);
       } catch (error) {
         console.error(`Error procesando piloto ${pilot.name} (ID: ${pilot.id}):`, error);
         errors.push(`Error con piloto ${pilot.name}: ${error.message}`);
@@ -232,10 +227,10 @@ const adminService = {
   }
 };
 
-// Aplicar middleware a todas las rutas
+
 router.use(verifyAdmin);
 
-// Controladores
+
 const adminController = {
   async getPendingRaces(req, res) {
     try {
@@ -414,7 +409,7 @@ const adminController = {
   }
 };
 
-// GET /carreras-pendientes
+
 router.get("/carreras-pendientes", async (req, res) => {
   try {
     const result = await dbUtils.execute(`
@@ -446,7 +441,7 @@ router.get("/carreras-pendientes", async (req, res) => {
   }
 });
 
-// GET /torneos-pendientes
+
 router.get("/torneos-pendientes", async (req, res) => {
   try {
     const result = await dbUtils.execute(`
@@ -477,7 +472,6 @@ router.get("/torneos-pendientes", async (req, res) => {
   }
 });
 
-// GET /carrera/:id/participantes
 router.get("/carrera/:id/participantes", async (req, res) => {
   try {
     const { id } = req.params;
@@ -508,7 +502,6 @@ router.get("/carrera/:id/participantes", async (req, res) => {
   }
 });
 
-// GET /torneo/:id/participantes
 router.get("/torneo/:id/participantes", async (req, res) => {
   try {
     const { id } = req.params;
@@ -539,7 +532,7 @@ router.get("/torneo/:id/participantes", async (req, res) => {
   }
 });
 
-// POST /confirmar-carrera
+
 router.post("/confirmar-carrera", async (req, res) => {
   try {
     const { carreraId, resultados } = req.body;
@@ -566,7 +559,7 @@ router.post("/confirmar-carrera", async (req, res) => {
   }
 });
 
-// POST /confirmar-torneo
+
 router.post("/confirmar-torneo", async (req, res) => {
   try {
     const { torneoId, resultados } = req.body;

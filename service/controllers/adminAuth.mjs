@@ -2,7 +2,6 @@ import { conn } from "../sql/conexionSQL.mjs";
 
 export const esAdmin = async (emailUsuario) => {
   if (!emailUsuario) {
-    console.log("No se proporcionó email");
     return false;
   }
 

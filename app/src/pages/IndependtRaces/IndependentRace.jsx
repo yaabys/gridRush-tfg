@@ -310,7 +310,9 @@ const IndependentRace = () => {
                   </button>
                   <button
                     className="btn-info"
-                    onClick={() => navigate(`/carrera-libre/${carrera.id}`)}
+                    onClick={() => {
+                      navigate(`/carrera-libre/${carrera.id}`);
+                    }}
                   >
                     Más información
                   </button>
@@ -321,7 +323,7 @@ const IndependentRace = () => {
         )}
       </div>
 
-      {/* Modal personalizado */}
+
       {modal.isOpen && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

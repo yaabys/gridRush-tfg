@@ -83,7 +83,6 @@
   font-weight: 500;
 }
 
-/* Drag & Drop Zone */
 .drag-drop-zone {
   border: 2px dashed var(--color-primary);
   border-radius: var(--border-radius);
@@ -201,8 +200,6 @@ tr:hover {
     transform: scale(1);
   }
 }
-
-/* Responsive */
 @media (max-width: 768px) {
   .main-container {
     padding: 4rem 1rem;

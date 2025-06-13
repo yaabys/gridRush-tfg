@@ -161,7 +161,7 @@
   cursor: not-allowed;
 }
 
-/* Estilos del Modal */
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -312,7 +312,7 @@
   background: #0056b3;
 }
 
-/* Animaciones */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -333,7 +333,7 @@
   }
 }
 
-/* Estilos adicionales para el botón de desapuntarse */
+
 .card-carrera button.btn-desapuntarse {
   background-color: #dc3545;
   color: white;
@@ -369,7 +369,6 @@
 .card-carrera:nth-child(7) {
   animation-delay: 0.4s;
 }
-/* Puedes seguir añadiendo más según necesites */
 
 .card-buttons {
   display: flex;

@@ -19,7 +19,7 @@ import { CSS } from "@dnd-kit/utilities";
 import axios from "axios";
 import "./HomeAdmin.css";
 
-// Configuración
+
 const API_ENDPOINTS = {
   races: "carreras-pendientes",
   tournaments: "torneos-pendientes",
@@ -41,7 +41,7 @@ const VIEWS = {
   REORDER: "reorder"
 };
 
-// Hook para API
+
 const useAPI = () => {
   const makeRequest = async (method, endpoint, data = null) => {
     const config = {
@@ -61,7 +61,7 @@ const useAPI = () => {
   };
 };
 
-// Hook para autenticación
+
 const useAuth = () => {
   const navigate = useNavigate();
   
@@ -132,7 +132,6 @@ function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
       <button
         className="ver-foto-btn"
         onClick={() => {
-          console.log("Ver foto de verificación:", { carreraId, idPiloto: racer.id, fotoUrl });
           onImgClick(fotoUrl);
         }}
         style={{ marginLeft: "1rem" }}
@@ -247,8 +246,7 @@ function ReorderView({ item, onGoBack, onConfirm }) {
         : { torneoId: item.id, resultados: racers };
 
       const { data } = await api.post(endpoint, payload);
-      
-      // Verificar si la carrera está asociada a un torneo
+
       const isRaceInTournament = item.type === ITEM_TYPES.RACE && item.torneoId;
       
       setSuccessMessage(
@@ -344,11 +342,9 @@ function ReorderView({ item, onGoBack, onConfirm }) {
         </div>
       </div>
 
-      {/* Modal para la imagen */}
       {modalImg && (
         <div className="modal-overlay" onClick={() => setModalImg(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            {console.log("Modal abierto para imagen:", modalImg)}
             <img
               src={modalImg}
               alt="Imagen de confirmación"

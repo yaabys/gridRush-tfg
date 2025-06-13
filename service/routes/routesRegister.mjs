@@ -23,9 +23,9 @@ router.use(express.urlencoded({ extended: true }));
 router.use(
   session({
     secret: "clave_secreta",
-    resave: false, // no guardar la cookie de nuevo si no hay cambio
-    saveUninitialized: true, // guardarla sin inicializar
-    cookie: { maxAge: 1000 * 60 * 60 * 2 }, // 2 horas
+    resave: false, 
+    saveUninitialized: true, 
+    cookie: { maxAge: 1000 * 60 * 60 * 2 }, 
   }),
 );
 
@@ -76,7 +76,7 @@ router.post("/register", async (req, res) => {
 
     const hashPassword = await hashearPassword(password);
 
-    // Registrar en Firebase
+
     const firebaseResult = await registrarFirebase(
       email,
       hashPassword,
@@ -115,7 +115,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// En routesRegister.mjs - Modifica la función de login
+
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -142,11 +142,11 @@ router.post("/login", async (req, res) => {
         .json({ success: false, error: "Error al establecer la sesión" });
     }
 
-    // Luego verificar si es admin
+
     const isAdmin = await esAdmin(email);
     
     if (isAdmin) {
-      // Si es admin, redirigir al panel de administración
+
       return res.status(200).json({ 
         success: true, 
         admin: true,
@@ -155,7 +155,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Usuario normal
+
     return res
       .status(200)
       .json({ 
