@@ -1,6 +1,6 @@
-import express from "express";
-import { conn } from "../sql/conexionSQL.mjs";
-import { esAdmin } from "../controllers/adminAuth.mjs";
+import express from "express"
+import { conn } from "../sql/conexionSQL.mjs"
+import { esAdmin } from "../controllers/adminAuth.mjs"
 
 const router = express.Router();
 

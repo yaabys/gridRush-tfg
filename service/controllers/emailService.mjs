@@ -1,6 +1,6 @@
-import nodemailer from "nodemailer";
-import { google } from "googleapis";
-import express from "express";
+import nodemailer from "nodemailer"
+import { google } from "googleapis"
+import express from "express"
 
 const app = express();
 

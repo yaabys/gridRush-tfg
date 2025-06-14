@@ -1,19 +1,19 @@
-import express from "express";
+import express from "express"
 import {
   registrarFirebase,
   comprobarLogin,
-} from "../firebase/conexionFirebase.mjs";
+} from "../firebase/conexionFirebase.mjs"
 import {
   comprobarUser,
   hashearPassword,
   comprobarEmail,
   comprobarSesion,
-} from "../controllers/userController.mjs";
-import { conn } from "../sql/conexionSQL.mjs";
+} from "../controllers/userController.mjs"
+import { conn } from "../sql/conexionSQL.mjs"
 import session from "express-session";
-import { enviarCorreoRegistro } from "../controllers/emailService.mjs";
-import { setSession } from "../controllers/setSession.mjs";
-import { esAdmin } from "../controllers/adminAuth.mjs";
+import { enviarCorreoRegistro } from "../controllers/emailService.mjs"
+import { setSession } from "../controllers/setSession.mjs"
+import { esAdmin } from "../controllers/adminAuth.mjs"
 
 const router = express.Router();
 
