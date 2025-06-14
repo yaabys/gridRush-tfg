@@ -31,7 +31,6 @@ body {
   transition: all 0.3s ease;
 }
 
-
 .header.scrolled {
   top: 0.5rem;
   width: 98%;
@@ -40,14 +39,8 @@ body {
   padding: 0.8rem 2rem;
 }
 
-
 html.light .header {
-  background-color: rgba(
-    249,
-    249,
-    249,
-    0.85
-  );
+  background-color: rgba(249, 249, 249, 0.85);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -80,7 +73,6 @@ html.light .perfil-link.active {
   border: 1px solid rgba(var(--color-primary-rgb), 0.2);
 }
 
-
 .app-name {
   font-size: 1.8rem;
   font-weight: 800;
@@ -112,7 +104,6 @@ html.light .perfil-link.active {
   text-shadow: 0 0 12px var(--color-primary);
   transform: translateY(-2px);
 }
-
 
 .nav-links {
   display: flex;
@@ -165,7 +156,6 @@ html.light .perfil-link.active {
   transform: translateX(-50%) scaleX(1);
 }
 
-
 .header-right {
   display: flex;
   align-items: center;
@@ -212,7 +202,6 @@ html.light .perfil-link.active {
   opacity: 1;
 }
 
-
 @media (max-width: 768px) {
   .header {
     padding: 0.5rem 1rem;
@@ -236,8 +225,7 @@ html.light .perfil-link.active {
   }
 }
 
-
 main,
 .main-content {
-  padding-top: 6rem; 
+  padding-top: 6rem;
 }

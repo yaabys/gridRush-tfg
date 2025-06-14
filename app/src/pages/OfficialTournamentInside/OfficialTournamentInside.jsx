@@ -133,7 +133,8 @@ const OfficialTournamentInside = () => {
                       <strong>🗓 Fecha:</strong> {carrera.fecha}
                     </p>
                     <p>
-                      <strong>⏰ Hora:</strong> {String(carrera.hora).replace(".", ":")}
+                      <strong>⏰ Hora:</strong>{" "}
+                      {String(carrera.hora).replace(".", ":")}
                     </p>
                   </div>
                 ))}

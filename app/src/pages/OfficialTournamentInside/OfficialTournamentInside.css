@@ -35,7 +35,7 @@
   margin-bottom: 2rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--color-primary-light);
-  margin-top: 0; 
+  margin-top: 0;
   clear: both;
 }
 
@@ -143,12 +143,16 @@
 }
 
 .carrera-card.clickable {
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
   cursor: pointer;
 }
 
 .carrera-card.clickable:hover {
-  box-shadow: 0 0 0 3px #e53935, 0 2px 16px #000a;
+  box-shadow:
+    0 0 0 3px #e53935,
+    0 2px 16px #000a;
   transform: translateY(-2px) scale(1.03);
 }
 

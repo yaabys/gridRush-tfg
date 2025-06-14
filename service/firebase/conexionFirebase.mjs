@@ -104,7 +104,6 @@ export const actualizarUsernameFirebase = async (
   try {
     const usernameDocRef = doc(collection(db, "gridrush_fb"), usernameNuevo);
 
-
     const usernameDoc = await getDoc(usernameDocRef);
     if (usernameDoc.exists()) {
       return {
@@ -132,12 +131,9 @@ export const actualizarUsernameFirebase = async (
       username: usernameNuevo,
     };
 
-
     await setDoc(usernameDocRef, nuevosDatos);
 
-
     await deleteDoc(doc(collection(db, "gridrush_fb"), userDoc.id));
-
 
     const resultadoSQL = await conn.execute({
       sql: "UPDATE Usuarios SET username = ? WHERE username = ?",
@@ -162,7 +158,6 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
   try {
     const emailDocRef = doc(collection(db, "gridrush_fb"), emailNuevo);
 
-
     const emailDoc = await getDoc(emailDocRef);
     if (emailDoc.exists()) {
       return { success: false, error: "El correo ya está registrado." };
@@ -186,12 +181,9 @@ export const actualizarEmailFirebase = async (usernameActual, emailNuevo) => {
       email: emailNuevo,
     };
 
-
     await setDoc(emailDocRef, nuevosDatos);
 
-
     await deleteDoc(doc(collection(db, "gridrush_fb"), userDoc.id));
-
 
     const resultadoSQL = await conn.execute({
       sql: "UPDATE Usuarios SET email = ? WHERE username = ?",

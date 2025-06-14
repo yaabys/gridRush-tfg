@@ -74,13 +74,12 @@ function ImagenUploader({ idCarrera, idPiloto }) {
         id="fileInput"
         onChange={handleFileChange}
       />
-      <label htmlFor="fileInput" style={{ cursor: "pointer", color: "#e53935" }}>
+      <label
+        htmlFor="fileInput"
+        style={{ cursor: "pointer", color: "#e53935" }}
+      >
         {preview ? (
-          <img
-            src={preview}
-            alt="Previsualización"
-            className="preview-img"
-          />
+          <img src={preview} alt="Previsualización" className="preview-img" />
         ) : (
           <span style={{ fontSize: "2rem" }}>📁</span>
         )}
@@ -114,9 +113,12 @@ const CarreraTorneoInside = () => {
   useEffect(() => {
     const fetchCarreraDetails = async () => {
       try {
-        const response = await axios.get(`/api/carrera-torneo/${idTorneo}/${idCarrera}`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `/api/carrera-torneo/${idTorneo}/${idCarrera}`,
+          {
+            withCredentials: true,
+          },
+        );
         setCarrera(response.data.carrera);
         setParticipantes(response.data.participantes);
       } catch (err) {
@@ -133,7 +135,11 @@ const CarreraTorneoInside = () => {
   useEffect(() => {
     const fetchIdPiloto = async () => {
       try {
-        const res = await axios.post("/api/get-id-piloto", {}, { withCredentials: true });
+        const res = await axios.post(
+          "/api/get-id-piloto",
+          {},
+          { withCredentials: true },
+        );
         setIdPiloto(res.data.id_piloto);
       } catch (err) {
         console.error("Error al obtener id_piloto:", err);
@@ -142,12 +148,13 @@ const CarreraTorneoInside = () => {
     fetchIdPiloto();
   }, []);
 
-
   useEffect(() => {
     const checkInscripcion = async () => {
       if (!idCarrera) return;
       try {
-        const res = await axios.get(`/api/inscrito-carrera/${idCarrera}`, { withCredentials: true });
+        const res = await axios.get(`/api/inscrito-carrera/${idCarrera}`, {
+          withCredentials: true,
+        });
         setInscrito(res.data.inscrito);
       } catch (err) {
         console.error("Error comprobando inscripción:", err);
@@ -205,13 +212,18 @@ const CarreraTorneoInside = () => {
           </div>
         </div>
 
-
         <div style={{ maxWidth: 400, margin: "0 auto" }}>
           {idPiloto && inscrito && (
             <ImagenUploader idCarrera={idCarrera} idPiloto={idPiloto} />
           )}
           {idPiloto && !inscrito && (
-            <p style={{ color: "#e53935", marginTop: "1rem",marginBottom: "1rem" }}>
+            <p
+              style={{
+                color: "#e53935",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
               Debes estar inscrito para subir tu foto de confirmación.
             </p>
           )}

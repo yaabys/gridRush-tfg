@@ -57,17 +57,14 @@ const OfficialTournaments = () => {
         setLoading(true);
         setError(null);
 
-
         const sessionResponse = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
         });
-
 
         const response = await axios.get("/api/torneos", {
           withCredentials: true,
         });
         setTorneos(response.data);
-
 
         if (sessionResponse.data.logueado) {
           const username = sessionResponse.data.username;

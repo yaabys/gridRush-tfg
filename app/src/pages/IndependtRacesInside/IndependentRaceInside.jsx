@@ -53,7 +53,7 @@ function ImagenUploader({ idCarrera, idPiloto }) {
       setImagen(null);
       setPreview(null);
     } catch (err) {
-      console.error("Error al subir la imagen:", err); 
+      console.error("Error al subir la imagen:", err);
       setMensaje("Error al subir la imagen");
     }
   };
@@ -74,13 +74,12 @@ function ImagenUploader({ idCarrera, idPiloto }) {
         id="fileInput"
         onChange={handleFileChange}
       />
-      <label htmlFor="fileInput" style={{ cursor: "pointer", color: "#e53935" }}>
+      <label
+        htmlFor="fileInput"
+        style={{ cursor: "pointer", color: "#e53935" }}
+      >
         {preview ? (
-          <img
-            src={preview}
-            alt="Previsualización"
-            className="preview-img"
-          />
+          <img src={preview} alt="Previsualización" className="preview-img" />
         ) : (
           <span style={{ fontSize: "2rem" }}>📁</span>
         )}
@@ -129,12 +128,21 @@ const IndependentRaceInside = () => {
   useEffect(() => {
     const fetchIdPiloto = async () => {
       try {
-        const res = await axios.post("/api/get-id-piloto", {}, { withCredentials: true });
+        const res = await axios.post(
+          "/api/get-id-piloto",
+          {},
+          { withCredentials: true },
+        );
         setIdPiloto(res.data.id_piloto);
-        const insRes = await axios.get(`/api/inscrito-carrera/${id}`, { withCredentials: true });
+        const insRes = await axios.get(`/api/inscrito-carrera/${id}`, {
+          withCredentials: true,
+        });
         setInscrito(insRes.data.inscrito);
       } catch (err) {
-        console.error("Error al obtener id_piloto o comprobar inscripción:", err);
+        console.error(
+          "Error al obtener id_piloto o comprobar inscripción:",
+          err,
+        );
       }
     };
     fetchIdPiloto();
@@ -192,7 +200,13 @@ const IndependentRaceInside = () => {
             <ImagenUploader idCarrera={carrera.id} idPiloto={idPiloto} />
           )}
           {idPiloto && !inscrito && (
-            <p style={{ color: "#e53935", marginTop: "1rem", marginBottom: "1rem" }}>
+            <p
+              style={{
+                color: "#e53935",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
               Debes estar inscrito para subir tu foto de confirmación.
             </p>
           )}

@@ -7,7 +7,7 @@ router.get("/motorsport-news", async (req, res) => {
   const apiKey = process.env.NEWS_API_KEY;
 
   const keywords = [
-    "Karting", 
+    "Karting",
     '"Formula 1"',
     "F1",
     "WRC",
@@ -26,7 +26,6 @@ router.get("/motorsport-news", async (req, res) => {
     "automovilismo",
     '"GT Racing"',
   ];
-
 
   const query = keywords.join(" OR ");
 

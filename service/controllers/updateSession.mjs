@@ -21,7 +21,6 @@ export const updateSession = async (req, nuevoUsername) => {
           return resolve(false);
         }
 
-        
         resolve(true);
       });
     });

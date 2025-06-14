@@ -1,4 +1,3 @@
-
 :root {
   --transition-speed: 0.3s;
   --hover-scale: 1.05;
@@ -10,7 +9,6 @@
     var(--color-primary-light) 100%
   );
 }
-
 
 @keyframes fadeIn {
   from {
@@ -424,7 +422,6 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-
 @media (max-width: 768px) {
   .profile-content {
     grid-template-columns: 1fr;
@@ -545,7 +542,6 @@
   color: #fff;
 }
 
-
 .modal-editar {
   position: fixed;
   top: 0;
@@ -629,7 +625,7 @@
 .edit-inline {
   display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .edit-input {
@@ -658,7 +654,7 @@
 .avatar-save {
   margin-top: 10px;
   display: flex;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .edit-btn {

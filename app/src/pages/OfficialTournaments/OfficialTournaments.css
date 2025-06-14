@@ -34,7 +34,6 @@
   min-height: 50vh;
   width: 90%;
   max-width: 1200px;
-
 }
 
 .main-container h1 {
@@ -464,7 +463,6 @@
 .modal-btn.confirm.info:hover {
   background: #0056b3;
 }
-
 
 @keyframes fadeIn {
   from {

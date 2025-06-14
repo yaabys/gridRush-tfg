@@ -10,11 +10,9 @@ const Index = () => {
   const [error, setError] = useState(null);
   const [animateStats, setAnimateStats] = useState(false);
 
-
   const [news, setNews] = useState([]);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState(null);
-
 
   const [userData, setUserData] = useState({});
 
@@ -23,13 +21,13 @@ const Index = () => {
       try {
         const res = await axios.get("/api/comprobarSesion", {
           withCredentials: true,
-        }); 
+        });
         if (!res.data.logueado) {
-          navigate("/registro"); 
+          navigate("/registro");
         }
       } catch (err) {
         console.log("Error al comprobar sesión:", err);
-        setError("Error al comprobar la sesión"); 
+        setError("Error al comprobar la sesión");
       }
     };
     comprobarSesion();
@@ -38,10 +36,10 @@ const Index = () => {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        setLoading(true); 
+        setLoading(true);
         const response = await axios.get("/api/perfil", {
           withCredentials: true,
-        }); 
+        });
 
         setUserData({
           username: response.data.username || "Username",
@@ -50,23 +48,22 @@ const Index = () => {
           carrerasVictorias: response.data.carrerasVictorias,
           carrerasParticipadas: response.data.carrerasParticipadas,
           torneosParticipados: response.data.torneosParticipados,
-        }); 
+        });
 
-        setLoading(false); 
+        setLoading(false);
 
         setTimeout(() => {
-          setAnimateStats(true); 
+          setAnimateStats(true);
         }, 500);
       } catch (err) {
         console.error("Error al obtener perfil:", err);
-        setError("No se pudo cargar el perfil. ¿Estás logueado?"); 
-        setLoading(false); 
+        setError("No se pudo cargar el perfil. ¿Estás logueado?");
+        setLoading(false);
       }
     };
 
     obtenerPerfil();
   }, []);
-
 
   useEffect(() => {
     const obtenerNoticias = async () => {
@@ -85,16 +82,14 @@ const Index = () => {
     };
 
     obtenerNoticias();
-  }, []);  
-
+  }, []);
 
   const getTournamentEmoji = (nombreTorneo) => {
-    if (nombreTorneo.toLowerCase().includes("campeonato")) return "🏆"; 
-    if (nombreTorneo.toLowerCase().includes("copa")) return "🏁"; 
-    if (nombreTorneo.toLowerCase().includes("gran premio")) return "🏎️"; 
-    return "🏆"; 
+    if (nombreTorneo.toLowerCase().includes("campeonato")) return "🏆";
+    if (nombreTorneo.toLowerCase().includes("copa")) return "🏁";
+    if (nombreTorneo.toLowerCase().includes("gran premio")) return "🏎️";
+    return "🏆";
   };
-
 
   const NewsCard = ({ article }) => (
     <a
@@ -122,7 +117,6 @@ const Index = () => {
     </a>
   );
 
-
   if (loading) {
     return (
       <>
@@ -134,7 +128,7 @@ const Index = () => {
           </div>
         </div>
       </>
-    ); 
+    );
   }
 
   if (error) {
@@ -149,7 +143,7 @@ const Index = () => {
           </div>
         </div>
       </>
-    ); 
+    );
   }
 
   return (

@@ -53,7 +53,7 @@ router.get("/avatar", async (req, res) => {
       return res.status(404).json({ message: "Imagen no encontrada" });
     }
 
-    const buffer = Buffer.from(rows[0].fotoPerfil); 
+    const buffer = Buffer.from(rows[0].fotoPerfil);
     res.set("Content-Type", rows[0].avatar_tipo);
     res.end(buffer);
   } catch (err) {
@@ -71,7 +71,7 @@ router.get("/avatar/:id", async (req, res) => {
   try {
     const result = await conn.execute(
       "SELECT fotoPerfil, avatar_tipo FROM usuarios WHERE id = ?",
-      [id]
+      [id],
     );
     const rows = result.rows || result[0];
     if (!rows.length || !rows[0].fotoPerfil) {
@@ -97,26 +97,28 @@ router.post("/uploadFotoCarrera", upload.single("file"), async (req, res) => {
   try {
     const check = await conn.execute(
       "SELECT id FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
-      [id_carrera, id_piloto]
+      [id_carrera, id_piloto],
     );
     const rows = check.rows || check[0];
 
     if (rows.length > 0) {
       await conn.execute(
         "UPDATE VerificacionesCarreraFoto SET fotoVerificacion = ?, tipoFotoVerificacion = ? WHERE id_carrera = ? AND id_piloto = ?",
-        [file.buffer, file.mimetype, id_carrera, id_piloto]
+        [file.buffer, file.mimetype, id_carrera, id_piloto],
       );
     } else {
       await conn.execute(
         "INSERT INTO VerificacionesCarreraFoto (id_carrera, id_piloto, fotoVerificacion, tipoFotoVerificacion) VALUES (?, ?, ?, ?)",
-        [id_carrera, id_piloto, file.buffer, file.mimetype]
+        [id_carrera, id_piloto, file.buffer, file.mimetype],
       );
     }
 
     res.json({ message: "Foto de verificación subida correctamente" });
   } catch (err) {
     console.error("Error al guardar foto de verificación:", err);
-    res.status(500).json({ message: "Error al guardar la foto de verificación" });
+    res
+      .status(500)
+      .json({ message: "Error al guardar la foto de verificación" });
   }
 });
 

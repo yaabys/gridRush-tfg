@@ -49,10 +49,8 @@ export const hashearPassword = async (password) => {
   }
 };
 
-
 export const comprobarSesion = (req) => {
   if (!comprobarUser(req.session.usuario)) {
-
     return false;
   }
 
@@ -63,7 +61,6 @@ export const comprobarSesion = (req) => {
   }
   return false;
 };
-
 
 export const actualizarPerfil = async (id, nuevoUsername, nuevoEmail) => {
   try {
