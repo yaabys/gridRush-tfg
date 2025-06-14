@@ -6,7 +6,6 @@
   overflow-x: hidden;
 }
 
-
 .hero {
   min-height: 100vh;
   display: flex;
@@ -157,7 +156,6 @@
   border-radius: var(--border-radius);
 }
 
-
 .features {
   padding: 6rem 2rem;
   background: var(--color-bg-dark);
@@ -261,7 +259,6 @@
   opacity: 1;
 }
 
-
 .stats {
   padding: 4rem 2rem;
   background: var(--color-bg);
@@ -299,7 +296,6 @@
   color: var(--color-muted);
   font-size: 1.1rem;
 }
-
 
 .cta {
   padding: 6rem 2rem;
@@ -374,7 +370,6 @@
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
 
 @media (max-width: 1200px) {
   .hero-content {

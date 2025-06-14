@@ -49,7 +49,6 @@ export const enviarCorreoRegistro = async (destinatario, nombreUsuario) => {
         <p>El equipo de GridRush</p>
       `,
     });
-
   } catch (error) {
     console.error("Error al enviar el correo:", error);
   }

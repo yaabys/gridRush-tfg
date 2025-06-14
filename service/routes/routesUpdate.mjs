@@ -18,7 +18,6 @@ router.put("/cambiarperfil", async (req, res) => {
   }
 
   try {
-
     if (username && username !== usernameActual) {
       const result = await conn.execute({
         sql: "SELECT id FROM Usuarios WHERE username = ? AND username != ?",
@@ -89,7 +88,6 @@ router.put("/reservar-carreraLibre", async (req, res) => {
   }
 
   try {
-
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -100,7 +98,6 @@ router.put("/reservar-carreraLibre", async (req, res) => {
     }
 
     const idUsuario = userResult.rows[0].id;
-
 
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
@@ -114,7 +111,6 @@ router.put("/reservar-carreraLibre", async (req, res) => {
         inscrito: true,
       });
     }
-
 
     await conn.execute({
       sql: "INSERT INTO InscripcionesCarrera (id_carrera, id_piloto) VALUES (?, ?)",
@@ -140,7 +136,6 @@ router.post("/check-inscripcion", async (req, res) => {
   }
 
   try {
-
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -151,7 +146,6 @@ router.post("/check-inscripcion", async (req, res) => {
     }
 
     const idUsuario = userResult.rows[0].id;
-
 
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
@@ -195,7 +189,6 @@ router.put("/reservar-torneo", async (req, res) => {
   }
 
   try {
-
     const userResult = await conn.execute({
       sql: "SELECT id, elo FROM Usuarios WHERE username = ?",
       args: [username],
@@ -209,7 +202,6 @@ router.put("/reservar-torneo", async (req, res) => {
     const eloUsuario = userResult.rows[0].elo;
     const nivelUsuario = calcularNivel(eloUsuario);
 
-
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
       args: [idTorneo, idUsuario],
@@ -222,7 +214,6 @@ router.put("/reservar-torneo", async (req, res) => {
       });
     }
 
-
     const torneoResult = await conn.execute({
       sql: "SELECT nivelMin, maxInscripciones FROM Torneos WHERE id = ?",
       args: [idTorneo],
@@ -234,13 +225,11 @@ router.put("/reservar-torneo", async (req, res) => {
 
     const torneo = torneoResult.rows[0];
 
-
     if (nivelUsuario < torneo.nivelMin) {
       return res.status(400).json({
         error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`,
       });
     }
-
 
     const inscritosResult = await conn.execute({
       sql: "SELECT COUNT(*) as inscritos FROM InscripcionesTorneo WHERE id_torneo = ?",
@@ -253,12 +242,10 @@ router.put("/reservar-torneo", async (req, res) => {
       });
     }
 
- 
     await conn.execute({
       sql: "INSERT INTO InscripcionesTorneo (id_torneo, id_piloto) VALUES (?, ?)",
       args: [idTorneo, idUsuario],
     });
-
 
     const carrerasResult = await conn.execute({
       sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
@@ -268,7 +255,6 @@ router.put("/reservar-torneo", async (req, res) => {
     let carrerasInscritas = 0;
 
     for (const carrera of carrerasResult.rows) {
-
       const inscritoCarrera = await conn.execute({
         sql: "SELECT id FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
         args: [carrera.id, idUsuario],
@@ -285,10 +271,10 @@ router.put("/reservar-torneo", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Inscripción realizada correctamente en el torneo y todas sus carreras",
-      carrerasInscritas: carrerasInscritas
+      message:
+        "Inscripción realizada correctamente en el torneo y todas sus carreras",
+      carrerasInscritas: carrerasInscritas,
     });
-
   } catch (error) {
     console.error("Error al inscribirse en el torneo:", error);
     return res.status(500).json({ error: "Error del servidor" });
@@ -303,7 +289,6 @@ router.post("/check-inscripcion-torneo", async (req, res) => {
   }
 
   try {
-
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -335,7 +320,6 @@ router.put("/cancelar-torneo", async (req, res) => {
   }
 
   try {
-
     const userResult = await conn.execute({
       sql: "SELECT id FROM Usuarios WHERE username = ?",
       args: [username],
@@ -346,7 +330,6 @@ router.put("/cancelar-torneo", async (req, res) => {
     }
 
     const idUsuario = userResult.rows[0].id;
-
 
     const inscripcionResult = await conn.execute({
       sql: "SELECT id FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
@@ -359,7 +342,6 @@ router.put("/cancelar-torneo", async (req, res) => {
       });
     }
 
-
     const carrerasResult = await conn.execute({
       sql: "SELECT id FROM Carreras WHERE id_torneo = ?",
       args: [idTorneo],
@@ -367,18 +349,16 @@ router.put("/cancelar-torneo", async (req, res) => {
 
     let carrerasCanceladas = 0;
 
-
     for (const carrera of carrerasResult.rows) {
       const result = await conn.execute({
         sql: "DELETE FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ?",
         args: [carrera.id, idUsuario],
       });
-      
+
       if (result.rowsAffected > 0) {
         carrerasCanceladas++;
       }
     }
-
 
     await conn.execute({
       sql: "DELETE FROM InscripcionesTorneo WHERE id_torneo = ? AND id_piloto = ?",
@@ -387,10 +367,10 @@ router.put("/cancelar-torneo", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Inscripción cancelada correctamente en el torneo y todas sus carreras",
-      carrerasCanceladas: carrerasCanceladas
+      message:
+        "Inscripción cancelada correctamente en el torneo y todas sus carreras",
+      carrerasCanceladas: carrerasCanceladas,
     });
-
   } catch (error) {
     console.error("Error al cancelar inscripción al torneo:", error);
     return res.status(500).json({ error: "Error del servidor" });

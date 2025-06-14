@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./buttonDarkMode.css"; 
+import "./buttonDarkMode.css";
 
 const DarkModeToggle = () => {
   const [darkMode, setDarkMode] = useState(true);

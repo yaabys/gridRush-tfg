@@ -23,9 +23,9 @@ router.use(express.urlencoded({ extended: true }));
 router.use(
   session({
     secret: "clave_secreta",
-    resave: false, 
-    saveUninitialized: true, 
-    cookie: { maxAge: 1000 * 60 * 60 * 2 }, 
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 2 },
   }),
 );
 
@@ -76,7 +76,6 @@ router.post("/register", async (req, res) => {
 
     const hashPassword = await hashearPassword(password);
 
-
     const firebaseResult = await registrarFirebase(
       email,
       hashPassword,
@@ -115,8 +114,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
-
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -142,28 +139,22 @@ router.post("/login", async (req, res) => {
         .json({ success: false, error: "Error al establecer la sesión" });
     }
 
-
     const isAdmin = await esAdmin(email);
-    
-    if (isAdmin) {
 
-      return res.status(200).json({ 
-        success: true, 
+    if (isAdmin) {
+      return res.status(200).json({
+        success: true,
         admin: true,
         message: "Login de administrador exitoso",
-        redirect: "/admin"
+        redirect: "/admin",
       });
     }
 
-
-    return res
-      .status(200)
-      .json({ 
-        success: true, 
-        admin: false,
-        message: "Inicio de sesión exitoso" 
-      });
-
+    return res.status(200).json({
+      success: true,
+      admin: false,
+      message: "Inicio de sesión exitoso",
+    });
   } catch (error) {
     console.error("Error en login:", error);
     return res
@@ -172,14 +163,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post('/logout', (req, res) => {
-  req.session.destroy(err => {
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ success: false, error: 'No se pudo cerrar la sesión.' });
+      return res
+        .status(500)
+        .json({ success: false, error: "No se pudo cerrar la sesión." });
     }
 
-    res.clearCookie('connect.sid'); 
-    return res.status(200).json({ success: true, message: 'Sesión cerrada correctamente.' });
+    res.clearCookie("connect.sid");
+    return res
+      .status(200)
+      .json({ success: true, message: "Sesión cerrada correctamente." });
   });
 });
 

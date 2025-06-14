@@ -323,7 +323,6 @@ const IndependentRace = () => {
         )}
       </div>
 
-
       {modal.isOpen && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

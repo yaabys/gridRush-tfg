@@ -1,4 +1,3 @@
-
 .loading-message,
 .error-message {
   display: flex;
@@ -50,7 +49,6 @@
   position: relative;
   overflow-x: hidden;
 }
-
 
 .dashboard-header {
   display: flex;
@@ -167,7 +165,6 @@
   transform: scale(1.2);
 }
 
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -200,7 +197,6 @@
   }
 }
 
-
 .stats-section {
   grid-column: span 12;
 }
@@ -223,8 +219,6 @@
   border-radius: 3px;
   background: var(--color-primary);
 }
-
-
 
 .stats-grid {
   display: grid;
@@ -325,7 +319,6 @@
   transform: scale(1.05);
   text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
 }
-
 
 .challenge-section {
   grid-column: span 12;
@@ -489,7 +482,6 @@
   text-shadow: 0 0 5px rgba(var(--color-primary-rgb), 0.5);
 }
 
-
 .tournaments-section {
   grid-column: span 8;
 }
@@ -643,7 +635,6 @@
 .tournament-link:hover::after {
   width: 100%;
 }
-
 
 .suggestions-section {
   grid-column: span 4;
@@ -802,7 +793,6 @@
   width: 100%;
 }
 
-
 .loading-icon,
 .error-icon {
   font-size: 3.5rem;
@@ -827,7 +817,6 @@
   }
 }
 
-
 .stat-card.animate {
   animation: cardAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -843,13 +832,11 @@
   }
 }
 
-
 .stat-subtitle {
   font-size: 1rem;
   opacity: 0.7;
   font-weight: normal;
 }
-
 
 @media (max-width: 1200px) {
   .tournaments-section,
@@ -954,16 +941,13 @@
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(280px, 1fr)
-  ); 
-  gap: 1.5rem; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
 .news-card {
-  background: rgba(var(--color-bg-dark-rgb), 0.8); 
+  background: rgba(var(--color-bg-dark-rgb), 0.8);
   border-radius: 16px;
   overflow: hidden;
   display: flex;
@@ -1020,7 +1004,7 @@
   margin-bottom: 1rem;
   color: var(--color-text);
   line-height: 1.4;
-  min-height: 60px; 
+  min-height: 60px;
 }
 
 .news-source {
@@ -1042,13 +1026,13 @@
 }
 
 .news-error {
-  color: #ff6b6b; 
+  color: #ff6b6b;
   font-weight: bold;
 }
 
 .see-more-link {
   display: inline-block;
-  float: right; 
+  float: right;
   margin-top: 1rem;
   color: var(--color-primary);
   text-decoration: none;

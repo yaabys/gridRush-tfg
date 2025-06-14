@@ -68,14 +68,14 @@ router.get("/perfil", async (req, res) => {
 router.get("/temporada-actual", async (req, res) => {
   try {
     const result = await conn.execute(
-      "SELECT * FROM Temporadas WHERE fecha_inicio <= DATE('now') AND fecha_fin >= DATE('now') ORDER BY fecha_inicio DESC LIMIT 1"
+      "SELECT * FROM Temporadas WHERE fecha_inicio <= DATE('now') AND fecha_fin >= DATE('now') ORDER BY fecha_inicio DESC LIMIT 1",
     );
 
     const temporadas = result.rows;
 
     if (!Array.isArray(temporadas) || temporadas.length === 0) {
       const resultProximas = await conn.execute(
-        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1"
+        "SELECT * FROM Temporadas WHERE fecha_inicio > DATE('now') ORDER BY fecha_inicio ASC LIMIT 1",
       );
 
       const proximasTemporadas = resultProximas.rows;
@@ -106,7 +106,7 @@ router.get("/recompensas/:temporadaId", async (req, res) => {
        JOIN Recompensas r ON tr.id_recompensa = r.id 
        WHERE tr.id_temporada = ? 
        ORDER BY tr.posicion_min ASC`,
-      [temporadaId]
+      [temporadaId],
     );
 
     let recompensas = result.rows;
@@ -129,7 +129,7 @@ router.get("/ranking/:temporadaId", async (req, res) => {
        WHERE tu.id_temporada = ? 
        ORDER BY tu.puntos DESC 
        LIMIT 100`,
-      [temporadaId]
+      [temporadaId],
     );
 
     let ranking = result.rows;
@@ -151,7 +151,7 @@ router.get("/kartings", async (req, res) => {
     }
 
     const kartings = await conn.execute(
-      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`
+      `SELECT nombre, ciudad as ubicacion,ubicacionLink as link  FROM Kartings ORDER BY nombre`,
     );
 
     const kartingRows = kartings.rows;
@@ -261,7 +261,6 @@ router.get("/carreras-libres", async (req, res) => {
       ORDER BY c.fecha ASC
     `);
 
-
     const carreras = result.rows;
 
     if (!carreras || carreras.length === 0) {
@@ -311,7 +310,7 @@ router.get("/carrera-libre/:id", async (req, res) => {
       JOIN Kartings k ON c.id_karting = k.id
       WHERE c.id = ? AND c.id_torneo IS NULL
     `,
-      [id]
+      [id],
     );
 
     if (!carreraResult.rows || carreraResult.rows.length === 0) {
@@ -329,7 +328,7 @@ router.get("/carrera-libre/:id", async (req, res) => {
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
     `,
-      [id]
+      [id],
     );
 
     res.json({
@@ -380,7 +379,7 @@ router.get("/torneo/:id", async (req, res) => {
       JOIN Kartings k ON tk.id_karting = k.id
       WHERE t.id = ?
     `,
-      [id]
+      [id],
     );
 
     if (!torneoResult.rows || torneoResult.rows.length === 0) {
@@ -392,7 +391,7 @@ router.get("/torneo/:id", async (req, res) => {
     if (username) {
       const userResult = await conn.execute(
         "SELECT elo FROM Usuarios WHERE username = ?",
-        [username]
+        [username],
       );
       if (userResult.rows && userResult.rows.length > 0) {
         userElo = userResult.rows[0].elo;
@@ -414,7 +413,7 @@ router.get("/torneo/:id", async (req, res) => {
       WHERE rt.id_torneo = ?
       ORDER BY rt.puntosTorneo DESC
     `,
-      [id, id]
+      [id, id],
     );
 
     const carrerasResult = await conn.execute(
@@ -429,10 +428,11 @@ router.get("/torneo/:id", async (req, res) => {
       WHERE c.id_torneo = ? AND date(c.fecha) >= date('now')
       ORDER BY c.fecha ASC
     `,
-      [id]
+      [id],
     );
 
-    const premiosResult = await conn.execute(`
+    const premiosResult = await conn.execute(
+      `
       SELECT 
         posicion_min as posicion,
         nombre_recompensa as premio,
@@ -441,7 +441,7 @@ router.get("/torneo/:id", async (req, res) => {
       WHERE id_torneo = ?
       ORDER BY posicion_min ASC
     `,
-      [id]
+      [id],
     );
 
     res.json({
@@ -470,7 +470,7 @@ router.post("/get-id-piloto", async (req, res) => {
   try {
     const result = await conn.execute(
       "SELECT id FROM Usuarios WHERE username = ?",
-      [username]
+      [username],
     );
     if (!result.rows || result.rows.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });
@@ -489,7 +489,7 @@ router.get(
     try {
       const result = await conn.execute(
         "SELECT fotoVerificacion, tipoFotoVerificacion FROM VerificacionesCarreraFoto WHERE id_carrera = ? AND id_piloto = ?",
-        [id_carrera, id_piloto]
+        [id_carrera, id_piloto],
       );
       const rows = result.rows || result[0];
       if (!rows.length || !rows[0].fotoVerificacion) {
@@ -501,7 +501,7 @@ router.get(
     } catch (err) {
       res.status(500).send();
     }
-  }
+  },
 );
 
 router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
@@ -535,7 +535,7 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
       FROM Carreras c
       JOIN Kartings k ON c.id_karting = k.id
       WHERE c.id = ? AND c.id_torneo = ?`,
-      [idCarrera, idTorneo]
+      [idCarrera, idTorneo],
     );
 
     if (!carreraResult.rows || carreraResult.rows.length === 0) {
@@ -553,7 +553,7 @@ router.get("/carrera-torneo/:idTorneo/:idCarrera", async (req, res) => {
       WHERE ic.id_carrera = ?
       ORDER BY ic.fecha_inscripcion ASC
     `,
-      [idCarrera]
+      [idCarrera],
     );
 
     res.json({
@@ -579,17 +579,16 @@ router.get("/inscrito-carrera/:id", async (req, res) => {
   try {
     const userResult = await conn.execute(
       "SELECT id FROM Usuarios WHERE username = ?",
-      [username]
+      [username],
     );
     if (!userResult.rows || userResult.rows.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
     const idPiloto = userResult.rows[0].id;
 
-
     const inscripcionResult = await conn.execute(
       "SELECT 1 FROM InscripcionesCarrera WHERE id_carrera = ? AND id_piloto = ? LIMIT 1",
-      [idCarrera, idPiloto]
+      [idCarrera, idPiloto],
     );
 
     const inscrito =

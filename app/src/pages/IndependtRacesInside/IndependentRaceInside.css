@@ -157,7 +157,9 @@ tr:hover {
   color: #fff;
   min-height: 220px;
   margin: 2rem 0;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
 .drag-drop-zone.drag-over {

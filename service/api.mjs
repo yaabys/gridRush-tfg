@@ -12,7 +12,6 @@ import session from "express-session";
 const app = express();
 const puerto = 3000;
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
