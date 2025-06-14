@@ -577,11 +577,6 @@ router.get("/inscrito-carrera/:id", async (req, res) => {
   const idCarrera = req.params.id;
 
   try {
-    console.log(
-      `[/inscrito-carrera] Comprobando inscripción para usuario: ${username} en carrera: ${idCarrera}`
-    );
-
-
     const userResult = await conn.execute(
       "SELECT id FROM Usuarios WHERE username = ?",
       [username]
