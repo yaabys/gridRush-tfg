@@ -84,7 +84,7 @@ const useAuth = () => {
 };
 
 // Componente Piloto Arrastrable
-function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
+function SortableRacerItem({ id, racer, carreraId, onImgClick, esTorneo = false }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const [avatarUrl, setAvatarUrl] = useState("/img/defaultIconProfile.webp");
@@ -129,15 +129,18 @@ function SortableRacerItem({ id, racer, carreraId, onImgClick }) {
       <span className="racer-position">{racer.position}º</span>
       <span className="racer-name">{racer.name}</span>
       <span className="racer-elo">ELO: {racer.elo || 0}</span>
-      <button
-        className="ver-foto-btn"
-        onClick={() => {
-          onImgClick(fotoUrl);
-        }}
-        style={{ marginLeft: "1rem" }}
-      >
-        Ver foto
-      </button>
+      {/* Solo muestra el botón si NO es torneo */}
+      {!esTorneo && (
+        <button
+          className="ver-foto-btn"
+          onClick={() => {
+            onImgClick(fotoUrl);
+          }}
+          style={{ marginLeft: "1rem" }}
+        >
+          Ver foto
+        </button>
+      )}
     </div>
   );
 }
@@ -171,7 +174,6 @@ function AvatarById({ id, name, className = "confirmacion-img" }) {
   );
 }
 
-// Componente Vista de Reordenamiento
 function ReorderView({ item, onGoBack, onConfirm }) {
   const [racers, setRacers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -311,6 +313,7 @@ function ReorderView({ item, onGoBack, onConfirm }) {
                   racer={racer}
                   carreraId={item.id}
                   onImgClick={setModalImg}
+                  esTorneo={item.type === ITEM_TYPES.TOURNAMENT}
                 />
               ))
             )}
