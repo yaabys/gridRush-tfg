@@ -225,9 +225,9 @@ router.put("/reservar-torneo", async (req, res) => {
 
     const torneo = torneoResult.rows[0];
 
-    if (nivelUsuario < torneo.nivelMin) {
+    if (eloUsuario < torneo.nivelMin) {
       return res.status(400).json({
-        error: `No cumples con el nivel mínimo requerido. Nivel mínimo: ${torneo.nivelMin}, Tu nivel: ${nivelUsuario} (Elo: ${eloUsuario})`,
+        error: `No cumples con el ELO mínimo requerido. ELO mínimo: ${torneo.nivelMin}, Tu ELO: ${eloUsuario}`,
       });
     }
 
