@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import bcrypt from "bcrypt";
+import { initializeApp } from "firebase/app"
+import bcrypt from "bcrypt"
 import {
   getFirestore,
   collection,
@@ -9,10 +9,10 @@ import {
   setDoc,
   query,
   where,
-} from "firebase/firestore";
-import { hashearPassword } from "../controllers/userController.mjs";
-import { deleteDoc } from "firebase/firestore";
-import { conn } from "../sql/conexionSQL.mjs";
+} from "firebase/firestore"
+import { hashearPassword } from "../controllers/userController.mjs"
+import { deleteDoc } from "firebase/firestore"
+import { conn } from "../sql/conexionSQL.mjs"
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,

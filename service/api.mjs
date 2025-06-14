@@ -1,13 +1,13 @@
 //rutas
-import rutasEliminar from "./routes/routesDelete.mjs";
-import rutasRead from "./routes/routesRead.mjs";
-import rutasModificar from "./routes/routesUpdate.mjs";
-import rutasRegister from "./routes/routesRegister.mjs";
-import rutasUploadFoto from "./routes/routesUploadFoto.mjs";
-import rutasNews from "./routes/routerNews.mjs";
-import rutasAdmin from "./routes/routesAdmin.mjs";
-import express from "express";
-import session from "express-session";
+import rutasEliminar from "./routes/routesDelete.mjs"
+import rutasRead from "./routes/routesRead.mjs"
+import rutasModificar from "./routes/routesUpdate.mjs"
+import rutasRegister from "./routes/routesRegister.mjs"
+import rutasUploadFoto from "./routes/routesUploadFoto.mjs"
+import rutasNews from "./routes/routerNews.mjs"
+import rutasAdmin from "./routes/routesAdmin.mjs"
+import express from "express"
+import session from "express-session"
 
 const app = express();
 const puerto = 3000;

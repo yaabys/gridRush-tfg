@@ -1,6 +1,6 @@
-import express from "express";
-import { conn } from "../sql/conexionSQL.mjs";
-import multer from "multer";
+import express from "express"
+import { conn } from "../sql/conexionSQL.mjs"
+import multer from "multer"
 
 export const upload = multer({ storage: multer.memoryStorage() });
 

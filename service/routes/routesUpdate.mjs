@@ -1,12 +1,12 @@
-import express from "express";
-import { actualizarPerfil } from "../controllers/userController.mjs";
-import { conn } from "../sql/conexionSQL.mjs";
+import express from "express"
+import { actualizarPerfil } from "../controllers/userController.mjs"
+import { conn } from "../sql/conexionSQL.mjs"
 import {
   actualizarUsernameFirebase,
   actualizarEmailFirebase,
-} from "../firebase/conexionFirebase.mjs";
-import session from "express-session";
-import { updateSession } from "../controllers/updateSession.mjs";
+} from "../firebase/conexionFirebase.mjs"
+import session from "express-session"
+import { updateSession } from "../controllers/updateSession.mjs"
 
 const router = express.Router();
 

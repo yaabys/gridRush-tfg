@@ -1,4 +1,4 @@
-import { conn } from "../sql/conexionSQL.mjs";
+import { conn } from "../sql/conexionSQL.mjs"
 
 export const esAdmin = async (emailUsuario) => {
   if (!emailUsuario) {

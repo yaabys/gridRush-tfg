@@ -1,5 +1,5 @@
-import { createClient } from "@libsql/client";
-import process from "process";
+import { createClient } from "@libsql/client"
+import process from "process"
 
 export const conn = createClient({
   url: process.env.DATABASE_URL,

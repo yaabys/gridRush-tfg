@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import { conn } from "../sql/conexionSQL.mjs";
+import bcrypt from "bcrypt"
+import { conn } from "../sql/conexionSQL.mjs"
 
 export const comprobarUser = async (user) => {
   try {
